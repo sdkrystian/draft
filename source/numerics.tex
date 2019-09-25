@@ -12,20 +12,19 @@ The following subclauses describe components for
 complex number types, random number generation,
 numeric (%
 \textit{n}-at-a-time)
-arrays, generalized numeric algorithms, and
-mathematical constants and functions for floating-point types,
-as summarized in \tref{numerics.summary}.
+arrays, generalized numeric algorithms,
+and mathematical functions for floating-point types,
+as summarized in \tref{numerics.lib.summary}.
 
-\begin{libsumtab}{Numerics library summary}{numerics.summary}
+\begin{libsumtab}{Numerics library summary}{tab:numerics.lib.summary}
 \ref{numeric.requirements}  & Requirements &           \\ \rowsep
 \ref{cfenv}           & Floating-point environment & \tcode{<cfenv>}  \\ \rowsep
 \ref{complex.numbers} & Complex numbers & \tcode{<complex>} \\ \rowsep
 \ref{bit}   & Bit manipulation & \tcode{<bit>} \\ \rowsep
 \ref{rand}  & Random number generation & \tcode{<random>} \\ \rowsep
 \ref{numarray}  & Numeric arrays     & \tcode{<valarray>}  \\ \rowsep
-\ref{c.math}  & Mathematical functions for floating-point types &
-  \tcode{<cmath>}, \tcode{<cstdlib>} \\ \rowsep
-\ref{numbers}  & Numbers & \tcode{<numbers>} \\
+\ref{c.math}  & Mathematical functions for & \tcode{<cmath>}   \\
+              & floating-point types       & \tcode{<cstdlib>} \\
 \end{libsumtab}
 
 \rSec1[numeric.requirements]{Numeric type requirements}
@@ -39,7 +38,7 @@ and
 components are parameterized by the type of information they contain and manipulate.
 A \Cpp{} program shall instantiate these components only with a numeric type.
 A \defnadj{numeric}{type} is a cv-unqualified object type \tcode{T}
-that meets the
+that satisfies the
 \oldconcept{DefaultConstructible},
 \oldconcept{CopyConstructible},
 \oldconcept{CopyAssignable}, and
@@ -62,7 +61,7 @@ In addition, many member and related functions of
 \tcode{valarray<T>}
 can be successfully instantiated
 and will exhibit well-defined behavior if and only if
-\tcode{T} meets additional requirements specified for each such member
+\tcode{T} satisfies additional requirements specified for each such member
 or related function.
 
 \pnum
@@ -163,9 +162,7 @@ floating-point evaluation in constant expressions.
 The floating-point environment has thread storage
 duration\iref{basic.stc.thread}. The initial state for a thread's floating-point
 environment is the state of the floating-point environment of the thread that constructs
-the corresponding \tcode{thread} object\iref{thread.thread.class}
-or \tcode{jthread} object\iref{thread.jthread.class}
-at the time it
+the corresponding \tcode{thread} object\iref{thread.thread.class} at the time it
 constructed the object. \begin{note} That is, the child thread gets the floating-point
 state of the parent thread at the time of the child's creation. \end{note}
 
@@ -250,6 +247,11 @@ namespace std {
 
   template<class T> constexpr bool operator==(const complex<T>&, const complex<T>&);
   template<class T> constexpr bool operator==(const complex<T>&, const T&);
+  template<class T> constexpr bool operator==(const T&, const complex<T>&);
+
+  template<class T> constexpr bool operator!=(const complex<T>&, const complex<T>&);
+  template<class T> constexpr bool operator!=(const complex<T>&, const T&);
+  template<class T> constexpr bool operator!=(const T&, const complex<T>&);
 
   template<class T, class charT, class traits>
     basic_istream<charT, traits>& operator>>(basic_istream<charT, traits>&, complex<T>&);
@@ -737,6 +739,7 @@ template<class T> constexpr complex<T> operator/(const T& lhs, const complex<T>&
 \begin{itemdecl}
 template<class T> constexpr bool operator==(const complex<T>& lhs, const complex<T>& rhs);
 template<class T> constexpr bool operator==(const complex<T>& lhs, const T& rhs);
+template<class T> constexpr bool operator==(const T& lhs, const complex<T>& rhs);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -751,6 +754,19 @@ The imaginary part is assumed to be
 or 0.0, for the
 \tcode{T}
 arguments.
+\end{itemdescr}
+
+\indexlibrarymember{operator"!=}{complex}%
+\begin{itemdecl}
+template<class T> constexpr bool operator!=(const complex<T>& lhs, const complex<T>& rhs);
+template<class T> constexpr bool operator!=(const complex<T>& lhs, const T& rhs);
+template<class T> constexpr bool operator!=(const T& lhs, const complex<T>& rhs);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+\tcode{rhs.real() != lhs.real() || rhs.imag() != lhs.imag()}.
 \end{itemdescr}
 
 \indexlibrarymember{operator>>}{complex}%
@@ -1231,6 +1247,7 @@ ensure, for a call with at least one argument of type \tcode{complex<T>}:
 \rSec2[complex.literals]{Suffixes for complex number literals}
 
 \indextext{literal!complex}%
+\indexlibrary{\tcode{complex}!literals}%
 \pnum
 This subclause describes literal suffixes for constructing complex number literals.
 The suffixes \tcode{i}, \tcode{il}, and \tcode{if} create complex numbers of
@@ -1288,43 +1305,18 @@ manipulate and process both individual bits and bit sequences.
 \begin{codeblock}
 namespace std {
   // \ref{bit.cast}, \tcode{bit_cast}
-  template<class To, class From>
+  template<typename To, typename From>
     constexpr To bit_cast(const From& from) noexcept;
 
   // \ref{bit.pow.two}, integral powers of 2
   template<class T>
     constexpr bool ispow2(T x) noexcept;
   template<class T>
-    constexpr T ceil2(T x);
+    constexpr T ceil2(T x) noexcept;
   template<class T>
     constexpr T floor2(T x) noexcept;
   template<class T>
     constexpr T log2p1(T x) noexcept;
-
-  // \ref{bit.rotate}, rotating
-  template<class T>
-    [[nodiscard]] constexpr T rotl(T x, int s) noexcept;
-  template<class T>
-    [[nodiscard]] constexpr T rotr(T x, int s) noexcept;
-
-  // \ref{bit.count}, counting
-  template<class T>
-    constexpr int countl_zero(T x) noexcept;
-  template<class T>
-    constexpr int countl_one(T x) noexcept;
-  template<class T>
-    constexpr int countr_zero(T x) noexcept;
-  template<class T>
-    constexpr int countr_one(T x) noexcept;
-  template<class T>
-    constexpr int popcount(T x) noexcept;
-
-  // \ref{bit.endian}, endian
-  enum class endian {
-    little = @\seebelow@,
-    big    = @\seebelow@,
-    native = @\seebelow@
-  };
 }
 \end{codeblock}
 
@@ -1332,7 +1324,7 @@ namespace std {
 
 \indexlibrary{\idxcode{bit_cast}}%
 \begin{itemdecl}
-template<class To, class From>
+template<typename To, typename From>
   constexpr To bit_cast(const From& from) noexcept;
 \end{itemdecl}
 
@@ -1390,34 +1382,21 @@ unless \tcode{T} is an unsigned integer type\iref{basic.fundamental}.
 \indexlibrary{\idxcode{ceil2}}%
 \begin{itemdecl}
 template<class T>
-  constexpr T ceil2(T x);
+  constexpr T ceil2(T x) noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
-Let $N$ be the smallest power of 2 greater than or equal to \tcode{x}.
-
-\pnum
-\constraints
-\tcode{T} is an unsigned integer type\iref{basic.fundamental}.
-
-\pnum
-\expects
-$N$ is representable as a value of type \tcode{T}.
-
-\pnum
 \returns
-$N$.
-
-\pnum
-\throws
-Nothing.
+The minimal value \tcode{y} such that
+\tcode{ispow2(y)} is \tcode{true} and \tcode{y >= x};
+if \tcode{y} is not representable as a value of type \tcode{T},
+the result is an unspecified value.
 
 \pnum
 \remarks
-A function call expression
-that violates the precondition in the \expects element
-is not a core constant expression\iref{expr.const}.
+This function shall not participate in overload resolution
+unless \tcode{T} is an unsigned integer type\iref{basic.fundamental}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{floor2}}%
@@ -1458,190 +1437,6 @@ This function shall not participate in overload resolution
 unless \tcode{T} is an unsigned integer type\iref{basic.fundamental}.
 \end{itemdescr}
 
-\rSec2[bit.rotate]{Rotating}
-
-In the following descriptions,
-let \tcode{N} denote \tcode{numeric_limits<T>::digits}.
-
-\begin{itemdecl}
-template<class T>
-  [[nodiscard]] constexpr T rotl(T x, int s) noexcept;
-\end{itemdecl}
-
-\indexlibrary{\idxcode{rotl}}%
-\begin{itemdescr}
-\pnum
-\constraints
-\tcode{T} is an unsigned integer type\iref{basic.fundamental}.
-
-\pnum
-Let \tcode{r} be \tcode{s \% N}.
-
-\pnum
-\returns
-If \tcode{r} is \tcode{0}, \tcode{x};
-if \tcode{r} is positive, \tcode{(x << r) | (x >> (N - r))};
-if \tcode{r} is negative, \tcode{rotr(x, -r)}.
-\end{itemdescr}
-
-\begin{itemdecl}
-template<class T>
-  [[nodiscard]] constexpr T rotr(T x, int s) noexcept;
-\end{itemdecl}
-
-\indexlibrary{\idxcode{rotr}}%
-\begin{itemdescr}
-\pnum
-\constraints
-\tcode{T} is an unsigned integer type\iref{basic.fundamental}.
-
-\pnum
-Let \tcode{r} be \tcode{s \% N}.
-
-\pnum
-\returns
-If \tcode{r} is \tcode{0}, \tcode{x};
-if \tcode{r} is positive, \tcode{(x >> r) | (x << (N - r))};
-if \tcode{r} is negative, \tcode{rotl(x, -r)}.
-\end{itemdescr}
-
-\rSec2[bit.count]{Counting}
-
-In the following descriptions,
-let \tcode{N} denote \tcode{numeric_limits<T>::digits}.
-
-\begin{itemdecl}
-template<class T>
-  constexpr int countl_zero(T x) noexcept;
-\end{itemdecl}
-
-\indexlibrary{\idxcode{countl_zero}}%
-\begin{itemdescr}
-\pnum
-\constraints
-\tcode{T} is an unsigned integer type\iref{basic.fundamental}.
-
-\pnum
-\returns
-The number of consecutive \tcode{0} bits in the value of \tcode{x},
-starting from the most significant bit.
-\begin{note}
-Returns \tcode{N} if \tcode{x == 0}.
-\end{note}
-\end{itemdescr}
-
-\begin{itemdecl}
-template<class T>
-  constexpr int countl_one(T x) noexcept;
-\end{itemdecl}
-
-\indexlibrary{\idxcode{countl_one}}%
-\begin{itemdescr}
-\pnum
-\constraints
-\tcode{T} is an unsigned integer type\iref{basic.fundamental}.
-
-\pnum
-\returns
-The number of consecutive \tcode{1} bits in the value of \tcode{x},
-starting from the most significant bit.
-\begin{note}
-Returns \tcode{N} if \tcode{x == numeric_limits<T>::max()}.
-\end{note}
-\end{itemdescr}
-
-\begin{itemdecl}
-template<class T>
-  constexpr int countr_zero(T x) noexcept;
-\end{itemdecl}
-
-\indexlibrary{\idxcode{countr_zero}}%
-\begin{itemdescr}
-\pnum
-\constraints
-\tcode{T} is an unsigned integer type\iref{basic.fundamental}.
-
-\pnum
-\returns
-The number of consecutive \tcode{0} bits in the value of \tcode{x},
-starting from the least significant bit.
-\begin{note}
-Returns \tcode{N} if \tcode{x == 0}.
-\end{note}
-\end{itemdescr}
-
-\begin{itemdecl}
-template<class T>
-  constexpr int countr_one(T x) noexcept;
-\end{itemdecl}
-
-\indexlibrary{\idxcode{countr_one}}%
-\begin{itemdescr}
-\pnum
-\constraints
-\tcode{T} is an unsigned integer type\iref{basic.fundamental}.
-
-\pnum
-\returns
-The number of consecutive \tcode{1} bits in the value of \tcode{x},
-starting from the least significant bit.
-\begin{note}
-Returns \tcode{N} if \tcode{x == numeric_limits<T>::max()}.
-\end{note}
-\end{itemdescr}
-
-\begin{itemdecl}
-template<class T>
-  constexpr int popcount(T x) noexcept;
-\end{itemdecl}
-
-\indexlibrary{\idxcode{popcount}}%
-\begin{itemdescr}
-\pnum
-\constraints
-\tcode{T} is an unsigned integer type\iref{basic.fundamental}.
-
-\pnum
-\returns
-The number of \tcode{1} bits in the value of \tcode{x}.
-\end{itemdescr}
-
-\rSec2[bit.endian]{Endian}
-
-\pnum
-Two common methods of byte ordering in multibyte scalar types are big-endian
-and little-endian in the execution environment. Big-endian is a format for
-storage of binary data in which the most significant byte is placed first,
-with the rest in descending order. Little-endian is a format for storage of
-binary data in which the least significant byte is placed first, with the rest
-in ascending order. This subclause describes the endianness of the scalar types
-of the execution environment.
-
-\indexlibrary{\idxcode{endian}}%
-\indexlibrarymember{little}{endian}%
-\indexlibrarymember{big}{endian}%
-\indexlibrarymember{native}{endian}%
-\begin{itemdecl}
-enum class endian {
-  little = @\seebelow@,
-  big    = @\seebelow@,
-  native = @\seebelow@
-};
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-If all scalar types have size 1 byte, then all of \tcode{endian::little},
-\tcode{endian::big}, and \tcode{endian::native} have the same value.
-Otherwise, \tcode{endian::little} is not equal to \tcode{endian::big}.
-If all scalar types are big-endian, \tcode{endian::native} is
-equal to \tcode{endian::big}.
-If all scalar types are little-endian, \tcode{endian::native} is
-equal to \tcode{endian::little}.
-Otherwise, \tcode{endian::native} is not equal
-to either \tcode{endian::big} or \tcode{endian::little}.
-\end{itemdescr}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1676,7 +1471,7 @@ four categories of entities are described:
 and
 \term{random number distributions}.
 These categorizations are applicable
-to types that meet the corresponding requirements,
+to types that satisfy the corresponding requirements,
 to objects instantiated from such types,
 and to templates producing such types when instantiated.
 \begin{note}
@@ -1759,7 +1554,7 @@ Further:
 namespace std {
   // \ref{rand.req.urng}, uniform random bit generator requirements
   template<class G>
-    concept uniform_random_bit_generator = @\seebelow@;
+    concept UniformRandomBitGenerator = @\seebelow@;
 
   // \ref{rand.eng.lcong}, class template \tcode{linear_congruential_engine}
   template<class UIntType, UIntType a, UIntType c, UIntType m>
@@ -1922,21 +1717,21 @@ the effect of instantiating a template:
     named \tcode{Sseq}
     is undefined unless the corresponding template argument
     is cv-unqualified and
-    meets the requirements
+    satisfies the requirements
     of seed sequence\iref{rand.req.seedseq}.
   \item
     that has a template type parameter
     named \tcode{URBG}
     is undefined unless the corresponding template argument
     is cv-unqualified and
-    meets the requirements
+    satisfies the requirements
     of uniform random bit generator\iref{rand.req.urng}.
   \item
     that has a template type parameter
     named \tcode{Engine}
     is undefined unless the corresponding template argument
     is cv-unqualified and
-    meets the requirements
+    satisfies the requirements
     of random number engine\iref{rand.req.eng}.
   \item
     that has a template type parameter
@@ -1978,13 +1773,13 @@ Throughout this subclause \ref{rand},
 phrases of the form ``\tcode{x} is an iterator of a specific kind''
 shall be interpreted as equivalent to the more formal requirement that
 ``\tcode{x} is a value
-of a type meeting the requirements
+of a type satisfying the requirements
 of the specified iterator type''.
 
 \pnum
 Throughout this subclause \ref{rand},
 any constructor that can be called with a single argument
-and that meets a requirement specified in this subclause
+and that satisfies a requirement specified in this subclause
 shall be declared \tcode{explicit}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2011,12 +1806,12 @@ shall be declared \tcode{explicit}.
 
 \pnum
 A class \tcode{S}
-meets the requirements
+satisfies the requirements
 of a seed sequence
 if the expressions shown
-in \tref{rand.req.seedseq}
+in \tref{SeedSequence}
 are valid and have the indicated semantics,
-and if \tcode{S} also meets all other requirements
+and if \tcode{S} also satisfies all other requirements
 of this subclause \ref{rand.req.seedseq}.
 In that Table and throughout this subclause:
 \begin{itemize}
@@ -2043,7 +1838,7 @@ In that Table and throughout this subclause:
 
 \begin{libreqtab4d}
   {Seed sequence requirements}
-  {rand.req.seedseq}
+  {tab:SeedSequence}
 \\ \topline
 \lhdr{Expression}
   & \chdr{Return type}
@@ -2152,17 +1947,17 @@ of being returned.
 
 \begin{codeblock}
 template<class G>
-  concept uniform_random_bit_generator =
-    invocable<G&> && unsigned_integral<invoke_result_t<G&>> &&
+  concept UniformRandomBitGenerator =
+    Invocable<G&> && UnsignedIntegral<invoke_result_t<G&>> &&
     requires {
-      { G::min() } -> same_as<invoke_result_t<G&>>;
-      { G::max() } -> same_as<invoke_result_t<G&>>;
+      { G::min() } -> Same<invoke_result_t<G&>>;
+      { G::max() } -> Same<invoke_result_t<G&>>;
     };
 \end{codeblock}
 
 \pnum
 Let \tcode{g} be an object of type \tcode{G}. \tcode{G} models
-\libconcept{uniform_random_bit_generator} only if
+\libconcept{UniformRandomBitGenerator} only if
 
 \begin{itemize}
 \item both \tcode{G::min()} and \tcode{G::max()} are constant
@@ -2177,7 +1972,7 @@ Let \tcode{g} be an object of type \tcode{G}. \tcode{G} models
 \indextext{uniform random bit generator!requirements|)}%
 \pnum
 A class \tcode{G} meets the \term{uniform random bit generator} requirements if
-\tcode{G} models \libconcept{uniform_random_bit_generator},
+\tcode{G} models \libconcept{UniformRandomBitGenerator},
 \tcode{invoke_result_t<G\&>} is an unsigned integer type\iref{basic.fundamental},
 and
 \tcode{G} provides a nested \grammarterm{typedef-name} \tcode{result_type}
@@ -2236,14 +2031,14 @@ An engine's state may be established via
 
 \pnum
 A class \tcode{E}
-that meets the requirements
+that satisfies the requirements
 of a uniform random bit generator\iref{rand.req.urng}
-also meets the requirements
+also satisfies the requirements
 of a \term{random number engine}
 if the expressions shown
-in \tref{rand.req.eng}
+in \tref{RandomEngine}
 are valid and have the indicated semantics,
-and if \tcode{E} also meets all other requirements
+and if \tcode{E} also satisfies all other requirements
 of this subclause \ref{rand.req.eng}.
 In that Table and throughout this subclause:
 \begin{itemize}
@@ -2258,7 +2053,7 @@ In that Table and throughout this subclause:
     \tcode{s} is a value of \tcode{T};
   \item
     \tcode{q} is an lvalue
-    meeting the requirements of a seed sequence\iref{rand.req.seedseq};
+    satisfying the requirements of a seed sequence\iref{rand.req.seedseq};
   \item
     \tcode{z} is a value
     of type \tcode{unsigned long long};
@@ -2275,7 +2070,7 @@ according to \ref{strings} and \ref{input.output}.
 
 \begin{libreqtab4d}
   {Random number engine requirements}
-  {rand.req.eng}
+  {tab:RandomEngine}
 \\ \topline
 \lhdr{Expression}
   & \chdr{Return type}
@@ -2448,9 +2243,9 @@ according to \ref{strings} and \ref{input.output}.
 \end{libreqtab4d}
 
 \pnum
-\tcode{E} shall meet the
-\oldconcept{CopyConstructible} (\tref{cpp17.copyconstructible})
-and \oldconcept{CopyAssignable} (\tref{cpp17.copyassignable}) requirements.
+\tcode{E} shall satisfy the
+\oldconcept{CopyConstructible} (\tref{copyconstructible})
+and \oldconcept{CopyAssignable} (\tref{copyassignable}) requirements.
 These operations shall each be of complexity
 no worse than \bigoh{\text{size of state}}.
 
@@ -2555,7 +2350,7 @@ template<class Sseq> void seed(Sseq& q);
 \end{itemdescr}
 
 \pnum
-\tcode{A} shall also meet
+\tcode{A} shall also satisfy
 the following additional requirements:
 \begin{itemize}
  \item
@@ -2621,13 +2416,13 @@ or by writing, for example,
 
 \pnum
 A class \tcode{D}
-meets the requirements
+satisfies the requirements
 of a \term{random number distribution}
 if the expressions shown
-in \tref{rand.req.dist}
+in \tref{RandomDistribution}
 are valid and have the indicated semantics,
 and if \tcode{D} and its associated types
-also meet all other requirements
+also satisfy all other requirements
 of this subclause \ref{rand.req.dist}.
 In that Table and throughout this subclause,
 \begin{itemize}
@@ -2653,7 +2448,7 @@ In that Table and throughout this subclause,
     \tcode{p} is a (possibly \tcode{const}) value of \tcode{P};
   \item
     \tcode{g}, \tcode{g1}, and \tcode{g2} are lvalues of a type
-    meeting the requirements
+    satisfying the requirements
     of a uniform random bit generator\iref{rand.req.urng};
   \item
     \tcode{os} is an lvalue of the type of some class template specialization
@@ -2668,7 +2463,7 @@ according to \ref{strings} and \ref{input.output}.
 
 \begin{libreqtab4d}
   {Random number distribution requirements}
-  {rand.req.dist}
+  {tab:RandomDistribution}
 \\ \topline
 \lhdr{Expression}
   & \chdr{Return type}
@@ -2827,9 +2622,9 @@ according to \ref{strings} and \ref{input.output}.
 \end{libreqtab4d}
 
 \pnum
-\tcode{D} shall meet the
-\oldconcept{CopyConstructible} (\tref{cpp17.copyconstructible})
-and \oldconcept{CopyAssignable} (\tref{cpp17.copyassignable}) requirements.
+\tcode{D} shall satisfy the
+\oldconcept{CopyConstructible} (\tref{copyconstructible})
+and \oldconcept{CopyAssignable} (\tref{copyassignable}) requirements.
 
 \pnum
 The sequence of numbers
@@ -2859,11 +2654,11 @@ are in the form of \tcode{typedef}s
 for convenience of exposition only.
 
 \pnum
-\tcode{P} shall meet the
-\oldconcept{CopyConstructible} (\tref{cpp17.copyconstructible}),
-\oldconcept{CopyAssignable} (\tref{cpp17.copyassignable}),
+\tcode{P} shall satisfy the
+\oldconcept{CopyConstructible} (\tref{copyconstructible}),
+\oldconcept{CopyAssignable} (\tref{copyassignable}),
 and
-\oldconcept{Equality\-Comp\-arable} (\tref{cpp17.equalitycomparable}) requirements.
+\oldconcept{Equality\-Comp\-arable} (\tref{equalitycomparable}) requirements.
 
 \pnum
 For each of the constructors of \tcode{D}
@@ -2903,7 +2698,7 @@ using distribution_type =  D;
 \pnum
 Each type instantiated
 from a class template specified in this subclause~\ref{rand.eng}
-meets the requirements
+satisfies the requirements
 of a random number engine\iref{rand.req.eng} type.
 
 \pnum
@@ -2998,7 +2793,6 @@ the generation algorithm%
 is $\mathsf{GA}(\state{x}{i}) = \state{x}{i+1}$.
 
 \indexlibrary{\idxcode{linear_congruential_engine}}%
-\indexlibrarymember{result_type}{linear_congruential_engine}%
 \begin{codeblock}
 template<class UIntType, UIntType a, UIntType c, UIntType m>
   class linear_congruential_engine {
@@ -3155,7 +2949,6 @@ The generation algorithm%
 \end{itemize}
 
 \indexlibrary{\idxcode{mersenne_twister_engine}}%
-\indexlibrarymember{result_type}{mersenne_twister_engine}%
 \begin{codeblock}
 template<class UIntType, size_t w, size_t n, size_t m, size_t r,
          UIntType a, size_t u, UIntType d, size_t s,
@@ -3327,7 +3120,6 @@ where $y$ is the value produced as a result
 of advancing the engine's state as described above.
 
 \indexlibrary{\idxcode{subtract_with_carry_engine}}%
-\indexlibrarymember{result_type}{subtract_with_carry_engine}%
 \begin{codeblock}
 template<class UIntType, size_t w, size_t s, size_t r>
   class subtract_with_carry_engine {
@@ -3443,7 +3235,7 @@ template<class Sseq> explicit subtract_with_carry_engine(Sseq& q);
 \pnum
 Each type instantiated
 from a class template specified in this subclause~\ref{rand.adapt}
-meets the requirements
+satisfies the requirements
 of a random number engine adaptor\iref{rand.req.adapt} type.
 
 \pnum
@@ -3528,7 +3320,6 @@ yields the value returned by the last invocation of \tcode{e()}
  while advancing \tcode{e}'s state as described above.
 
 \indexlibrary{\idxcode{discard_block_engine}}%
-\indexlibrarymember{result_type}{discard_block_engine}%
 \begin{codeblock}
 template<class Engine, size_t p, size_t r>
   class discard_block_engine {
@@ -3676,7 +3467,6 @@ for (@$k$@ = @$n_0$@; @$k \neq n$@; @$k$@ += @$1$@)  {
 \end{codeblock}
 
 \indexlibrary{\idxcode{independent_bits_engine}}%
-\indexlibrarymember{result_type}{independent_bits_engine}%
 \begin{codeblock}
 template<class Engine, size_t w, class UIntType>
   class independent_bits_engine {
@@ -3776,7 +3566,6 @@ yields the last value of \tcode{Y}
  produced while advancing \tcode{e}'s state as described above.
 
 \indexlibrary{\idxcode{shuffle_order_engine}}%
-\indexlibrarymember{result_type}{shuffle_order_engine}%
 \begin{codeblock}
 template<class Engine, size_t k>
   class shuffle_order_engine {
@@ -4051,7 +3840,6 @@ prevent generating nondeterministic random numbers,
 the implementation may employ a random number engine.
 
 \indexlibrary{\idxcode{random_device}}%
-\indexlibrarymember{result_type}{random_device}%
 \begin{codeblock}
 class random_device {
 public:
@@ -4073,8 +3861,8 @@ public:
   double entropy() const noexcept;
 
   @\textit{// no copy functions}@
-  random_device(const random_device&) = delete;
-  void operator=(const random_device&) = delete;
+  random_device(const random_device& ) = delete;
+  void operator=(const random_device& ) = delete;
 };
 \end{codeblock}
 
@@ -4158,7 +3946,6 @@ result_type operator()();
 \rSec3[rand.util.seedseq]{Class \tcode{seed_seq}}%
 
 \indexlibrary{\idxcode{seed_seq}}%
-\indexlibrarymember{result_type}{seed_seq}%
 \begin{codeblock}
 class seed_seq {
 public:
@@ -4182,8 +3969,8 @@ public:
     void param(OutputIterator dest) const;
 
   // no copy functions
-  seed_seq(const seed_seq&) = delete;
-  void operator=(const seed_seq&) = delete;
+  seed_seq(const seed_seq& ) = delete;
+  void operator=(const seed_seq& ) = delete;
 
 private:
   vector<result_type> v;   // \expos
@@ -4227,7 +4014,7 @@ template<class InputIterator>
 
 \begin{itemdescr}
 \pnum\requires
-  \tcode{InputIterator} shall meet the
+  \tcode{InputIterator} shall satisfy the
   \oldconcept{InputIterator} requirements\iref{input.iterators}.
   Moreover,
   \tcode{iterator_traits<InputIterator>::value_type}
@@ -4249,7 +4036,7 @@ template<class RandomAccessIterator>
 
 \begin{itemdescr}
 \pnum\requires \tcode{RandomAccessIterator}
-  shall meet the
+  shall satisfy the
   \oldconcept{RandomAccessIterator} requirements\iref{random.access.iterators}
   and the requirements of a mutable iterator.
   Moreover,
@@ -4356,7 +4143,7 @@ template<class OutputIterator>
 
 \begin{itemdescr}
 \pnum\requires
-  \tcode{OutputIterator} shall meet the
+  \tcode{OutputIterator} shall satisfy the
   \oldconcept{OutputIterator} requirements\iref{output.iterators}.
   Moreover,
   the expression
@@ -4463,7 +4250,7 @@ template<class RealType, size_t bits, class URBG>
 \pnum
 Each type instantiated
 from a class template specified in this subclause~\ref{rand.dist}
-meets the requirements
+satisfies the requirements
 of a random number distribution\iref{rand.req.dist} type.
 
 \pnum
@@ -4518,7 +4305,6 @@ the constant discrete probability function%
 \[  P(i\,|\,a,b) = 1 / (b - a + 1) \text{ .} \]
 
 \indexlibrary{\idxcode{uniform_int_distribution}}%
-\indexlibrarymember{result_type}{uniform_int_distribution}%
 \begin{codeblock}
 template<class IntType = int>
   class uniform_int_distribution {
@@ -4605,7 +4391,6 @@ This implies that $p(x\,|\,a,b)$ is undefined when \tcode{a == b}.
 \end{note}
 
 \indexlibrary{\idxcode{uniform_real_distribution}}%
-\indexlibrarymember{result_type}{uniform_real_distribution}%
 \begin{codeblock}
 template<class RealType = double>
   class uniform_real_distribution {
@@ -4707,7 +4492,6 @@ the discrete probability function
 \]
 
 \indexlibrary{\idxcode{bernoulli_distribution}}%
-\indexlibrarymember{result_type}{bernoulli_distribution}%
 \begin{codeblock}
 class bernoulli_distribution {
 public:
@@ -4778,7 +4562,6 @@ the discrete probability function%
 \[ P(i\,|\,t,p) = \binom{t}{i} \cdot p^i \cdot (1-p)^{t-i} \text{ .} \]
 
 \indexlibrary{\idxcode{binomial_distribution}}%
-\indexlibrarymember{result_type}{binomial_distribution}%
 \begin{codeblock}
 template<class IntType = int>
   class binomial_distribution {
@@ -4860,7 +4643,6 @@ the discrete probability function
 \[ P(i\,|\,p) = p \cdot (1-p)^{i} \text{ .} \]
 
 \indexlibrary{\idxcode{geometric_distribution}}%
-\indexlibrarymember{result_type}{geometric_distribution}%
 \begin{codeblock}
 template<class IntType = int>
   class geometric_distribution {
@@ -4936,7 +4718,6 @@ This implies that $P(i\,|\,k,p)$ is undefined when \tcode{p == 1}.
 \end{note}
 
 \indexlibrary{\idxcode{negative_binomial_distribution}}%
-\indexlibrarymember{result_type}{negative_binomial_distribution}%
 \begin{codeblock}
 template<class IntType = int>
   class negative_binomial_distribution {
@@ -5038,7 +4819,6 @@ is also known as this distribution's \term{mean}%
 .
 
 \indexlibrary{\idxcode{poisson_distribution}}%
-\indexlibrarymember{result_type}{poisson_distribution}%
 \begin{codeblock}
 template<class IntType = int>
   class poisson_distribution
@@ -5110,7 +4890,6 @@ the probability density function%
 \[ p(x\,|\,\lambda) = \lambda e^{-\lambda x} \text{ .} \]
 
 \indexlibrary{\idxcode{exponential_distribution}}%
-\indexlibrarymember{result_type}{exponential_distribution}%
 \begin{codeblock}
 template<class RealType = double>
   class exponential_distribution {
@@ -5184,7 +4963,6 @@ the probability density function%
      \text{ .} \]
 
 \indexlibrary{\idxcode{gamma_distribution}}%
-\indexlibrarymember{result_type}{gamma_distribution}%
 \begin{codeblock}
 template<class RealType = double>
   class gamma_distribution {
@@ -5272,7 +5050,6 @@ the probability density function%
      \text{ .} \]
 
 \indexlibrary{\idxcode{weibull_distribution}}%
-\indexlibrarymember{result_type}{weibull_distribution}%
 \begin{codeblock}
 template<class RealType = double>
   class weibull_distribution {
@@ -5365,7 +5142,6 @@ the probability density function\footnote{The distribution corresponding to
      \text{ .} \]
 
 \indexlibrary{\idxcode{extreme_value_distribution}}%
-\indexlibrarymember{result_type}{extreme_value_distribution}%
 \begin{codeblock}
 template<class RealType = double>
   class extreme_value_distribution {
@@ -5480,7 +5256,6 @@ and \term{standard deviation}%
 .
 
 \indexlibrary{\idxcode{normal_distribution}}%
-\indexlibrarymember{result_type}{normal_distribution}%
 \begin{codeblock}
 template<class RealType = double>
   class normal_distribution {
@@ -5567,7 +5342,6 @@ the probability density function%
      \text{ .} \]
 
 \indexlibrary{\idxcode{lognormal_distribution}}%
-\indexlibrarymember{result_type}{lognormal_distribution}%
 \begin{codeblock}
 template<class RealType = double>
   class lognormal_distribution {
@@ -5652,7 +5426,6 @@ the probability density function%
 \[ p(x\,|\,n) = \frac{x^{(n/2)-1} \cdot e^{-x/2}}{\Gamma(n/2) \cdot 2^{n/2}} \text{ .} \]
 
 \indexlibrary{\idxcode{chi_squared_distribution}}%
-\indexlibrarymember{result_type}{chi_squared_distribution}%
 \begin{codeblock}
 template<class RealType = double>
   class chi_squared_distribution {
@@ -5725,7 +5498,6 @@ the probability density function%
 \[  p(x\,|\,a,b) = \left(\pi b \left(1 + \left(\frac{x-a}{b} \right)^2 \, \right)\right)^{-1} \text{ .} \]
 
 \indexlibrary{\idxcode{cauchy_distribution}}%
-\indexlibrarymember{result_type}{cauchy_distribution}%
 \begin{codeblock}
 template<class RealType = double>
   class cauchy_distribution {
@@ -5814,7 +5586,6 @@ the probability density function%
      \text{ .} \]
 
 \indexlibrary{\idxcode{fisher_f_distribution}}%
-\indexlibrarymember{result_type}{fisher_distribution}%
 \begin{codeblock}
 template<class RealType = double>
   class fisher_f_distribution {
@@ -5902,7 +5673,6 @@ the probability density function%
      \text{ .} \]
 
 \indexlibrary{\idxcode{student_t_distribution}}%
-\indexlibrarymember{result_type}{student_t_distribution}%
 \begin{codeblock}
 template<class RealType = double>
   class student_t_distribution {
@@ -6001,7 +5771,6 @@ Moreover, the following relation shall hold:
 $0 < S = w_0 + \dotsb + w_{n - 1}$.
 
 \indexlibrary{\idxcode{discrete_distribution}}%
-\indexlibrarymember{result_type}{discrete_distribution}%
 \begin{codeblock}
 template<class IntType = int>
   class discrete_distribution {
@@ -6058,7 +5827,7 @@ template<class InputIterator>
 \begin{itemdescr}
 \pnum
 \requires
-  \tcode{InputIterator} shall meet the
+  \tcode{InputIterator} shall satisfy the
   \oldconcept{InputIterator} requirements\iref{input.iterators}.
   Moreover,
   \tcode{iterator_traits<InputIterator>::value_type}
@@ -6169,7 +5938,6 @@ Moreover, the following relation shall hold:
  $0 < S = w_0 + \dotsb + w_{n-1}$.
 
 \indexlibrary{\idxcode{piecewise_constant_distribution}}%
-\indexlibrarymember{result_type}{piecewise_constant_distribution}%
 \begin{codeblock}
 template<class RealType = double>
   class piecewise_constant_distribution {
@@ -6232,7 +6000,7 @@ template<class InputIteratorB, class InputIteratorW>
 \begin{itemdescr}
 \pnum\requires
   \tcode{InputIteratorB} and \tcode{InputIteratorW}
-  shall each meet the
+  shall each satisfy the
   \oldconcept{InputIterator} requirements\iref{input.iterators}.
   Moreover,
   the \grammarterm{id-expression}s
@@ -6384,7 +6152,6 @@ Moreover, the following relation shall hold:
 \[ 0 < S = \frac{1}{2} \cdot \sum_{k=0}^{n-1} (w_k + w_{k+1}) \cdot (b_{k+1} - b_k) \text{ .} \]
 
 \indexlibrary{\idxcode{piecewise_linear_distribution}}%
-\indexlibrarymember{result_type}{piecewise_linear_distribution}%
 \begin{codeblock}
 template<class RealType = double>
   class piecewise_linear_distribution {
@@ -6444,7 +6211,7 @@ template<class InputIteratorB, class InputIteratorW>
 \begin{itemdescr}
 \pnum\requires
   \tcode{InputIteratorB} and \tcode{InputIteratorW}
-  shall each meet the
+  shall each satisfy the
   \oldconcept{InputIterator} requirements\iref{input.iterators}.
   Moreover,
   the \grammarterm{id-expression}s
@@ -7980,8 +7747,6 @@ namespace std {
     size_t start() const;
     size_t size() const;
     size_t stride() const;
-
-    friend bool operator==(const slice& x, const slice& y);
   };
 }
 \end{codeblock}
@@ -8041,22 +7806,6 @@ by a \tcode{slice} object.
 
 \pnum
 \complexity Constant time.
-\end{itemdescr}
-
-\rSec3[slice.ops]{Operators}
-
-\indexlibrarymember{stride}{slice}%
-\begin{itemdecl}
-friend bool operator==(const slice& x, const slice& y);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\effects
-Equivalent to:
-\begin{codeblock}
-return x.start() == y.start() && x.size() == y.size() && x.stride() == y.stride();
-\end{codeblock}
 \end{itemdescr}
 
 \rSec2[template.slice.array]{Class template \tcode{slice_array}}
@@ -8742,12 +8491,12 @@ object refers.
 In the \tcode{begin} and \tcode{end} function templates that follow, \unspec{1}
 is a type that meets the requirements of a mutable
 \oldconcept{RandomAccessIterator}\iref{random.access.iterators}
-and models \libconcept{contiguous_iterator}\iref{iterator.concept.contiguous},
+and models \libconcept{ContiguousIterator}\iref{iterator.concept.contiguous},
 whose \tcode{value_type} is the template
 parameter \tcode{T} and whose \tcode{reference} type is \tcode{T\&}. \unspec{2} is a
 type that meets the requirements of a constant
 \oldconcept{RandomAccessIterator}
-and models \libconcept{contiguous_iterator},
+and models \libconcept{ContiguousIterator},
 whose \tcode{value_type} is the template
 parameter \tcode{T} and whose \tcode{reference} type is \tcode{const T\&}.
 
@@ -10489,85 +10238,3 @@ See also \ref{sf.cmath.cyl.neumann}.
 \end{itemdescr}
 
 \indextext{mathematical special functions|)}
-
-\rSec1[numbers]{Numbers}
-
-\rSec2[numbers.syn]{Header \tcode{<numbers>} synopsis}
-\indexhdr{numbers}%
-
-\begin{codeblock}
-namespace std::numbers {
-  template<class T> inline constexpr T e_v          = @\unspec@;
-  template<class T> inline constexpr T log2e_v      = @\unspec@;
-  template<class T> inline constexpr T log10e_v     = @\unspec@;
-  template<class T> inline constexpr T pi_v         = @\unspec@;
-  template<class T> inline constexpr T inv_pi_v     = @\unspec@;
-  template<class T> inline constexpr T inv_sqrtpi_v = @\unspec@;
-  template<class T> inline constexpr T ln2_v        = @\unspec@;
-  template<class T> inline constexpr T ln10_v       = @\unspec@;
-  template<class T> inline constexpr T sqrt2_v      = @\unspec@;
-  template<class T> inline constexpr T sqrt3_v      = @\unspec@;
-  template<class T> inline constexpr T inv_sqrt3_v  = @\unspec@;
-  template<class T> inline constexpr T egamma_v     = @\unspec@;
-  template<class T> inline constexpr T phi_v        = @\unspec@;
-
-  template<floating_point T> inline constexpr T e_v<T>          = @\seebelow@;
-  template<floating_point T> inline constexpr T log2e_v<T>      = @\seebelow@;
-  template<floating_point T> inline constexpr T log10e_v<T>     = @\seebelow@;
-  template<floating_point T> inline constexpr T pi_v<T>         = @\seebelow@;
-  template<floating_point T> inline constexpr T inv_pi_v<T>     = @\seebelow@;
-  template<floating_point T> inline constexpr T inv_sqrtpi_v<T> = @\seebelow@;
-  template<floating_point T> inline constexpr T ln2_v<T>        = @\seebelow@;
-  template<floating_point T> inline constexpr T ln10_v<T>       = @\seebelow@;
-  template<floating_point T> inline constexpr T sqrt2_v<T>      = @\seebelow@;
-  template<floating_point T> inline constexpr T sqrt3_v<T>      = @\seebelow@;
-  template<floating_point T> inline constexpr T inv_sqrt3_v<T>  = @\seebelow@;
-  template<floating_point T> inline constexpr T egamma_v<T>     = @\seebelow@;
-  template<floating_point T> inline constexpr T phi_v<T>        = @\seebelow@;
-
-  inline constexpr double e          = e_v<double>;
-  inline constexpr double log2e      = log2e_v<double>;
-  inline constexpr double log10e     = log10e_v<double>;
-  inline constexpr double pi         = pi_v<double>;
-  inline constexpr double inv_pi     = inv_pi_v<double>;
-  inline constexpr double inv_sqrtpi = inv_sqrtpi_v<double>;
-  inline constexpr double ln2        = ln2_v<double>;
-  inline constexpr double ln10       = ln10_v<double>;
-  inline constexpr double sqrt2      = sqrt2_v<double>;
-  inline constexpr double sqrt3      = sqrt3_v<double>;
-  inline constexpr double inv_sqrt3  = inv_sqrt3_v<double>;
-  inline constexpr double egamma     = egamma_v<double>;
-  inline constexpr double phi        = phi_v<double>;
-}
-\end{codeblock}
-
-\rSec2[math.constants]{Mathematical constants}
-
-\pnum
-The library-defined partial specializations
-of mathematical constant variable templates
-are initialized with the nearest representable values of
-$\mathrm{e}$,
-$\log_{2} \mathrm{e}$,
-$\log_{10} \mathrm{e}$,
-$\pi$,
-$\frac{1}{\pi}$,
-$\frac{1}{\sqrt{\pi}}$,
-$\ln 2$,
-$\ln 10$,
-$\sqrt{2}$,
-$\sqrt{3}$,
-$\frac{1}{\sqrt{3}}$,
-the Euler-Mascheroni $\gamma$ constant, and
-the golden ratio $\phi$ constant $\frac{1+\sqrt{5}}{2}$,
-respectively.
-
-\pnum
-Pursuant to \ref{namespace.std},
-a program may partially or explicitly specialize
-a mathematical constant variable template
-provided that the specialization depends on a program-defined type.
-
-\pnum
-A program that instantiates a primary template
-of a mathematical constant variable template is ill-formed.

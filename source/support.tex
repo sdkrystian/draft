@@ -17,26 +17,31 @@ characteristics of the predefined types,
 functions supporting start and termination of a \Cpp{} program,
 support for dynamic memory management,
 support for dynamic type identification,
+support for contract violation handling,
 support for exception processing, support for initializer lists,
 and other runtime support,
-as summarized in \tref{support.summary}.
+as summarized in \tref{lang.sup.lib.summary}.
 
-\begin{libsumtab}{Language support library summary}{support.summary}
-\ref{support.types}       & Common definitions        &
-  \tcode{<cstddef>}, \tcode{<cstdlib>}   \\ \rowsep
-\ref{support.limits}      & Implementation properties &
-  \tcode{<cfloat>}, \tcode{<climits>}, \tcode{<limits>}, \tcode{<version>}    \\ \rowsep
+\begin{libsumtab}{Language support library summary}{tab:lang.sup.lib.summary}
+\ref{support.types}       & Common definitions        &   \tcode{<cstddef>}   \\
+                          &                           &   \tcode{<cstdlib>}   \\ \rowsep
+\ref{support.limits}      & Implementation properties &   \tcode{<limits>}    \\
+                          &                           &   \tcode{<climits>}   \\
+                          &                           &   \tcode{<cfloat>}    \\
+                          &                           &   \tcode{<version>}   \\ \rowsep
 \ref{cstdint}             & Integer types             &   \tcode{<cstdint>}   \\ \rowsep
 \ref{support.start.term}  & Start and termination     &   \tcode{<cstdlib>}   \\ \rowsep
 \ref{support.dynamic}     & Dynamic memory management &   \tcode{<new>}       \\ \rowsep
 \ref{support.rtti}        & Type identification       &   \tcode{<typeinfo>}  \\ \rowsep
-\ref{support.srcloc}      & Source location           &   \tcode{<source_location>} \\ \rowsep
+\ref{support.contract}    & Contract violation handling & \tcode{<contract>}  \\ \rowsep
 \ref{support.exception}   & Exception handling        &   \tcode{<exception>} \\ \rowsep
 \ref{support.initlist}    & Initializer lists    & \tcode{<initializer_list>} \\ \rowsep
 \ref{cmp}                 & Comparisons               &   \tcode{<compare>}   \\ \rowsep
 \ref{support.coroutine}   & Coroutines                &   \tcode{<coroutine>} \\ \rowsep
-\ref{support.runtime}     & Other runtime support     &
-  \tcode{<csetjmp>}, \tcode{<csignal>}, \tcode{<cstdarg>}, \tcode{<cstdlib>}  \\
+\ref{support.runtime}     & Other runtime support     &   \tcode{<csignal>}   \\
+                          &                           &   \tcode{<csetjmp>}   \\
+                          &                           &   \tcode{<cstdarg>}   \\
+                          &                           &   \tcode{<cstdlib>}   \\
 \end{libsumtab}
 
 \rSec1[support.types]{Common definitions}
@@ -517,7 +522,7 @@ the values of these macros with greater values.
 \end{note}
 
 \begin{LongTable}{Standard library feature-test macros}
-{support.ft}{llx{.3\hsize}}
+{tab:support.ft}{llx{.3\hsize}}
 \\ \topline
 \lhdr{Macro name} & \chdr{Value} & \rhdr{Header(s)} \\ \capsep
 \endfirsthead
@@ -540,24 +545,14 @@ the values of these macros with greater values.
   \tcode{<iterator>} \tcode{<array>} \\ \rowsep
 \defnlibxname{cpp_lib_as_const}                             & \tcode{201510L} &
   \tcode{<utility>} \\ \rowsep
-\defnlibxname{cpp_lib_atomic_flag_test}                     & \tcode{201907L} &
-  \tcode{<atomic>} \\ \rowsep
 \defnlibxname{cpp_lib_atomic_is_always_lock_free}           & \tcode{201603L} &
-  \tcode{<atomic>} \\ \rowsep
-\defnlibxname{cpp_lib_atomic_lock_free_type_aliases}        & \tcode{201907L} &
   \tcode{<atomic>} \\ \rowsep
 \defnlibxname{cpp_lib_atomic_ref}                           & \tcode{201806L} &
   \tcode{<atomic>} \\ \rowsep
-\defnlibxname{cpp_lib_atomic_wait}                          & \tcode{201907L} &
-  \tcode{<atomic>} \\ \rowsep
-\defnlibxname{cpp_lib_barrier}                              & \tcode{201907L} &
-  \tcode{<barrier>} \\ \rowsep
 \defnlibxname{cpp_lib_bit_cast}                             & \tcode{201806L} &
   \tcode{<bit>} \\ \rowsep
-\defnlibxname{cpp_lib_bind_front}                           & \tcode{201907L} &
+\defnlibxname{cpp_lib_bind_front}                           & \tcode{201811L} &
   \tcode{<functional>} \\ \rowsep
-\defnlibxname{cpp_lib_bitops}                               & \tcode{201907L} &
-  \tcode{<bit>} \\ \rowsep
 \defnlibxname{cpp_lib_bool_constant}                        & \tcode{201505L} &
   \tcode{<type_traits>} \\ \rowsep
 \defnlibxname{cpp_lib_bounded_array_traits}                 & \tcode{201902L} &
@@ -566,11 +561,11 @@ the values of these macros with greater values.
   \tcode{<functional>} \\ \rowsep
 \defnlibxname{cpp_lib_byte}                                 & \tcode{201603L} &
   \tcode{<cstddef>} \\ \rowsep
-\defnlibxname{cpp_lib_char8_t}                              & \tcode{201907L} &
+\defnlibxname{cpp_lib_char8_t}                              & \tcode{201811L} &
   \tcode{<atomic>} \tcode{<filesystem>} \tcode{<istream>} \tcode{<limits>}
   \tcode{<locale>} \tcode{<ostream>} \tcode{<string>} \tcode{<string_view>}
   \\ \rowsep
-\defnlibxname{cpp_lib_chrono}                               & \tcode{201907L} &
+\defnlibxname{cpp_lib_chrono}                               & \tcode{201611L} &
   \tcode{<chrono>} \\ \rowsep
 \defnlibxname{cpp_lib_chrono_udls}                          & \tcode{201304L} &
   \tcode{<chrono>} \\ \rowsep
@@ -580,25 +575,15 @@ the values of these macros with greater values.
   \tcode{<complex>} \\ \rowsep
 \defnlibxname{cpp_lib_concepts}                             & \tcode{201806L} &
   \tcode{<concepts>} \\ \rowsep
-\defnlibxname{cpp_lib_constexpr}                            & \tcode{201811L} &
-  any C++ library header from \tref{headers.cpp} or
-  any C++ header for C library facilities from \tref{headers.cpp.c} \\ \rowsep
-\defnlibxname{cpp_lib_constexpr_dynamic_alloc}              & \tcode{201907L} &
-  \tcode{<memory>} \\ \rowsep
-\defnlibxname{cpp_lib_constexpr_invoke}                     & \tcode{201907L} &
-  \tcode{<functional>} \\ \rowsep
-\defnlibxname{cpp_lib_constexpr_string}                     & \tcode{201907L} &
-  \tcode{<string>} \\ \rowsep
+\defnlibxname{cpp_lib_constexpr_misc}                       & \tcode{201811L} &
+  \tcode{<array>} \tcode{<functional>} \tcode{<iterator>}
+  \tcode{<string_view>} \tcode{<tuple>} \tcode{<utility>} \\ \rowsep
 \defnlibxname{cpp_lib_constexpr_swap_algorithms}            & \tcode{201806L} &
   \tcode{<algorithm>} \\ \rowsep
-\defnlibxname{cpp_lib_constexpr_vector}                     & \tcode{201907L} &
-  \tcode{<vector>} \\ \rowsep
 \defnlibxname{cpp_lib_destroying_delete}                    & \tcode{201806L} &
   \tcode{<new>} \\ \rowsep
 \defnlibxname{cpp_lib_enable_shared_from_this}              & \tcode{201603L} &
   \tcode{<memory>} \\ \rowsep
-\defnlibxname{cpp_lib_endian}                               & \tcode{201907L} &
-  \tcode{<bit>} \\ \rowsep
 \defnlibxname{cpp_lib_erase_if}                             & \tcode{201811L} &
   \tcode{<string>} \tcode{<deque>} \tcode{<forward_list>} \tcode{<list>}
   \tcode{<vector>} \tcode{<map>} \tcode{<set>} \tcode{<unordered_map>}
@@ -609,13 +594,13 @@ the values of these macros with greater values.
   \tcode{<execution>} \\ \rowsep
 \defnlibxname{cpp_lib_filesystem}                           & \tcode{201703L} &
   \tcode{<filesystem>} \\ \rowsep
-\defnlibxname{cpp_lib_format}                               & \tcode{201907L} &
-  \tcode{<format>} \\ \rowsep
 \defnlibxname{cpp_lib_gcd_lcm}                              & \tcode{201606L} &
   \tcode{<numeric>} \\ \rowsep
 \defnlibxname{cpp_lib_generic_associative_lookup}           & \tcode{201304L} &
   \tcode{<map>} \tcode{<set>} \\ \rowsep
 \defnlibxname{cpp_lib_generic_unordered_lookup}             & \tcode{201811L} &
+  \tcode{<unordered_map>} \tcode{<unordered_set>} \\ \rowsep
+\defnlibxname{cpp_lib_generic_unordered_hash_lookup}        & \tcode{201902L} &
   \tcode{<unordered_map>} \tcode{<unordered_set>} \\ \rowsep
 \defnlibxname{cpp_lib_hardware_interference_size}           & \tcode{201703L} &
   \tcode{<new>} \\ \rowsep
@@ -641,18 +626,10 @@ the values of these macros with greater values.
   \tcode{<type_traits>} \\ \rowsep
 \defnlibxname{cpp_lib_is_invocable}                         & \tcode{201703L} &
   \tcode{<type_traits>} \\ \rowsep
-\defnlibxname{cpp_lib_is_layout_compatible}                 & \tcode{201907L} &
-  \tcode{<type_traits>} \\ \rowsep
 \defnlibxname{cpp_lib_is_null_pointer}                      & \tcode{201309L} &
-  \tcode{<type_traits>} \\ \rowsep
-\defnlibxname{cpp_lib_is_pointer_interconvertible}          & \tcode{201907L} &
   \tcode{<type_traits>} \\ \rowsep
 \defnlibxname{cpp_lib_is_swappable}                         & \tcode{201603L} &
   \tcode{<type_traits>} \\ \rowsep
-\defnlibxname{cpp_lib_jthread}                              & \tcode{201907L} &
-  \tcode{<stop_token>} \tcode{<thread>} \\ \rowsep
-\defnlibxname{cpp_lib_latch}                                & \tcode{201907L} &
-  \tcode{<latch>} \\ \rowsep
 \defnlibxname{cpp_lib_launder}                              & \tcode{201606L} &
   \tcode{<new>} \\ \rowsep
 \defnlibxname{cpp_lib_list_remove_return_type}              & \tcode{201806L} &
@@ -667,8 +644,6 @@ the values of these macros with greater values.
   \tcode{<memory>} \\ \rowsep
 \defnlibxname{cpp_lib_map_try_emplace}                      & \tcode{201411L} &
   \tcode{<map>} \\ \rowsep
-\defnlibxname{cpp_lib_math_constants}                       & \tcode{201907L} &
-  \tcode{<numbers>} \\ \rowsep
 \defnlibxname{cpp_lib_math_special_functions}               & \tcode{201603L} &
   \tcode{<cmath>} \\ \rowsep
 \defnlibxname{cpp_lib_memory_resource}                      & \tcode{201603L} &
@@ -703,8 +678,6 @@ the values of these macros with greater values.
   \tcode{<algorithm>} \\ \rowsep
 \defnlibxname{cpp_lib_scoped_lock}                          & \tcode{201703L} &
   \tcode{<mutex>} \\ \rowsep
-\defnlibxname{cpp_lib_semaphore}                            & \tcode{201907L} &
-  \tcode{<semaphore>} \\ \rowsep
 \defnlibxname{cpp_lib_shared_mutex}                         & \tcode{201505L} &
   \tcode{<shared_mutex>} \\ \rowsep
 \defnlibxname{cpp_lib_shared_ptr_arrays}                    & \tcode{201611L} &
@@ -713,18 +686,12 @@ the values of these macros with greater values.
   \tcode{<memory>} \\ \rowsep
 \defnlibxname{cpp_lib_shared_timed_mutex}                   & \tcode{201402L} &
   \tcode{<shared_mutex>} \\ \rowsep
-\defnlibxname{cpp_lib_source_location}                      & \tcode{201907L} &
-  \tcode{<source_location>} \\ \rowsep
-\defnlibxname{cpp_lib_spaceship}                            & \tcode{201907L} &
-  \tcode{<compare>} \\ \rowsep
 \defnlibxname{cpp_lib_string_udls}                          & \tcode{201304L} &
   \tcode{<string>} \\ \rowsep
 \defnlibxname{cpp_lib_string_view}                          & \tcode{201606L} &
   \tcode{<string>} \tcode{<string_view>} \\ \rowsep
 \defnlibxname{cpp_lib_three_way_comparison}                 & \tcode{201711L} &
   \tcode{<compare>} \\ \rowsep
-\defnlibxname{cpp_lib_to_array}                             & \tcode{201907L} &
-  \tcode{<array>} \\ \rowsep
 \defnlibxname{cpp_lib_to_chars}                             & \tcode{201611L} &
   \tcode{<charconv>} \\ \rowsep
 \defnlibxname{cpp_lib_transformation_trait_aliases}         & \tcode{201304L} &
@@ -2153,8 +2120,13 @@ called by a
 \grammarterm{new-expression}\iref{expr.new}
 to allocate
 \tcode{size} bytes of storage.
-The second form is called for a type with new-extended alignment, and
-the first form is called otherwise.
+The second form is called for a type with new-extended alignment,
+and allocates storage
+with the specified alignment.
+The first form is called otherwise,
+and allocates storage
+suitably aligned to represent any object of that size
+provided the object's type does not have new-extended alignment.
 
 \pnum
 \replaceable
@@ -2419,8 +2391,13 @@ called by the array form of a
 \grammarterm{new-expression}\iref{expr.new}
 to allocate
 \tcode{size} bytes of storage.
-The second form is called for a type with new-extended alignment, and
-the first form is called otherwise.%
+The second form is called for a type with new-extended alignment,
+and allocates storage
+with the specified alignment.
+The first form is called otherwise,
+and allocates storage
+suitably aligned to represent any array object of that size or smaller,
+provided the object's type does not have new-extended alignment.%
 \footnote{It is not the direct responsibility of
 \tcode{operator new[]}
 or
@@ -2754,7 +2731,9 @@ this order.
 namespace std {
   class bad_alloc : public exception {
   public:
-    // see \ref{exception} for the specification of the special member functions
+    bad_alloc() noexcept;
+    bad_alloc(const bad_alloc&) noexcept;
+    bad_alloc& operator=(const bad_alloc&) noexcept;
     const char* what() const noexcept override;
   };
 }
@@ -2775,6 +2754,12 @@ const char* what() const noexcept override;
 \pnum
 \returns
 An \impldef{return value of \tcode{bad_alloc::what}} \ntbs{}.
+
+\pnum
+\remarks
+The message may be a null-terminated multibyte string\iref{multibyte.strings},
+suitable for conversion and display as a
+\tcode{wstring}~(\ref{string.classes}, \ref{locale.codecvt}).
 \end{itemdescr}
 
 \indexlibrary{\idxcode{bad_array_new_length}}%
@@ -2785,7 +2770,7 @@ An \impldef{return value of \tcode{bad_alloc::what}} \ntbs{}.
 namespace std {
   class bad_array_new_length : public bad_alloc {
   public:
-    // see \ref{exception} for the specification of the special member functions
+    bad_array_new_length() noexcept;
     const char* what() const noexcept override;
   };
 }
@@ -2806,6 +2791,12 @@ const char* what() const noexcept override;
 \pnum
 \returns
 An \impldef{return value of \tcode{bad_array_new_length::what}} \ntbs{}.
+
+\pnum
+\remarks
+The message may be a null-terminated multibyte string\iref{multibyte.strings},
+suitable for conversion and display as a
+\tcode{wstring}~(\ref{string.classes}, \ref{locale.codecvt}).
 \end{itemdescr}
 
 \rSec3[new.handler]{Type \tcode{new_handler}}
@@ -3025,6 +3016,7 @@ namespace std {
   public:
     virtual ~type_info();
     bool operator==(const type_info& rhs) const noexcept;
+    bool operator!=(const type_info& rhs) const noexcept;
     bool before(const type_info& rhs) const noexcept;
     size_t hash_code() const noexcept;
     const char* name() const noexcept;
@@ -3059,6 +3051,17 @@ Compares the current object with \tcode{rhs}.
 \returns
 \tcode{true}
 if the two values describe the same type.
+\end{itemdescr}
+
+\indexlibrarymember{operator"!=}{type_info}%
+\begin{itemdecl}
+bool operator!=(const type_info& rhs) const noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+\tcode{!(*this == rhs)}.
 \end{itemdescr}
 
 \indexlibrarymember{before}{type_info}%
@@ -3110,7 +3113,7 @@ An \impldef{return value of \tcode{type_info::name()}} \ntbs{}.
 \remarks
 The message may be a null-terminated multibyte string\iref{multibyte.strings},
 suitable for conversion and display as a
-\tcode{wstring}~(\ref{string.classes}, \ref{locale.codecvt}).
+\tcode{wstring}~(\ref{string.classes}, \ref{locale.codecvt})
 \end{itemdescr}
 
 \rSec2[bad.cast]{Class \tcode{bad_cast}}
@@ -3121,7 +3124,9 @@ suitable for conversion and display as a
 namespace std {
   class bad_cast : public exception {
   public:
-    // see \ref{exception} for the specification of the special member functions
+    bad_cast() noexcept;
+    bad_cast(const bad_cast&) noexcept;
+    bad_cast& operator=(const bad_cast&) noexcept;
     const char* what() const noexcept override;
   };
 }
@@ -3145,6 +3150,12 @@ const char* what() const noexcept override;
 \pnum
 \returns
 An \impldef{return value of \tcode{bad_cast::what}} \ntbs{}.
+
+\pnum
+\remarks
+The message may be a null-terminated multibyte string\iref{multibyte.strings},
+suitable for conversion and display as a
+\tcode{wstring}~(\ref{string.classes}, \ref{locale.codecvt})
 \end{itemdescr}
 
 \rSec2[bad.typeid]{Class \tcode{bad_typeid}}
@@ -3155,7 +3166,9 @@ An \impldef{return value of \tcode{bad_cast::what}} \ntbs{}.
 namespace std {
   class bad_typeid : public exception {
   public:
-    // see \ref{exception} for the specification of the special member functions
+    bad_typeid() noexcept;
+    bad_typeid(const bad_typeid&) noexcept;
+    bad_typeid& operator=(const bad_typeid&) noexcept;
     const char* what() const noexcept override;
   };
 }
@@ -3179,214 +3192,105 @@ const char* what() const noexcept override;
 \pnum
 \returns
 An \impldef{return value of \tcode{bad_typeid::what}} \ntbs{}.
+
+\pnum
+\remarks
+The message may be a null-terminated multibyte string\iref{multibyte.strings},
+suitable for conversion and display as a
+\tcode{wstring}~(\ref{string.classes}, \ref{locale.codecvt})
 \end{itemdescr}
 
-\rSec1[support.srcloc]{Class \tcode{source_location}}
+\rSec1[support.contract]{Contract violation handling}
 
-The header \tcode{<source_location>} defines the class \tcode{source_location} that provides a means to obtain source location information.
+\rSec2[contract.syn]{Header \tcode{<contract>} synopsis}
 
-\rSec2[source_location.syn]{Header \tcode{<source_location>} synopsis}
-\indexhdr{source_location}%
-\indexlibrary{\idxcode{source_location}}%
+The header \tcode{<contract>} defines a type
+for reporting information about contract violations
+generated by the implementation.
+\begin{codeblock}
+namespace std {
+  class contract_violation;
+}
+\end{codeblock}
+
+\rSec2[support.contract.cviol]{Class \tcode{contract_violation}}
+\indexlibrary{\idxcode{contract_violation}}%
 
 \begin{codeblock}
 namespace std {
-  struct source_location {
-    // source location construction
-    static consteval source_location current() noexcept;
-    constexpr source_location() noexcept;
-
-    // source location field access
-    constexpr uint_least32_t line() const noexcept;
-    constexpr uint_least32_t column() const noexcept;
-    constexpr const char* file_name() const noexcept;
-    constexpr const char* function_name() const noexcept;
-
-  private:
-    uint_least32_t line_;               // \expos
-    uint_least32_t column_;             // \expos
-    const char* file_name_;             // \expos
-    const char* function_name_;         // \expos
+  class contract_violation {
+  public:
+    uint_least32_t line_number() const noexcept;
+    string_view file_name() const noexcept;
+    string_view function_name() const noexcept;
+    string_view comment() const noexcept;
+    string_view assertion_level() const noexcept;
   };
 }
 \end{codeblock}
 
 \pnum
-The type \tcode{source_location} meets the
-\oldconcept{DefaultConstructible},
-\oldconcept{CopyConstructible},
-\oldconcept{Copy\-Assignable}, and
-\oldconcept{Destructible}
-requirements\iref{utility.arg.requirements}.
-Lvalues of type \tcode{source_location}
-are swappable\iref{swappable.requirements}.
-All of the following conditions are \tcode{true}:
-\begin{itemize}
-\item \tcode{is_nothrow_move_constructible_v<source_location>}
-\item \tcode{is_nothrow_move_assignable_v<source_location>}
-\item \tcode{is_nothrow_swappable_v<source_location>}
-\end{itemize}
-\begin{note}
-The intent of \tcode{source_location} is
-to have a small size and efficient copying.
-\end{note}
+The class \tcode{contract_violation} describes information about
+a contract violation generated by the implementation.
 
-\pnum
-The data members \tcode{file_name_} and \tcode{function_name_}
-always each refer to an \ntbs{}.
-
-\pnum
-The copy/move constructors and the copy/move assignment operators of
-\tcode{source_location} meet the following postconditions:
-Given two objects  \tcode{lhs} and \tcode{rhs} of type \tcode{source_location},
-where \tcode{lhs} is a copy/move result of \tcode{rhs}, and
-where \tcode{rhs_p} is a value denoting the state of \tcode{rhs}
-before the corresponding copy/move operation,
-then each of the following conditions is \tcode{true}:
-\begin{itemize}
-\item \tcode{strcmp(lhs.file_name(), rhs_p.file_name()) == 0}
-\item \tcode{strcmp(lhs.function_name(), rhs_p.function_name()) == 0}
-\item \tcode{lhs.line() == rhs_p.line()}
-\item \tcode{lhs.column() == rhs_p.column()}
-\end{itemize}
-
-\rSec2[support.srcloc.cons]{Creation}
-
+\indexlibrarymember{line_number}{contract_violation}%
 \begin{itemdecl}
-static consteval source_location current() noexcept;
+uint_least32_t line_number() const noexcept;
 \end{itemdecl}
+
 \begin{itemdescr}
 \pnum
-\returns
-\begin{itemize}
-\item
-  When invoked by a function call
-  whose \grammarterm{postfix-expression} is
-  a (possibly parenthesized) \grammarterm{id-expression} naming \tcode{current},
-  returns a \tcode{source_location} with an implementation-defined value.
-  The value should be affected by \tcode{\#line}\iref{cpp.line}
-  in the same manner as for \mname{LINE} and \mname{FILE}.
-  The values of the exposition-only data members
-  of the returned \tcode{source_location} object
-  are indicated in \tref{support.srcloc.current}.
-
-\begin{libefftabvalue}
-  {Value of object returned by \tcode{current}}
-  {support.srcloc.current}
-\tcode{line_}    &
-  A presumed line number\iref{cpp.predefined}.
-  Line numbers are presumed to be 1-indexed;
-  however, an implementation is encouraged to use 0
-  when the line number is unknown. \\ \rowsep
-\tcode{column_}  &
-  An implementation-defined value denoting
-  some offset from the start of the line denoted by \tcode{line_}.
-  Column numbers are presumed to be 1-indexed;
-  however, an implementation is encouraged to use 0
-  when the column number is unknown. \\ \rowsep
-\tcode{file_name_} &
-  A presumed name of the current source file\iref{cpp.predefined} as an \ntbs{}.
-  \\ \rowsep
-\tcode{function_name_} &
-  A name of the current function
-  such as in \mname{func}\iref{dcl.fct.def.general} if any,
-  an empty string otherwise. \\
-\end{libefftabvalue}
-
-\item
-  Otherwise, when invoked in some other way, returns a
-  \tcode{source_location} whose data members are initialized
-  with valid but unspecified values.
-\end{itemize}
-
-\pnum
-\remarks
-When a default member initializer
-is used to initialize a non-static data member,
-any calls to \tcode{current} should correspond to the location
-of the constructor or aggregate initialization that initializes the member.
-
-\pnum
-\begin{note}
-When used as a default argument\iref{dcl.fct.default},
-the value of the \tcode{source_location} will be
-the location of the call to \tcode{current} at the call site.
-\end{note}
+\returns The source code location
+where the contract violation happened\iref{dcl.attr.contract}.
+If the location is unknown, an implementation may return \tcode{0}.
 \end{itemdescr}
 
-\pnum
-\begin{example}
-\begin{codeblock}
-struct s {
-  source_location member = source_location::current();
-  int other_member;
-  s(source_location loc = source_location::current())
-    : member(loc)               // values of \tcode{member} refer to the location of the calling function\iref{dcl.fct.default}
-  {}
-  s(int blather) :              // values of \tcode{member} refer to this location
-    other_member(blather)
-  {}
-  s(double)                     // values of \tcode{member} refer to this location
-  {}
-};
-void f(source_location a = source_location::current()) {
-  source_location b = source_location::current();       // values in \tcode{b} refer to this line
-}
-
-void g() {
-  f();                          // \tcode{f}'s first argument corresponds to this line of code
-
-  source_location c = source_location::current();
-  f(c);                         // \tcode{f}'s first argument gets the same values as \tcode{c}, above
-}
-\end{codeblock}
-\end{example}
-
+\indexlibrarymember{file_name}{contract_violation}%
 \begin{itemdecl}
-constexpr source_location() noexcept;
+string_view file_name() const noexcept;
 \end{itemdecl}
-\begin{itemdescr}
 
+\begin{itemdescr}
 \pnum
-\Fundesc{Effects}
-The data members are initialized with valid but unspecified values.
+\returns The source file name
+where the contract violation happened\iref{dcl.attr.contract}.
+If the file name is unknown,
+an implementation may return \tcode{string_view\{\}}.
 \end{itemdescr}
 
-\rSec2[support.srcloc.access]{Field access}
-
+\indexlibrarymember{function_name}{contract_violation}%
 \begin{itemdecl}
-constexpr uint_least32_t line() const noexcept;
+string_view function_name() const noexcept;
 \end{itemdecl}
+
 \begin{itemdescr}
 \pnum
-\returns \tcode{line_}.
+\returns The name of the function
+where the contract violation happened\iref{dcl.attr.contract}.
+If the function name is unknown,
+an implementation may return \tcode{string_view\{\}}.
 \end{itemdescr}
 
+\indexlibrarymember{comment}{contract_violation}%
 \begin{itemdecl}
-constexpr uint_least32_t column() const noexcept;
+string_view comment() const noexcept;
 \end{itemdecl}
+
 \begin{itemdescr}
 \pnum
-\returns
-\tcode{column_}.
+\returns Implementation-defined text describing
+the predicate of the violated contract.
 \end{itemdescr}
 
+\indexlibrarymember{assertion_level}{contract_violation}%
 \begin{itemdecl}
-constexpr const char* file_name() const noexcept;
+string_view assertion_level() const noexcept;
 \end{itemdecl}
-\begin{itemdescr}
-\pnum
-\returns
-\tcode{file_name_}.
-\end{itemdescr}
 
-\begin{itemdecl}
-constexpr const char* function_name() const noexcept;
-\end{itemdecl}
 \begin{itemdescr}
 \pnum
-\returns
-\tcode{function_name_}.
+\returns Text describing the \grammarterm{assertion-level}
+of the violated contract.
 \end{itemdescr}
 
 \rSec1[support.exception]{Exception handling}
@@ -3449,20 +3353,12 @@ class for the types of objects thrown as exceptions by
 expressions, to report errors detected during program execution.
 
 \pnum
-Each standard library class \tcode{T} that derives from class \tcode{exception}
-has the following publicly accessible member functions, each of them having
-a non-throwing exception specification\iref{except.spec}:
-\begin{itemize}
-\item default constructor (unless the class synopsis shows other constructors)
-\item copy constructor
-\item copy assignment operator
-\end{itemize}
-The copy constructor and the copy assignment operator meet
+Each standard library class \tcode{T} that derives from class \tcode{exception} shall have a
+publicly accessible copy constructor and a publicly accessible copy assignment
+operator that do not exit with an exception. These member functions shall meet
 the following postcondition: If two objects \tcode{lhs} and \tcode{rhs} both have
 dynamic type \tcode{T} and \tcode{lhs} is a copy of \tcode{rhs}, then
-\tcode{strcmp(lhs.what(), rhs.what())} is equal to \tcode{0}.
-The \tcode{what()} member function of each such \tcode{T} satisfies the
-constraints specified for \tcode{exception::what()} (see below).
+\tcode{strcmp(lhs.what(), rhs.what())} shall equal 0.
 
 \indexlibrary{\idxcode{exception}!constructor}%
 \indexlibrarymember{operator=}{exception}%
@@ -3517,7 +3413,9 @@ member function of the exception object is called.
 namespace std {
   class bad_exception : public exception {
   public:
-    // see \ref{exception} for the specification of the special member functions
+    bad_exception() noexcept;
+    bad_exception(const bad_exception&) noexcept;
+    bad_exception& operator=(const bad_exception&) noexcept;
     const char* what() const noexcept override;
   };
 }
@@ -3540,6 +3438,12 @@ const char* what() const noexcept override;
 \pnum
 \returns
 An \impldef{return value of \tcode{bad_exception::what}} \ntbs{}.
+
+\pnum
+\remarks
+The message may be a null-terminated multibyte string\iref{multibyte.strings},
+suitable for conversion and display as a
+\tcode{wstring}~(\ref{string.classes}, \ref{locale.codecvt}).
 \end{itemdescr}
 
 \rSec2[exception.terminate]{Abnormal termination}
@@ -3663,7 +3567,7 @@ The type \tcode{exception_ptr} can be used to refer to an exception object.
 
 \pnum
 \tcode{exception_ptr} meets the requirements of
-\oldconcept{NullablePointer} (\tref{cpp17.nullablepointer}).
+\oldconcept{NullablePointer} (\tref{nullablepointer}).
 
 \pnum
 Two non-null values of type \tcode{exception_ptr} are equivalent and compare equal if and
@@ -4021,30 +3925,12 @@ namespace std {
   template<class... Ts>
     using common_comparison_category_t = typename common_comparison_category<Ts...>::type;
 
-  // \ref{cmp.concept}, concept \libconcept{three_way_comparable}
-  template<class T, class Cat = partial_ordering>
-    concept three_way_comparable = @\seebelow@;
-  template<class T, class U, class Cat = partial_ordering>
-    concept three_way_comparable_with = @\seebelow@;
-
-  // \ref{cmp.result}, result of three-way comparison
-  template<class T, class U = T> struct compare_three_way_result;
-
-  template<class T, class U = T>
-    using compare_three_way_result_t = typename compare_three_way_result<T, U>::type;
-
-  // \ref{cmp.object}, class \tcode{compare_three_way}
-  struct compare_three_way;
-
   // \ref{cmp.alg}, comparison algorithms
-  inline namespace @\unspec@ {
-    inline constexpr @\unspec@ strong_order = @\unspec@;
-    inline constexpr @\unspec@ weak_order = @\unspec@;
-    inline constexpr @\unspec@ partial_order = @\unspec@;
-    inline constexpr @\unspec@ compare_strong_order_fallback = @\unspec@;
-    inline constexpr @\unspec@ compare_weak_order_fallback = @\unspec@;
-    inline constexpr @\unspec@ compare_partial_order_fallback = @\unspec@;
-  }
+  template<class T> constexpr strong_ordering strong_order(const T& a, const T& b);
+  template<class T> constexpr weak_ordering weak_order(const T& a, const T& b);
+  template<class T> constexpr partial_ordering partial_order(const T& a, const T& b);
+  template<class T> constexpr strong_equality strong_equal(const T& a, const T& b);
+  template<class T> constexpr weak_equality weak_equal(const T& a, const T& b);
 }
 \end{codeblock}
 
@@ -4065,10 +3951,10 @@ whose value typically corresponds to that of an enumerator
 from one of the following exposition-only enumerations:
 
 \begin{codeblock}
-enum class @\placeholdernc{eq}@ { @\placeholdernc{equal}@ = 0, @\placeholdernc{equivalent}@ = @\placeholdernc{equal}@,
-                @\placeholdernc{nonequal}@ = 1, @\placeholdernc{nonequivalent}@ = @\placeholdernc{nonequal}@ };   // \expos
-enum class @\placeholdernc{ord}@ { @\placeholdernc{less}@ = -1, @\placeholdernc{greater}@ = 1 };                  // \expos
-enum class @\placeholdernc{ncmp}@ { @\placeholdernc{unordered}@ = -127 };                       // \expos
+enum class eq { equal = 0, equivalent = equal,
+                nonequal = 1, nonequivalent = nonequal };   // \expos
+enum class ord { less = -1, greater = 1 };                  // \expos
+enum class ncmp { unordered = -127 };                       // \expos
 \end{codeblock}
 
 \pnum
@@ -4085,7 +3971,7 @@ This type shall be selected by the implementation such that
 these parameters can accept literal \tcode{0} as a corresponding argument.
 \begin{example}
 \tcode{nullptr_t}
-meets this requirement.
+satisfies this requirement.
 \end{example}
 In this context, the behavior of a program that supplies
 an argument other than a literal \tcode{0} is undefined.
@@ -4114,7 +4000,7 @@ namespace std {
     int value;  // \expos
 
     // exposition-only constructor
-    constexpr explicit weak_equality(@\placeholder{eq}@ v) noexcept : value(int(v)) {}  // \expos
+    constexpr explicit weak_equality(eq v) noexcept : value(int(v)) {}  // \expos
 
   public:
     // valid values
@@ -4123,26 +4009,41 @@ namespace std {
 
     // comparisons
     friend constexpr bool operator==(weak_equality v, @\unspec@) noexcept;
-    friend constexpr bool operator==(weak_equality v, weak_equality w) noexcept = default;
+    friend constexpr bool operator!=(weak_equality v, @\unspec@) noexcept;
+    friend constexpr bool operator==(@\unspec@, weak_equality v) noexcept;
+    friend constexpr bool operator!=(@\unspec@, weak_equality v) noexcept;
     friend constexpr weak_equality operator<=>(weak_equality v, @\unspec@) noexcept;
     friend constexpr weak_equality operator<=>(@\unspec@, weak_equality v) noexcept;
   };
 
   // valid values' definitions
-  inline constexpr weak_equality weak_equality::equivalent(@\placeholder{eq}@::@\placeholder{equivalent}@);
-  inline constexpr weak_equality weak_equality::nonequivalent(@\placeholder{eq}@::@\placeholder{nonequivalent}@);
+  inline constexpr weak_equality weak_equality::equivalent(eq::equivalent);
+  inline constexpr weak_equality weak_equality::nonequivalent(eq::nonequivalent);
 }
 \end{codeblock}
 
 \indexlibrarymember{operator==}{weak_equality}%
 \begin{itemdecl}
 constexpr bool operator==(weak_equality v, @\unspec@) noexcept;
+constexpr bool operator==(@\unspec@, weak_equality v) noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
 \returns
 \tcode{v.value == 0}.
+\end{itemdescr}
+
+\indexlibrarymember{operator"!=}{weak_equality}%
+\begin{itemdecl}
+constexpr bool operator!=(weak_equality v, @\unspec@) noexcept;
+constexpr bool operator!=(@\unspec@, weak_equality v) noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+\tcode{v.value != 0}.
 \end{itemdescr}
 
 \indexlibrarymember{operator<=>}{weak_equality}%
@@ -4176,7 +4077,7 @@ namespace std {
     int value;  // \expos
 
     // exposition-only constructor
-    constexpr explicit strong_equality(@\placeholder{eq}@ v) noexcept : value(int(v)) {}    // \expos
+    constexpr explicit strong_equality(eq v) noexcept : value(int(v)) {}    // \expos
 
   public:
     // valid values
@@ -4190,16 +4091,18 @@ namespace std {
 
     // comparisons
     friend constexpr bool operator==(strong_equality v, @\unspec@) noexcept;
-    friend constexpr bool operator==(strong_equality v, strong_equality w) noexcept = default;
+    friend constexpr bool operator!=(strong_equality v, @\unspec@) noexcept;
+    friend constexpr bool operator==(@\unspec@, strong_equality v) noexcept;
+    friend constexpr bool operator!=(@\unspec@, strong_equality v) noexcept;
     friend constexpr strong_equality operator<=>(strong_equality v, @\unspec@) noexcept;
     friend constexpr strong_equality operator<=>(@\unspec@, strong_equality v) noexcept;
   };
 
   // valid values' definitions
-  inline constexpr strong_equality strong_equality::equal(@\placeholder{eq}@::@\placeholder{equal}@);
-  inline constexpr strong_equality strong_equality::nonequal(@\placeholder{eq}@::@\placeholder{nonequal}@);
-  inline constexpr strong_equality strong_equality::equivalent(@\placeholder{eq}@::@\placeholder{equivalent}@);
-  inline constexpr strong_equality strong_equality::nonequivalent(@\placeholder{eq}@::@\placeholder{nonequivalent}@);
+  inline constexpr strong_equality strong_equality::equal(eq::equal);
+  inline constexpr strong_equality strong_equality::nonequal(eq::nonequal);
+  inline constexpr strong_equality strong_equality::equivalent(eq::equivalent);
+  inline constexpr strong_equality strong_equality::nonequivalent(eq::nonequivalent);
 }
 \end{codeblock}
 
@@ -4217,12 +4120,25 @@ constexpr operator weak_equality() const noexcept;
 \indexlibrarymember{operator==}{strong_equality}%
 \begin{itemdecl}
 constexpr bool operator==(strong_equality v, @\unspec@) noexcept;
+constexpr bool operator==(@\unspec@, strong_equality v) noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
 \returns
 \tcode{v.value == 0}.
+\end{itemdescr}
+
+\indexlibrarymember{operator"!=}{strong_equality}%
+\begin{itemdecl}
+constexpr bool operator!=(strong_equality v, @\unspec@) noexcept;
+constexpr bool operator!=(@\unspec@, strong_equality v) noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+\tcode{v.value != 0}.
 \end{itemdescr}
 
 \indexlibrarymember{operator<=>}{strong_equality}%
@@ -4260,11 +4176,11 @@ namespace std {
 
     // exposition-only constructors
     constexpr explicit
-      partial_ordering(@\placeholder{eq}@ v) noexcept : value(int(v)), is_ordered(true) {}      // \expos
+      partial_ordering(eq v) noexcept : value(int(v)), is_ordered(true) {}      // \expos
     constexpr explicit
-      partial_ordering(@\placeholder{ord}@ v) noexcept : value(int(v)), is_ordered(true) {}     // \expos
+      partial_ordering(ord v) noexcept : value(int(v)), is_ordered(true) {}     // \expos
     constexpr explicit
-      partial_ordering(@\placeholder{ncmp}@ v) noexcept : value(int(v)), is_ordered(false) {}   // \expos
+      partial_ordering(ncmp v) noexcept : value(int(v)), is_ordered(false) {}   // \expos
 
   public:
     // valid values
@@ -4278,11 +4194,13 @@ namespace std {
 
     // comparisons
     friend constexpr bool operator==(partial_ordering v, @\unspec@) noexcept;
-    friend constexpr bool operator==(partial_ordering v, partial_ordering w) noexcept = default;
+    friend constexpr bool operator!=(partial_ordering v, @\unspec@) noexcept;
     friend constexpr bool operator< (partial_ordering v, @\unspec@) noexcept;
     friend constexpr bool operator> (partial_ordering v, @\unspec@) noexcept;
     friend constexpr bool operator<=(partial_ordering v, @\unspec@) noexcept;
     friend constexpr bool operator>=(partial_ordering v, @\unspec@) noexcept;
+    friend constexpr bool operator==(@\unspec@, partial_ordering v) noexcept;
+    friend constexpr bool operator!=(@\unspec@, partial_ordering v) noexcept;
     friend constexpr bool operator< (@\unspec@, partial_ordering v) noexcept;
     friend constexpr bool operator> (@\unspec@, partial_ordering v) noexcept;
     friend constexpr bool operator<=(@\unspec@, partial_ordering v) noexcept;
@@ -4292,10 +4210,10 @@ namespace std {
   };
 
   // valid values' definitions
-  inline constexpr partial_ordering partial_ordering::less(@\placeholder{ord}@::@\placeholder{less}@);
-  inline constexpr partial_ordering partial_ordering::equivalent(@\placeholder{eq}@::@\placeholder{equivalent}@);
-  inline constexpr partial_ordering partial_ordering::greater(@\placeholder{ord}@::@\placeholder{greater}@);
-  inline constexpr partial_ordering partial_ordering::unordered(@\placeholder{ncmp}@::@\placeholder{unordered}@);
+  inline constexpr partial_ordering partial_ordering::less(ord::less);
+  inline constexpr partial_ordering partial_ordering::equivalent(eq::equivalent);
+  inline constexpr partial_ordering partial_ordering::greater(ord::greater);
+  inline constexpr partial_ordering partial_ordering::unordered(ncmp::unordered);
 }
 \end{codeblock}
 
@@ -4332,11 +4250,13 @@ constexpr bool operator>=(partial_ordering v, @\unspec@) noexcept;
 For \tcode{operator@}, \tcode{v.is_ordered \&\& v.value @ 0}.
 \end{itemdescr}
 
+\indexlibrarymember{operator==}{partial_ordering}%
 \indexlibrarymember{operator<}{partial_ordering}%
 \indexlibrarymember{operator>}{partial_ordering}%
 \indexlibrarymember{operator<=}{partial_ordering}%
 \indexlibrarymember{operator>=}{partial_ordering}%
 \begin{itemdecl}
+constexpr bool operator==(@\unspec@, partial_ordering v) noexcept;
 constexpr bool operator< (@\unspec@, partial_ordering v) noexcept;
 constexpr bool operator> (@\unspec@, partial_ordering v) noexcept;
 constexpr bool operator<=(@\unspec@, partial_ordering v) noexcept;
@@ -4347,6 +4267,18 @@ constexpr bool operator>=(@\unspec@, partial_ordering v) noexcept;
 \pnum
 \returns
 For \tcode{operator@}, \tcode{v.is_ordered \&\& 0 @ v.value}.
+\end{itemdescr}
+
+\indexlibrarymember{operator"!=}{partial_ordering}%
+\begin{itemdecl}
+constexpr bool operator!=(partial_ordering v, @\unspec@) noexcept;
+constexpr bool operator!=(@\unspec@, partial_ordering v) noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+For \tcode{operator@}, \tcode{!v.is_ordered || v.value != 0}.
 \end{itemdescr}
 
 \indexlibrarymember{operator<=>}{partial_ordering}%
@@ -4389,8 +4321,8 @@ namespace std {
     int value;  // \expos
 
     // exposition-only constructors
-    constexpr explicit weak_ordering(@\placeholder{eq}@ v) noexcept : value(int(v)) {}  // \expos
-    constexpr explicit weak_ordering(@\placeholder{ord}@ v) noexcept : value(int(v)) {} // \expos
+    constexpr explicit weak_ordering(eq v) noexcept : value(int(v)) {}  // \expos
+    constexpr explicit weak_ordering(ord v) noexcept : value(int(v)) {} // \expos
 
   public:
     // valid values
@@ -4404,11 +4336,13 @@ namespace std {
 
     // comparisons
     friend constexpr bool operator==(weak_ordering v, @\unspec@) noexcept;
-    friend constexpr bool operator==(weak_ordering v, weak_ordering w) noexcept = default;
+    friend constexpr bool operator!=(weak_ordering v, @\unspec@) noexcept;
     friend constexpr bool operator< (weak_ordering v, @\unspec@) noexcept;
     friend constexpr bool operator> (weak_ordering v, @\unspec@) noexcept;
     friend constexpr bool operator<=(weak_ordering v, @\unspec@) noexcept;
     friend constexpr bool operator>=(weak_ordering v, @\unspec@) noexcept;
+    friend constexpr bool operator==(@\unspec@, weak_ordering v) noexcept;
+    friend constexpr bool operator!=(@\unspec@, weak_ordering v) noexcept;
     friend constexpr bool operator< (@\unspec@, weak_ordering v) noexcept;
     friend constexpr bool operator> (@\unspec@, weak_ordering v) noexcept;
     friend constexpr bool operator<=(@\unspec@, weak_ordering v) noexcept;
@@ -4418,9 +4352,9 @@ namespace std {
   };
 
   // valid values' definitions
-  inline constexpr weak_ordering weak_ordering::less(@\placeholder{ord}@::@\placeholder{less}@);
-  inline constexpr weak_ordering weak_ordering::equivalent(@\placeholder{eq}@::@\placeholder{equivalent}@);
-  inline constexpr weak_ordering weak_ordering::greater(@\placeholder{ord}@::@\placeholder{greater}@);
+  inline constexpr weak_ordering weak_ordering::less(ord::less);
+  inline constexpr weak_ordering weak_ordering::equivalent(eq::equivalent);
+  inline constexpr weak_ordering weak_ordering::greater(ord::greater);
 }
 \end{codeblock}
 
@@ -4451,12 +4385,14 @@ value < 0  ? partial_ordering::less :
 \end{itemdescr}
 
 \indexlibrarymember{operator==}{weak_ordering}%
+\indexlibrarymember{operator"!=}{weak_ordering}%
 \indexlibrarymember{operator<}{weak_ordering}%
 \indexlibrarymember{operator>}{weak_ordering}%
 \indexlibrarymember{operator<=}{weak_ordering}%
 \indexlibrarymember{operator>=}{weak_ordering}%
 \begin{itemdecl}
 constexpr bool operator==(weak_ordering v, @\unspec@) noexcept;
+constexpr bool operator!=(weak_ordering v, @\unspec@) noexcept;
 constexpr bool operator< (weak_ordering v, @\unspec@) noexcept;
 constexpr bool operator> (weak_ordering v, @\unspec@) noexcept;
 constexpr bool operator<=(weak_ordering v, @\unspec@) noexcept;
@@ -4469,11 +4405,15 @@ constexpr bool operator>=(weak_ordering v, @\unspec@) noexcept;
 \tcode{v.value @ 0} for \tcode{operator@}.
 \end{itemdescr}
 
+\indexlibrarymember{operator==}{weak_ordering}%
+\indexlibrarymember{operator"!=}{weak_ordering}%
 \indexlibrarymember{operator<}{weak_ordering}%
 \indexlibrarymember{operator>}{weak_ordering}%
 \indexlibrarymember{operator<=}{weak_ordering}%
 \indexlibrarymember{operator>=}{weak_ordering}%
 \begin{itemdecl}
+constexpr bool operator==(@\unspec@, weak_ordering v) noexcept;
+constexpr bool operator!=(@\unspec@, weak_ordering v) noexcept;
 constexpr bool operator< (@\unspec@, weak_ordering v) noexcept;
 constexpr bool operator> (@\unspec@, weak_ordering v) noexcept;
 constexpr bool operator<=(@\unspec@, weak_ordering v) noexcept;
@@ -4527,8 +4467,8 @@ namespace std {
     int value;  // \expos
 
     // exposition-only constructors
-    constexpr explicit strong_ordering(@\placeholder{eq}@ v) noexcept : value(int(v)) {}    // \expos
-    constexpr explicit strong_ordering(@\placeholder{ord}@ v) noexcept : value(int(v)) {}   // \expos
+    constexpr explicit strong_ordering(eq v) noexcept : value(int(v)) {}    // \expos
+    constexpr explicit strong_ordering(ord v) noexcept : value(int(v)) {}   // \expos
 
   public:
     // valid values
@@ -4545,11 +4485,13 @@ namespace std {
 
     // comparisons
     friend constexpr bool operator==(strong_ordering v, @\unspec@) noexcept;
-    friend constexpr bool operator==(strong_ordering v, strong_ordering w) noexcept = default;
+    friend constexpr bool operator!=(strong_ordering v, @\unspec@) noexcept;
     friend constexpr bool operator< (strong_ordering v, @\unspec@) noexcept;
     friend constexpr bool operator> (strong_ordering v, @\unspec@) noexcept;
     friend constexpr bool operator<=(strong_ordering v, @\unspec@) noexcept;
     friend constexpr bool operator>=(strong_ordering v, @\unspec@) noexcept;
+    friend constexpr bool operator==(@\unspec@, strong_ordering v) noexcept;
+    friend constexpr bool operator!=(@\unspec@, strong_ordering v) noexcept;
     friend constexpr bool operator< (@\unspec@, strong_ordering v) noexcept;
     friend constexpr bool operator> (@\unspec@, strong_ordering v) noexcept;
     friend constexpr bool operator<=(@\unspec@, strong_ordering v) noexcept;
@@ -4559,10 +4501,10 @@ namespace std {
   };
 
   // valid values' definitions
-  inline constexpr strong_ordering strong_ordering::less(@\placeholder{ord}@::@\placeholder{less}@);
-  inline constexpr strong_ordering strong_ordering::equal(@\placeholder{eq}@::@\placeholder{equal}@);
-  inline constexpr strong_ordering strong_ordering::equivalent(@\placeholder{eq}@::@\placeholder{equivalent}@);
-  inline constexpr strong_ordering strong_ordering::greater(@\placeholder{ord}@::@\placeholder{greater}@);
+  inline constexpr strong_ordering strong_ordering::less(ord::less);
+  inline constexpr strong_ordering strong_ordering::equal(eq::equal);
+  inline constexpr strong_ordering strong_ordering::equivalent(eq::equivalent);
+  inline constexpr strong_ordering strong_ordering::greater(ord::greater);
 }
 \end{codeblock}
 
@@ -4619,12 +4561,14 @@ value < 0  ? weak_ordering::less :
 \end{itemdescr}
 
 \indexlibrarymember{operator==}{strong_ordering}%
+\indexlibrarymember{operator"!=}{strong_ordering}%
 \indexlibrarymember{operator<}{strong_ordering}%
 \indexlibrarymember{operator>}{strong_ordering}%
 \indexlibrarymember{operator<=}{strong_ordering}%
 \indexlibrarymember{operator>=}{strong_ordering}%
 \begin{itemdecl}
 constexpr bool operator==(strong_ordering v, @\unspec@) noexcept;
+constexpr bool operator!=(strong_ordering v, @\unspec@) noexcept;
 constexpr bool operator< (strong_ordering v, @\unspec@) noexcept;
 constexpr bool operator> (strong_ordering v, @\unspec@) noexcept;
 constexpr bool operator<=(strong_ordering v, @\unspec@) noexcept;
@@ -4637,11 +4581,15 @@ constexpr bool operator>=(strong_ordering v, @\unspec@) noexcept;
 \tcode{v.value @ 0} for \tcode{operator@}.
 \end{itemdescr}
 
+\indexlibrarymember{operator==}{strong_ordering}%
+\indexlibrarymember{operator"!=}{strong_ordering}%
 \indexlibrarymember{operator<}{strong_ordering}%
 \indexlibrarymember{operator>}{strong_ordering}%
 \indexlibrarymember{operator<=}{strong_ordering}%
 \indexlibrarymember{operator>=}{strong_ordering}%
 \begin{itemdecl}
+constexpr bool operator==(@\unspec@, strong_ordering v) noexcept;
+constexpr bool operator!=(@\unspec@, strong_ordering v) noexcept;
 constexpr bool operator< (@\unspec@, strong_ordering v) noexcept;
 constexpr bool operator> (@\unspec@, strong_ordering v) noexcept;
 constexpr bool operator<=(@\unspec@, strong_ordering v) noexcept;
@@ -4709,431 +4657,183 @@ includes a type that is not a comparison category type.
 \end{note}
 \end{itemdescr}
 
-\rSec2[cmp.concept]{Concept \tcode{three_way_comparable}}
+\rSec2[cmp.alg]{Comparison algorithms}
 
-\begin{codeblock}
-template<class T, class Cat>
-  concept @\placeholder{compares-as}@ =                 // \expos
-    same_as<common_comparison_category_t<T, Cat>, Cat>;
-
-template<class T, class U>
-  concept @\placeholder{partially-ordered-with}@ =      // \expos
-    requires(const remove_reference_t<T>& t, const remove_reference_t<U>& u) {
-      { t <  u } -> boolean;
-      { t >  u } -> boolean;
-      { t <= u } -> boolean;
-      { t >= u } -> boolean;
-      { u <  t } -> boolean;
-      { u >  t } -> boolean;
-      { u <= t } -> boolean;
-      { u >= t } -> boolean;
-    };
-\end{codeblock}
-
-\pnum
-Let \tcode{t} and \tcode{u} be
-lvalues of types \tcode{const remove_reference_t<T>} and
-\tcode{const remove_reference_t<U>}, respectively.
-\tcode{T} and \tcode{U} model
-\tcode{\placeholder{partially-ordered-with}<T, U>} only if:
-\begin{itemize}
-\item
-  \tcode{t < u},
-  \tcode{t <= u},
-  \tcode{t > u},
-  \tcode{t >= u},
-  \tcode{u < t},
-  \tcode{u <= t},
-  \tcode{u > t}, and
-  \tcode{u >= t}
-  have the same domain.
-\item
-  \tcode{bool(t < u) == bool(u > t)} is \tcode{true},
-\item
-  \tcode{bool(u < t) == bool(t > u)} is \tcode{true},
-\item
-  \tcode{bool(t <= u) == bool(u >= t)} is \tcode{true}, and
-\item
-  \tcode{bool(u <= t) == bool(t >= u)} is \tcode{true}.
-\end{itemize}
-
-\indexlibrary{\idxcode{three_way_comparable}}%
-\begin{codeblock}
-template<class T, class Cat = partial_ordering>
-  concept three_way_comparable =
-    @\placeholder{weakly-equality-comparable-with}@<T, T> &&
-    (!convertible_to<Cat, partial_ordering> || @\placeholder{partially-ordered-with}@<T, T>) &&
-    requires(const remove_reference_t<T>& a, const remove_reference_t<T>& b) {
-      { a <=> b } -> @\placeholder{compares-as}@<Cat>;
-    };
-\end{codeblock}
-
-\pnum
-Let \tcode{a} and \tcode{b} be lvalues
-of type \tcode{const remove_reference_t<T>}.
-\tcode{T} and \tcode{Cat}
-model \tcode{\libconcept{three_way_comparable}<T, Cat>} only if:
-\begin{itemize}
-\item
-  \tcode{(a <=> b == 0) == bool(a == b)} is \tcode{true};
-\item
-  \tcode{(a <=> b != 0) == bool(a != b)} is \tcode{true};
-\item
-  \tcode{((a <=> b) <=> 0)} and \tcode{(0 <=> (b <=> a))} are equal;
-\item
-  if \tcode{Cat} is convertible to \tcode{strong_equality}, \tcode{T} models
-  \libconcept{equality_comparable}\iref{concept.equalitycomparable};
-\item
-  if \tcode{Cat} is convertible to \tcode{partial_ordering}:
-  \begin{itemize}
-  \item
-    \tcode{(a <=> b < 0) == bool(a < b)} is \tcode{true},
-  \item
-    \tcode{(a <=> b > 0) == bool(a > b)} is \tcode{true},
-  \item
-    \tcode{(a <=> b <= 0) == bool(a <= b)} is \tcode{true}, and
-  \item
-    \tcode{(a <=> b >= 0) == bool(a >= b)} is \tcode{true}; and
-  \end{itemize}
-\item
-  If \tcode{Cat} is convertible to \tcode{strong_ordering}, \tcode{T} models
-  \libconcept{totally_ordered}\iref{concept.totallyordered}.
-\end{itemize}
-
-\indexlibrary{\idxcode{three_way_comparable_with}}%
-\begin{codeblock}
-template<class T, class U, class Cat = partial_ordering>
-  concept three_way_comparable_with =
-    @\placeholder{weakly-equality-comparable-with}@<T, U> &&
-    (!convertible_to<Cat, partial_ordering> || @\placeholder{partially-ordered-with}@<T, U>) &&
-    three_way_comparable<T, Cat> &&
-    three_way_comparable<U, Cat> &&
-    common_reference_with<const remove_reference_t<T>&, const remove_reference_t<U>&> &&
-    three_way_comparable<
-      common_reference_t<const remove_reference_t<T>&, const remove_reference_t<U>&>, Cat> &&
-    requires(const remove_reference_t<T>& t, const remove_reference_t<U>& u) {
-      { t <=> u } -> @\placeholder{compares-as}@<Cat>;
-      { u <=> t } -> @\placeholder{compares-as}@<Cat>;
-    };
-\end{codeblock}
-
-\pnum
-Let \tcode{t} and \tcode{u} be lvalues
-of types \tcode{const remove_reference_t<T>} and
-\tcode{const remove_reference_t<U>}, respectively.
-Let \tcode{C} be
-\tcode{common_reference_t<const remove_reference_t<T>\&, const remove_reference_t<U>\&>}.
-\tcode{T}, \tcode{U}, and \tcode{Cat}
-model \tcode{\libconcept{three_way_comparable_with}<T, U, Cat>} only if:
-\begin{itemize}
-\item
-  \tcode{t <=> u} and \tcode{u <=> t} have the same domain;
-\item
-  \tcode{((t <=> u) <=> 0)} and \tcode{(0 <=> (u <=> t))} are equal;
-\item
-  \tcode{(t <=> u == 0) == bool(t == u)} is \tcode{true};
-\item
-  \tcode{(t <=> u != 0) == bool(t != u)} is \tcode{true};
-\item
-  \tcode{Cat(t <=> u) == Cat(C(t) <=> C(u))} is \tcode{true};
-\item
-  if \tcode{Cat} is convertible to \tcode{strong_equality},
-  \tcode{T} and \tcode{U} model
-  \tcode{\libconcept{equality_comparable_with}<T, U>}\iref{concept.equalitycomparable};
-\item
-  if \tcode{Cat} is convertible to \tcode{partial_ordering}:
-  \begin{itemize}
-  \item
-    \tcode{(t <=> u < 0) == bool(t < u)} is \tcode{true},
-  \item
-    \tcode{(t <=> u > 0) == bool(t > u)} is \tcode{true},
-  \item
-    \tcode{(t <=> u <= 0) == bool(t <= u)} is \tcode{true},
-  \item
-    \tcode{(t <=> u >= 0) == bool(t >= u)} is \tcode{true}; and
-  \end{itemize}
-\item
-  if \tcode{Cat} is convertible to \tcode{strong_ordering},
-  \tcode{T} and \tcode{U} model
-  \tcode{\libconcept{totally_ordered_with}<T, U>}\iref{concept.totallyordered}.
-\end{itemize}
-
-\rSec2[cmp.result]{Result of three-way comparison}
-
-\pnum
-The behavior of a program
-that adds specializations for the \tcode{compare_three_way_result} template
-defined in this subclause is undefined.
-
-\pnum
-For the \tcode{compare_three_way_result} type trait
-applied to the types \tcode{T} and \tcode{U},
-let \tcode{t} and \tcode{u} denote lvalues of types
-\tcode{const remove_reference_t<T>} and \tcode{const remove_reference_t<U>},
-respectively.
-If the expression \tcode{t <=> u} is well-formed
-when treated as an unevaluated operand\iref{expr.context},
-the member \grammarterm{typedef-name} \tcode{type}
-denotes the type \tcode{decltype(t <=> u)}.
-Otherwise, there is no member \tcode{type}.
-
-\rSec2[cmp.object]{Class \tcode{compare_three_way}}
-
-\pnum
-In this subclause, \tcode{\placeholdernc{BUILTIN-PTR-THREE-WAY}(T, U)}
-for types \tcode{T} and \tcode{U} is a boolean constant expression.
-\tcode{\placeholdernc{BUILTIN-PTR-THREE-WAY}(T, U)} is \tcode{true}
-if and only if \tcode{<=>} in the expression
-\begin{codeblock}
-declval<T>() <=> declval<U>()
-\end{codeblock}
-resolves to a built-in operator comparing pointers.
-
-\indexlibrary{\idxcode{compare_three_way}}%
-\begin{codeblock}
-struct compare_three_way {
-  template<class T, class U>
-    requires three_way_comparable_with<T, U> || @\placeholdernc{BUILTIN-PTR-THREE-WAY}@(T, U)
-  constexpr auto operator()(T&& t, U&& u) const;
-
-  using is_transparent = @\unspec@;
-};
-\end{codeblock}
-
-\pnum
-In addition to being available via inclusion of the \tcode{<compare>} header,
-the class \tcode{compare_three_way} is available
-when the header \tcode{<functional>} is included.
-
+\indexlibrary{\idxcode{strong_order}}%
 \begin{itemdecl}
-template<class T, class U>
-  requires three_way_comparable_with<T, U> || @\placeholdernc{BUILTIN-PTR-THREE-WAY}@(T, U)
-constexpr auto operator()(T&& t, U&& u) const;
+template<class T> constexpr strong_ordering strong_order(const T& a, const T& b);
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
-\expects
-If the expression \tcode{std::forward<T>(t) <=> std::forward<U>(u)} results in
-a call to a built-in operator \tcode{<=>} comparing pointers of type \tcode{P},
-the conversion sequences from both \tcode{T} and \tcode{U} to \tcode{P}
-are equality-preserving\iref{concepts.equality}.
-
-\pnum
 \effects
+Compares two values and produces a result of type \tcode{strong_ordering}:
+
 \begin{itemize}
 \item
-  If the expression \tcode{std::forward<T>(t) <=> std::forward<U>(u)} results in
-  a call to a built-in operator \tcode{<=>} comparing pointers of type \tcode{P},
-  returns \tcode{strong_ordering::less}
-  if (the converted value of) \tcode{t} precedes \tcode{u}
-  in the implementation-defined strict total order\iref{range.cmp}
-  over pointers of type \tcode{P},
-  \tcode{strong_ordering::greater}
-  if \tcode{u} precedes \tcode{t}, and
-  otherwise \tcode{strong_ordering::equal}.
+If \tcode{numeric_limits<T>::is_iec559} is \tcode{true},
+returns a result of type \tcode{strong_ordering}
+that is consistent with the \tcode{totalOrder} operation
+as specified in ISO/IEC/IEEE 60559.
 \item
-  Otherwise, equivalent to: \tcode{return std::forward<T>(t) <=> std::forward<U>(u);}
+Otherwise, returns \tcode{a <=> b}
+if that expression is well-formed and
+convertible to \tcode{strong_ordering}.
+\item
+Otherwise, if the expression \tcode{a <=> b} is well-formed,
+then the function is defined as deleted.
+\item
+Otherwise, if the expressions \tcode{a == b} and \tcode{a < b}
+are each well-formed and convertible to \tcode{bool}, then
+\begin{itemize}
+\item
+if \tcode{a == b} is \tcode{true},
+returns \tcode{strong_ordering::equal};
+\item
+otherwise, if \tcode{a < b} is \tcode{true},
+returns \tcode{strong_ordering::less};
+\item
+otherwise,
+returns \tcode{strong_ordering::greater}.
+\end{itemize}
+\item
+Otherwise, the function is defined as deleted.
 \end{itemize}
 \end{itemdescr}
 
-\rSec2[cmp.alg]{Comparison algorithms}
-
-\indexlibrary{\idxcode{strong_order}}%
-\pnum
-The name \tcode{strong_order} denotes
-a customization point object\iref{customization.point.object}.
-The expression \tcode{strong_order(E, F)}
-for some subexpressions \tcode{E} and \tcode{F}
-is expression-equivalent\iref{defns.expression-equivalent} to the following:
-\begin{itemize}
-\item
-  If the decayed types of \tcode{E} and \tcode{F} differ,
-  \tcode{strong_order(E, F)} is ill-formed.
-\item
-  Otherwise, \tcode{strong_ordering(strong_order(E, F))}
-  if it is a well-formed expression
-  with overload resolution performed in a context
-  that does not include a declaration of \tcode{std::strong_order}.
-\item
-  Otherwise, if the decayed type \tcode{T} of \tcode{E} is
-  a floating-point type,
-  yields a value of type \tcode{strong_ordering}
-  that is consistent with the ordering
-  observed by \tcode{T}'s comparison operators, and
-  if \tcode{numeric_limits<T>::is_iec559} is \tcode{true},
-  is additionally consistent with the \tcode{totalOrder} operation
-  as specified in ISO/IEC/IEEE 60599.
-\item
-  Otherwise, \tcode{strong_ordering(E <=> F)} if it is a well-formed expression.
-\item
-  Otherwise, \tcode{strong_order(E, F)} is ill-formed.
-  \begin{note}
-  This case can result in substitution failure
-  when \tcode{strong_order(E, F)} appears in the immediate context
-  of a template instantiation.
-  \end{note}
-\end{itemize}
-
 \indexlibrary{\idxcode{weak_order}}%
+\begin{itemdecl}
+template<class T> constexpr weak_ordering weak_order(const T& a, const T& b);
+\end{itemdecl}
+
+\begin{itemdescr}
 \pnum
-The name \tcode{weak_order} denotes
-a customization point object\iref{customization.point.object}.
-The expression \tcode{weak_order(E, F)}
-for some subexpressions \tcode{E} and \tcode{F}
-is expression-equivalent\iref{defns.expression-equivalent} to the following:
+\effects
+Compares two values and produces a result of type \tcode{weak_ordering}:
+
 \begin{itemize}
 \item
-  If the decayed types of \tcode{E} and \tcode{F} differ,
-  \tcode{weak_order(E, F)} is ill-formed.
+Returns \tcode{a <=> b} if that expression is well-formed and
+convertible to \tcode{weak_ordering}.
 \item
-  Otherwise, \tcode{weak_ordering(weak_order(E, F))}
-  if it is a well-formed expression
-  with overload resolution performed in a context
-  that does not include a declaration of \tcode{std::weak_order}.
+Otherwise, if the expression \tcode{a <=> b} is well-formed,
+then the function is defined as deleted.
 \item
-  Otherwise, if the decayed type \tcode{T} of \tcode{E}
-  is a floating-point type,
-  yields a value of type \tcode{weak_ordering}
-  that is consistent with the ordering
-  observed by \tcode{T}'s comparison operators and \tcode{strong_order}, and
-  if \tcode{numeric_limits<T>::is_iec559} is \tcode{true},
-  is additionally consistent with the following equivalence classes,
-  ordered from lesser to greater:
-  \begin{itemize}
-  \item together, all negative NaN values;
-  \item negative infinity;
-  \item each normal negative value;
-  \item each subnormal negative value;
-  \item together, both zero values;
-  \item each subnormal positive value;
-  \item each normal positive value;
-  \item positive infinity;
-  \item together, all positive NaN values.
-  \end{itemize}
+Otherwise, if the expressions \tcode{a == b} and \tcode{a < b}
+are each well-formed and convertible to \tcode{bool}, then
+\begin{itemize}
 \item
-  Otherwise, \tcode{weak_ordering(E <=> F)} if it is a well-formed expression.
+if \tcode{a == b} is \tcode{true},
+returns \tcode{weak_ordering::equivalent};
 \item
-  Otherwise, \tcode{weak_ordering(strong_order(E, F))}
-  if it is a well-formed expression.
+otherwise, if \tcode{a < b} is \tcode{true},
+returns \tcode{weak_ordering::less};
 \item
-  Otherwise, \tcode{weak_order(E, F)} is ill-formed.
-  \begin{note}
-  This case can result in substitution failure
-  when \tcode{std::weak_order(E, F)} appears in the immediate context
-  of a template instantiation.
-  \end{note}
+otherwise, returns \tcode{weak_ordering::greater}.
 \end{itemize}
+\item
+Otherwise, the function is defined as deleted.
+\end{itemize}
+\end{itemdescr}
 
 \indexlibrary{\idxcode{partial_order}}%
-\pnum
-The name \tcode{partial_order} denotes
-a customization point object\iref{customization.point.object}.
-The expression \tcode{partial_order(E, F)}
-for some subexpressions \tcode{E} and \tcode{F}
-is expression-equivalent\iref{defns.expression-equivalent} to the following:
-\begin{itemize}
-\item
-  If the decayed types of \tcode{E} and \tcode{F} differ,
-  \tcode{partial_order(E, F)} is ill-formed.
-\item
-  Otherwise, \tcode{partial_ordering(partial_order(E, F))}
-  if it is a well-formed expression
-  with overload resolution performed in a context
-  that does not include a declaration of \tcode{std::partial_order}.
-\item
-  Otherwise, \tcode{partial_ordering(E <=> F)}
-  if it is a well-formed expression.
-\item
-  Otherwise, \tcode{partial_ordering(weak_order(E, F))}
-  if it is a well-formed expression.
-\item
-  Otherwise, \tcode{partial_order(E, F)} is ill-formed.
-  \begin{note}
-  This case can result in substitution failure
-  when \tcode{std::partial_order(E, F)}
-  appears in the immediate context of a template instantiation.
-\end{note}
-\end{itemize}
+\begin{itemdecl}
+template<class T> constexpr partial_ordering partial_order(const T& a, const T& b);
+\end{itemdecl}
 
-\indexlibrary{\idxcode{compare_strong_order_fallback}}%
+\begin{itemdescr}
 \pnum
-The name \tcode{compare_strong_order_fallback}
-denotes a customization point object\iref{customization.point.object}.
-The expression \tcode{compare_strong_order_fallback(E, F)}
-for some subexpressions \tcode{E} and {F}
-is expression-equivalent\iref{defns.expression-equivalent} to:
-\begin{itemize}
-\item
-  If the decayed types of \tcode{E} and \tcode{F} differ,
-  \tcode{compare_strong_order_fallback(E, F)} is ill-formed.
-\item
-  Otherwise, \tcode{strong_order(E, F)} if it is a well-formed expression.
-\item
-  Otherwise, if the expressions \tcode{E == F} and \tcode{E < F}
-  are both well-formed and convertible to \tcode{bool},
-\begin{codeblock}
-E == F ? strong_ordering::equal :
-E < F  ? strong_ordering::less :
-         strong_ordering::greater
-\end{codeblock}
-except that \tcode{E} and \tcode{F} are evaluated only once.
-\item
-Otherwise, \tcode{compare_strong_order_fallback(E, F)} is ill-formed.
-\end{itemize}
+\effects
+Compares two values and produces a result of type \tcode{partial_ordering}:
 
-\indexlibrary{\idxcode{compare_weak_order_fallback}}%
-\pnum
-The name \tcode{compare_weak_order_fallback} denotes
-a customization point object\iref{customization.point.object}.
-The expression \tcode{compare_weak_order_fallback(E, F)}
-for some subexpressions \tcode{E} and \tcode{F}
-is expression-equivalent\iref{defns.expression-equivalent} to:
 \begin{itemize}
 \item
-  If the decayed types of \tcode{E} and \tcode{F} differ,
-  \tcode{compare_weak_order_fallback(E, F)} is ill-formed.
+Returns \tcode{a <=> b} if that expression is well-formed and
+convertible to \tcode{partial_ordering}.
 \item
-  Otherwise, \tcode{weak_order(E, F)} if it is a well-formed expression.
+Otherwise, if the expression \tcode{a <=> b} is well-formed,
+then the function is defined as deleted.
 \item
-  Otherwise, if the expressions \tcode{E == F} and \tcode{E < F}
-  are both well-formed and convertible to \tcode{bool},
-\begin{codeblock}
-E == F ? weak_ordering::equal :
-E < F  ? weak_ordering::less :
-         weak_ordering::greater
-\end{codeblock}
-except that \tcode{E} and \tcode{F} are evaluated only once.
+Otherwise, if the expressions \tcode{a == b} and \tcode{a < b}
+are each well-formed and convertible to \tcode{bool}, then
+\begin{itemize}
 \item
-  Otherwise, \tcode{compare_weak_order_fallback(E, F)} is ill-formed.
+if \tcode{a == b} is \tcode{true},
+returns \tcode{partial_ordering::equivalent};
+\item
+otherwise, if \tcode{a < b} is \tcode{true},
+returns \tcode{partial_ordering::less};
+\item
+otherwise, returns \tcode{partial_ordering::greater}.
 \end{itemize}
+\item
+Otherwise, the function is defined as deleted.
+\end{itemize}
+\end{itemdescr}
 
-\indexlibrary{\idxcode{compare_partial_order_fallback}}%
+\indexlibrary{\idxcode{strong_equal}}%
+\begin{itemdecl}
+template<class T> constexpr strong_equality strong_equal(const T& a, const T& b);
+\end{itemdecl}
+
+\begin{itemdescr}
 \pnum
-The name \tcode{compare_partial_order_fallback} denotes
-a customization point object\iref{customization.point.object}.
-The expression \tcode{compare_partial_order_fallback(E, F)}
-for some subexpressions \tcode{E} and \tcode{F}
-is expression-equivalent\iref{defns.expression-equivalent} to:
+\effects
+Compares two values and produces a result of type \tcode{strong_equality}:
+
 \begin{itemize}
 \item
-  If the decayed types of \tcode{E} and \tcode{F} differ,
-  \tcode{compare_partial_order_fallback(E, F)} is ill-formed.
+Returns \tcode{a <=> b} if that expression is well-formed and
+convertible to \tcode{strong_equality}.
 \item
-  Otherwise, \tcode{partial_order(E, F)} if it is a well-formed expression.
+Otherwise, if the expression \tcode{a <=> b} is well-formed,
+then the function is defined as deleted.
 \item
-  Otherwise, if the expressions \tcode{E == F} and \tcode{E < F}
-  are both well-formed and convertible to \tcode{bool},
-\begin{codeblock}
-E == F ? partial_ordering::equivalent :
-E < F  ? partial_ordering::less :
-F < E  ? partial_ordering::greater :
-         partial_ordering::unordered
-\end{codeblock}
-except that \tcode{E} and \tcode{F} are evaluated only once.
+Otherwise, if the expression \tcode{a == b}
+is well-formed and convertible to \tcode{bool}, then
+\begin{itemize}
 \item
-  Otherwise, \tcode{compare_partial_order_fallback(E, F)} is ill-formed.
+if \tcode{a == b} is \tcode{true},
+returns \tcode{strong_equality::equal};
+\item
+otherwise, returns \tcode{strong_equality::nonequal}.
 \end{itemize}
+\item
+Otherwise, the function is defined as deleted.
+\end{itemize}
+\end{itemdescr}
+
+\indexlibrary{\idxcode{weak_equal}}%
+\begin{itemdecl}
+template<class T> constexpr weak_equality weak_equal(const T& a, const T& b);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Compares two values and produces a result of type \tcode{weak_equality}:
+
+\begin{itemize}
+\item
+Returns \tcode{a <=> b} if that expression is well-formed and
+convertible to \tcode{weak_equality}.
+\item
+Otherwise, if the expression \tcode{a <=> b} is well-formed,
+then the function is defined as deleted.
+\item
+Otherwise, if the expression \tcode{a == b}
+is well-formed and convertible to \tcode{bool}, then
+\begin{itemize}
+\item
+if \tcode{a == b} is \tcode{true},
+returns \tcode{weak_equality::equivalent};
+\item
+otherwise, returns \tcode{weak_equality::nonequivalent}.
+\end{itemize}
+\item
+Otherwise, the function is defined as deleted.
+\end{itemize}
+\end{itemdescr}
 
 \rSec1[support.coroutine]{Coroutines}
 
@@ -5161,7 +4861,11 @@ namespace std {
 
   // \ref{coroutine.handle.compare}, comparison operators
   constexpr bool operator==(coroutine_handle<> x, coroutine_handle<> y) noexcept;
-  constexpr strong_ordering operator<=>(coroutine_handle<> x, coroutine_handle<> y) noexcept;
+  constexpr bool operator!=(coroutine_handle<> x, coroutine_handle<> y) noexcept;
+  constexpr bool operator<(coroutine_handle<> x, coroutine_handle<> y) noexcept;
+  constexpr bool operator>(coroutine_handle<> x, coroutine_handle<> y) noexcept;
+  constexpr bool operator<=(coroutine_handle<> x, coroutine_handle<> y) noexcept;
+  constexpr bool operator>=(coroutine_handle<> x, coroutine_handle<> y) noexcept;
 
   // \ref{coroutine.handle.hash}, hash support
   template<class T> struct hash;
@@ -5188,7 +4892,7 @@ This subclause defines requirements on classes representing
 \term{coroutine traits},
 and defines the class template
 \tcode{coroutine_traits}
-that meets those requirements.
+that satisfies those requirements.
 
 \rSec3[coroutine.traits.primary]{Class template \tcode{coroutine_traits}}
 
@@ -5226,7 +4930,7 @@ namespace std {
 
     // \ref{coroutine.handle.export.import}, export/import
     constexpr void* address() const noexcept;
-    static constexpr coroutine_handle from_address(void* addr);
+    constexpr static coroutine_handle from_address(void* addr);
 
     // \ref{coroutine.handle.observers}, observers
     constexpr explicit operator bool() const noexcept;
@@ -5250,7 +4954,7 @@ namespace std {
     coroutine_handle& operator=(nullptr_t) noexcept;
 
     // \ref{coroutine.handle.export.import}, export/import
-    static constexpr coroutine_handle from_address(void* addr);
+    constexpr static coroutine_handle from_address(void* addr);
 
     // \ref{coroutine.handle.promise}, promise access
     Promise& promise() const;
@@ -5325,8 +5029,8 @@ constexpr void* address() const noexcept;
 
 \indexlibrarymember{from_address}{coroutine_handle}%
 \begin{itemdecl}
-static constexpr coroutine_handle<> coroutine_handle<>::from_address(void* addr);
-static constexpr coroutine_handle<Promise> coroutine_handle<Promise>::from_address(void* addr);
+constexpr static coroutine_handle<> coroutine_handle<>::from_address(void* addr);
+constexpr static coroutine_handle<Promise> coroutine_handle<Promise>::from_address(void* addr);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5369,9 +5073,9 @@ final suspend point, otherwise \tcode{false}.
 Resuming a coroutine via \tcode{resume}, \tcode{operator()}, or \tcode{destroy}
 on an execution agent other than the one on which it was suspended
 has implementation-defined behavior unless
-each execution agent either is
-an instance of \tcode{std::thread} or \tcode{std::jthread},
-or is the thread that executes \tcode{main}.
+each execution agent is either
+an instance of \tcode{std::thread} or
+the thread that executes \tcode{main}.
 \begin{note}
 A coroutine that is resumed on a different execution agent should
 avoid relying on consistent thread identity throughout, such as holding
@@ -5437,13 +5141,16 @@ constexpr bool operator==(coroutine_handle<> x, coroutine_handle<> y) noexcept;
 \pnum \returns \tcode{x.address() == y.address()}.
 \end{itemdescr}
 
-\indexlibrarymember{operator<=>}{coroutine_handle}%
+\indexlibrarymember{operator<}{coroutine_handle}%
+\indexlibrarymember{operator>}{coroutine_handle}%
+\indexlibrarymember{operator<=}{coroutine_handle}%
+\indexlibrarymember{operator>=}{coroutine_handle}%
 \begin{itemdecl}
-constexpr strong_ordering operator<=>(coroutine_handle<> x, coroutine_handle<> y) noexcept;
+constexpr bool operator<(coroutine_handle<> x, coroutine_handle<> y) noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum \returns \tcode{compare_three_way()(x.address(), y.address())}.
+\pnum \returns \tcode{less<>()(x.address(), y.address())}.
 \end{itemdescr}
 
 \rSec3[coroutine.handle.hash]{Hash support}
@@ -5816,7 +5523,7 @@ An evaluation is \defnx{signal-safe}{evaluation!signal-safe} unless it includes 
 \item
 a call to any standard library function,
 except for plain lock-free atomic operations and
-functions explicitly identified as signal-safe;
+functions explicitly identified as signal-safe.
 \begin{note}
 This implicitly excludes the use of \tcode{new} and \tcode{delete} expressions
 that rely on a library-provided memory allocator.

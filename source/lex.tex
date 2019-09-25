@@ -123,7 +123,7 @@ concatenation\iref{cpp.concat}, the behavior is undefined. A
 source file to be processed from phase 1 through phase 4, recursively.
 All preprocessing directives are then deleted.
 
-\item Each basic source character set member in a character literal or a string
+\item Each source character set member in a character literal or a string
 literal, as well as each escape sequence and \grammarterm{universal-character-name} in a
 character literal or a non-raw string literal, is converted to the corresponding
 member of the execution character set~(\ref{lex.ccon}, \ref{lex.string}); if
@@ -273,7 +273,6 @@ are locale-specific.%
 \begin{bnf}
 \nontermdef{preprocessing-token}\br
     header-name\br
-    import-keyword\br
     identifier\br
     pp-number\br
     character-literal\br
@@ -339,13 +338,17 @@ would cause further lexical analysis to fail,
 except that a \grammarterm{header-name}\iref{lex.header} is only formed
 \begin{itemize}
 \item
-after the \tcode{include} or \tcode{import} preprocessing token in an
-\tcode{\#include}\iref{cpp.include} or
-\tcode{import}\iref{cpp.import} directive, or
+within a \tcode{\#include} directive\iref{cpp.include},
 
 \item
-within a \grammarterm{has-include-expression}.
+within a \grammarterm{has-include-expression}, or
 
+\item
+outside of any preprocessing directive,
+if applying phase 4 of translation to the sequence
+of preprocessing tokens produced thus far
+is valid and
+results in an \grammarterm{import-seq}\iref{cpp.module}.
 \end{itemize}
 \end{itemize}
 
@@ -355,11 +358,6 @@ within a \grammarterm{has-include-expression}.
 const char* s = R"y";           // ill-formed raw string, not \tcode{"x" "y"}
 \end{codeblock}
 \end{example}
-
-\pnum
-The \grammarterm{import-keyword} is produced
-by processing an \tcode{import} directive\iref{cpp.import} and
-has no associated grammar productions.
 
 \pnum
 \begin{example} The program fragment \tcode{0xe+foo} is parsed as a
@@ -397,9 +395,9 @@ same, respectively, as its primary token, except for its spelling.\footnote{Thus
 \tcode{[} and \tcode{<:} will be different, maintaining the source
 spelling, but the tokens can otherwise be freely interchanged. }
 The set of alternative tokens is defined in
-\tref{lex.digraph}.
+\tref{alternative.tokens}.
 
-\begin{tokentable}{Alternative tokens}{lex.digraph}{Alternative}{Primary}
+\begin{tokentable}{Alternative tokens}{tab:alternative.tokens}{Alternative}{Primary}
 \tcode{<\%}             &   \tcode{\{}         &
 \tcode{and}             &   \tcode{\&\&}       &
 \tcode{and_eq}          &   \tcode{\&=}        \\ \rowsep
@@ -585,10 +583,10 @@ token.%
 An identifier is an arbitrarily long sequence of letters and digits.
 Each \grammarterm{universal-character-name} in an identifier shall designate a
 character whose encoding in ISO/IEC 10646 falls into one of the ranges
-specified in \tref{lex.name.allowed}.
+specified in \tref{charname.allowed}.
 The initial element shall not be a \grammarterm{universal-character-name}
 designating a character whose encoding falls into one of the ranges
-specified in \tref{lex.name.disallowed}.
+specified in \tref{charname.disallowed}.
 Upper- and lower-case letters are
 different. All characters are significant.\footnote{On systems in which linkers cannot accept extended
 characters, an encoding of the \grammarterm{universal-character-name} may be used in
@@ -600,7 +598,7 @@ place a translation limit on significant characters for external
 identifiers. In \Cpp{}, upper- and lower-case letters are considered
 different for all identifiers, including external identifiers. }
 
-\begin{floattable}{Ranges of characters allowed}{lex.name.allowed}
+\begin{floattable}{Ranges of characters allowed}{tab:charname.allowed}
 {lllll}
 \topline
 \tcode{00A8} &
@@ -650,7 +648,7 @@ different for all identifiers, including external identifiers. }
 \\
 \end{floattable}
 
-\begin{floattable}{Ranges of characters disallowed initially (combining characters)}{lex.name.disallowed}
+\begin{floattable}{Ranges of characters disallowed initially (combining characters)}{tab:charname.disallowed}
 {llll}
 \topline
 \tcode{0300-036F} &
@@ -661,25 +659,28 @@ different for all identifiers, including external identifiers. }
 \end{floattable}
 
 \pnum
+\indextext{\idxcode{audit}}%
+\indextext{\idxcode{axiom}}%
 \indextext{\idxcode{import}}%
 \indextext{\idxcode{final}}%
 \indextext{\idxcode{module}}%
 \indextext{\idxcode{override}}%
-The identifiers in \tref{lex.name.special} have a special meaning when
+The identifiers in \tref{identifiers.special} have a special meaning when
 appearing in a certain context. When referred to in the grammar, these identifiers
 are used explicitly rather than using the \grammarterm{identifier} grammar production.
 Unless otherwise specified, any ambiguity as to whether a given
 \grammarterm{identifier} has a special meaning is resolved to interpret the
 token as a regular \grammarterm{identifier}.
 
-\begin{multicolfloattable}{Identifiers with special meaning}{lex.name.special}
-{llll}
-\keyword{final}           \\
+\begin{multicolfloattable}{Identifiers with special meaning}{tab:identifiers.special}
+{lll}
+\keyword{audit}           \\
+\keyword{axiom}           \\
 \columnbreak
+\keyword{final}           \\
 \keyword{import}          \\
 \columnbreak
 \keyword{module}          \\
-\columnbreak
 \keyword{override}        \\
 \end{multicolfloattable}
 
@@ -712,11 +713,11 @@ reserved to the implementation for use as a name in the global namespace.%
 \enlargethispage{\baselineskip}%
 \pnum
 \indextext{keyword|(}%
-The identifiers shown in \tref{lex.key} are reserved for use
+The identifiers shown in \tref{keywords} are reserved for use
 as keywords (that is, they are unconditionally treated as keywords in
 phase 7) except in an \grammarterm{attribute-token}\iref{dcl.attr.grammar}:
 
-\begin{multicolfloattable}{Keywords}{lex.key}
+\begin{multicolfloattable}{Keywords}{tab:keywords}
 {lllll}
 \keyword{alignas} \\
 \keyword{alignof} \\
@@ -734,9 +735,8 @@ phase 7) except in an \grammarterm{attribute-token}\iref{dcl.attr.grammar}:
 \keyword{concept} \\
 \keyword{const} \\
 \keyword{consteval} \\
-\keyword{constexpr} \\
 \columnbreak
-\keyword{constinit} \\
+\keyword{constexpr} \\
 \keyword{const_cast} \\
 \keyword{continue} \\
 \keyword{co_await} \\
@@ -752,8 +752,8 @@ phase 7) except in an \grammarterm{attribute-token}\iref{dcl.attr.grammar}:
 \keyword{enum} \\
 \keyword{explicit} \\
 \keyword{export} \\
-\keyword{extern} \\
 \columnbreak
+\keyword{extern} \\
 \keyword{false} \\
 \keyword{float} \\
 \keyword{for} \\
@@ -769,9 +769,9 @@ phase 7) except in an \grammarterm{attribute-token}\iref{dcl.attr.grammar}:
 \keyword{noexcept} \\
 \keyword{nullptr} \\
 \keyword{operator} \\
+\columnbreak
 \keyword{private} \\
 \keyword{protected} \\
-\columnbreak
 \keyword{public} \\
 \keyword{register} \\
 \keyword{reinterpret_cast} \\
@@ -786,10 +786,10 @@ phase 7) except in an \grammarterm{attribute-token}\iref{dcl.attr.grammar}:
 \keyword{struct} \\
 \keyword{switch} \\
 \keyword{template} \\
+\columnbreak
 \keyword{this} \\
 \keyword{thread_local} \\
 \keyword{throw} \\
-\columnbreak
 \keyword{true} \\
 \keyword{try} \\
 \keyword{typedef} \\
@@ -810,12 +810,12 @@ is reserved for future use.\end{note}
 
 \pnum
 Furthermore, the alternative representations shown in
-\tref{lex.key.digraph} for certain operators and
+\tref{alternative.representations} for certain operators and
 punctuators\iref{lex.digraph} are reserved and shall not be used
 otherwise:
 
 
-\begin{floattable}{Alternative representations}{lex.key.digraph}
+\begin{floattable}{Alternative representations}{tab:alternative.representations}
 {llllll}
 \topline
 \keyword{and}     &   \keyword{and_eq}  &   \keyword{bitand}  &   \keyword{bitor}   &   \keyword{compl}   &   \keyword{not} \\
@@ -1006,11 +1006,11 @@ ten through fifteen.
 \indextext{suffix!\idxcode{l}}%
 \indextext{suffix!\idxcode{u}}%
 The type of an integer literal is the first of the corresponding list
-in \tref{lex.icon.type} in which its value can be
+in \tref{lex.type.integer.literal} in which its value can be
 represented.
 
 \enlargethispage{\baselineskip}%
-\begin{LongTable}{Types of integer literals}{lex.icon.type}{l|l|l}
+\begin{LongTable}{Types of integer literals}{tab:lex.type.integer.literal}{l|l|l}
 \\ \topline
 \lhdr{Suffix} & \chdr{Decimal literal}  & \rhdr{Binary, octal, or hexadecimal literal}   \\  \capsep
 \endfirsthead
@@ -1109,7 +1109,7 @@ that cannot be represented by any of the allowed types.
 
 \begin{bnf}
 \nontermdef{c-char}\br
-    \textnormal{any member of the basic source character set except the single-quote \terminal{'}, backslash \terminal{\textbackslash}, or new-line character}\br
+    \textnormal{any member of the source character set except the single-quote \terminal{'}, backslash \terminal{\textbackslash}, or new-line character}\br
     escape-sequence\br
     universal-character-name
 \end{bnf}
@@ -1255,7 +1255,7 @@ and the backslash
 \indextext{\idxcode{\textbackslash}|see{backslash character}}%
 \indextext{escape character|see{backslash character}}%
 \tcode{\textbackslash}, can be represented according to
-\tref{lex.ccon.esc}.
+\tref{escape.sequences}.
 \indextext{escape sequence!undefined}%
 The double quote \tcode{"}  and the question mark \tcode{?}, can be
 represented as themselves or by the escape sequences
@@ -1264,11 +1264,11 @@ the single quote \tcode{'} and the backslash \tcode{\textbackslash}
 shall be represented by the escape sequences \tcode{\textbackslash'} and
 \tcode{\textbackslash\textbackslash} respectively. Escape sequences in
 which the character following the backslash is not listed in
-\tref{lex.ccon.esc} are conditionally-supported, with \impldef{semantics of
+\tref{escape.sequences} are conditionally-supported, with \impldef{semantics of
 non-standard escape sequences} semantics. An escape sequence specifies a single
 character.
 
-\begin{floattable}{Escape sequences}{lex.ccon.esc}
+\begin{floattable}{Escape sequences}{tab:escape.sequences}
 {llm}
 \topline
 new-line        &   NL(LF)          &   \tcode{\textbackslash n}                \\
@@ -1460,7 +1460,7 @@ values for its type, the program is ill-formed.
 
 \begin{bnf}
 \nontermdef{s-char}\br
-    \textnormal{any member of the basic source character set except the double-quote \terminal{"}, backslash \terminal{\textbackslash}, or new-line character}\br
+    \textnormal{any member of the source character set except the double-quote \terminal{"}, backslash \terminal{\textbackslash}, or new-line character}\br
     escape-sequence\br
     universal-character-name
 \end{bnf}
@@ -1665,7 +1665,7 @@ well-formedness of the concatenation.
 \end{note}
 \tref{lex.string.concat} has some examples of valid concatenations.
 
-\begin{floattable}{String literal concatenations}{lex.string.concat}
+\begin{floattable}{String literal concatenations}{tab:lex.string.concat}
 {lll|lll|lll}
 \topline
 \multicolumn{2}{|c}{Source} &

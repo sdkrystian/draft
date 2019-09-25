@@ -22,27 +22,24 @@ Detailed specifications for each of the components in the library are in
 \ref{\firstlibchapter}--\ref{\lastlibchapter}, as shown in
 \tref{library.categories}.
 
-\begin{floattable}{Library categories}{library.categories}
-{ll}
-\topline
-\hdstyle{Clause}        & \hdstyle{Category}          \\ \capsep
-\ref{language.support}  & Language support library    \\
-\ref{concepts}          & Concepts library            \\
-\ref{diagnostics}       & Diagnostics library         \\
-\ref{utilities}         & General utilities library   \\
-\ref{strings}           & Strings library             \\
-\ref{containers}        & Containers library          \\
-\ref{iterators}         & Iterators library           \\
-\ref{ranges}            & Ranges library              \\
-\ref{algorithms}        & Algorithms library          \\
-\ref{numerics}          & Numerics library            \\
-\ref{time}              & Time library                \\
-\ref{localization}      & Localization library        \\
-\ref{input.output}      & Input/output library        \\
-\ref{re}                & Regular expressions library \\
-\ref{atomics}           & Atomic operations library   \\
-\ref{thread}            & Thread support library      \\
-\end{floattable}
+\begin{libsumtabbase}{Library categories}{tab:library.categories}{Clause}{Category}
+\ref{language.support}  &   &   Language support library    \\
+\ref{concepts}          &   &   Concepts library            \\
+\ref{diagnostics}       &   &   Diagnostics library         \\
+\ref{utilities}         &   &   General utilities library   \\
+\ref{strings}           &   &   Strings library             \\
+\ref{containers}        &   &   Containers library          \\
+\ref{iterators}         &   &   Iterators library           \\
+\ref{ranges}            &   &   Ranges library              \\
+\ref{algorithms}        &   &   Algorithms library          \\
+\ref{numerics}          &   &   Numerics library            \\
+\ref{time}              &   &   Time library                \\
+\ref{localization}      &   &   Localization library        \\
+\ref{input.output}      &   &   Input/output library        \\
+\ref{re}                &   &   Regular expressions library \\
+\ref{atomics}           &   &   Atomic operations library   \\
+\ref{thread}            &   &   Thread support library      \\
+\end{libsumtabbase}
 
 \pnum
 The language support library\iref{language.support} provides components that are
@@ -481,7 +478,7 @@ Such extensions are generally one of the following:
 \item Template arguments
 \item Derived classes
 \item Containers, iterators, and algorithms that meet an interface convention or
-  model a concept
+  satisfy a concept
 \end{itemize}
 
 \pnum
@@ -497,7 +494,7 @@ defined''. That is, whether the operator is a member is unspecified.
 
 \pnum
 Requirements are stated in terms of well-defined expressions that define valid terms of
-the types that meet the requirements. For every set of well-defined expression
+the types that satisfy the requirements. For every set of well-defined expression
 requirements there is either a named concept or a table that specifies an initial set of the valid expressions and
 their semantics. Any generic algorithm\iref{algorithms} that uses the
 well-defined expression requirements is described in terms of the valid expressions for
@@ -508,11 +505,11 @@ The library specification uses a typographical convention for naming
 requirements. Names in \textit{italic} type that begin with the prefix
 \oldconcept{} refer to sets of well-defined expression requirements typically
 presented in tabular form, possibly with additional prose semantic requirements.
-For example, \oldconcept{Destructible}~(\tref{cpp17.destructible}) is such a named
+For example, \oldconcept{Destructible}~(\tref{destructible}) is such a named
 requirement. Names in \tcode{constant width} type refer to library concepts
 which are presented as a concept definition\iref{temp}, possibly with additional
 prose semantic requirements. For example,
-\libconcept{destructible}\iref{concept.destructible}
+\libconcept{Destructible}\iref{concept.destructible}
 is such a named requirement.
 
 \pnum
@@ -530,13 +527,13 @@ unambiguously the optimum implementation.}
 \pnum
 Required operations of any concept defined in this document need not be
 total functions; that is, some arguments to a required operation may
-result in the required semantics failing to be met.
+result in the required semantics failing to be satisfied.
 \begin{example}
-The required \tcode{<} operator of the \libconcept{totally_ordered}
-concept\iref{concept.totallyordered} does not meet the
+The required \tcode{<} operator of the \libconcept{StrictTotallyOrdered}
+concept\iref{concept.stricttotallyordered} does not meet the
 semantic requirements of that concept when operating on NaNs.
 \end{example}
-This does not affect whether a type models the concept.
+This does not affect whether a type satisfies the concept.
 
 \pnum
 A declaration may explicitly impose requirements through its associated
@@ -609,6 +606,12 @@ and also define the function as deleted.
 \item
 \expects the conditions (sometimes termed preconditions)
 that the function assumes to hold whenever it is called.
+\begin{example}
+An implementation might express such conditions
+via an attribute such as \tcode{[[expects]]}\iref{dcl.attr.contract}.
+However, some such conditions might not lend themselves
+to expression via code.
+\end{example}
 
 \item
 \effects the actions performed by the function.
@@ -674,7 +677,7 @@ the presentation of complexity requirements in some cases.}
 
 \pnum
 Complexity requirements specified in the library clauses are upper bounds,
-and implementations that provide better complexity guarantees meet
+and implementations that provide better complexity guarantees satisfy
 the requirements.
 
 \pnum
@@ -707,32 +710,13 @@ are only defined for the purpose of exposition.
 The declaration of such a function is followed by a comment ending in \expos.
 
 \pnum
-The following are defined for exposition only
+The following function is defined for exposition only
 to aid in the specification of the library:
 \indexlibrary{decay-copy@\tcode{\placeholder{decay-copy}}}%
 \begin{codeblock}
 template<class T> constexpr decay_t<T> @\placeholdernc{decay-copy}@(T&& v)
     noexcept(is_nothrow_convertible_v<T, decay_t<T>>)           // \expos
   { return std::forward<T>(v); }
-
-constexpr auto @\placeholdernc{synth-three-way}@ =
-  []<class T, class U>(const T& t, const U& u)
-    requires requires {
-      { t < u } -> convertible_to<bool>;
-      { u < t } -> convertible_to<bool>;
-    }
-  {
-    if constexpr (three_way_comparable_with<T, U>) {
-      return t <=> u;
-    } else {
-      if (t < u) return weak_ordering::less;
-      if (u < t) return weak_ordering::greater;
-      return weak_ordering::equivalent;
-    }
-  };
-
-template<class T, class U=T>
-using @\placeholdernc{synth-three-way-result}@ = decltype(@\placeholdernc{synth-three-way}@(declval<T&>(), declval<U&>()));
 \end{codeblock}
 
 \rSec3[type.descriptions]{Type descriptions}
@@ -1010,23 +994,23 @@ with a literal class type that interacts with program-defined types while
 enforcing semantic requirements on that interaction.
 
 \pnum
-The type of a customization point object shall model
-\libconcept{semiregular}\iref{concepts.object}.
+The type of a customization point object shall satisfy
+\libconcept{Semiregular}\iref{concepts.object}.
 
 \pnum
 All instances of a specific customization point object type shall
 be equal\iref{concepts.equality}.
 
 \pnum
-The type \tcode{T} of a customization point object shall model
-\tcode{\libconcept{invocable}<const T\&, Args...>}\iref{concept.invocable}
+The type \tcode{T} of a customization point object shall satisfy
+\tcode{\libconcept{Invocable}<const T\&, Args...>}\iref{concept.invocable}
 when the types in \tcode{Args...} meet the requirements specified in that
 customization point object's definition. When the types of \tcode{Args...} do
 not meet the customization point object's requirements, \tcode{T} shall not have
 a function call operator that participates in overload resolution.
 
 \pnum
-Each customization point object type constrains its return type to model a
+Each customization point object type constrains its return type to satisfy a
 particular concept.
 
 \pnum
@@ -1058,6 +1042,75 @@ by default~(\ref{class.copy.ctor}, \ref{class.copy.assign}, \ref{class.dtor}).
 It is unspecified whether
 the implementation provides explicit definitions for such member function
 signatures, or for virtual destructors that can be generated by default.
+
+\rSec3[operators]{Operators}
+
+\pnum
+In this library, whenever a declaration is provided for an \tcode{operator!=},
+\tcode{operator>}, \tcode{operator<=}, or \tcode{operator>=}
+for a type \tcode{T},
+its requirements and semantics are as follows,
+unless explicitly specified otherwise.
+
+\indexlibrary{\idxcode{operator"!=}}%
+\begin{itemdecl}
+bool operator!=(const T& x, const T& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\requires
+Type \tcode{T} is \oldconcept{EqualityComparable} (\tref{equalitycomparable}).
+
+\pnum
+\returns
+\tcode{!(x == y)}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator>}}%
+\begin{itemdecl}
+bool operator>(const T& x, const T& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\requires
+Type \tcode{T} is \oldconcept{LessThanComparable} (\tref{lessthancomparable}).
+
+\pnum
+\returns
+\tcode{y < x}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator<=}}%
+\begin{itemdecl}
+bool operator<=(const T& x, const T& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\requires
+Type \tcode{T} is \oldconcept{LessThanComparable} (\tref{lessthancomparable}).
+
+\pnum
+\returns
+\tcode{!(y < x)}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator>=}}%
+\begin{itemdecl}
+bool operator>=(const T& x, const T& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\requires
+Type \tcode{T} is \oldconcept{LessThanComparable} (\tref{lessthancomparable}).
+
+\pnum
+\returns
+\tcode{!(x < y)}.
+\end{itemdescr}
 
 \rSec3[objects.within.classes]{Private members}
 
@@ -1156,15 +1209,14 @@ file names\iref{cpp.include}.}
 \pnum
 The \Cpp{} standard library provides the
 \defnx{\Cpp{} library headers}{header!C++ library},
-shown in \tref{headers.cpp}.
+shown in \tref{cpp.library.headers}.
 
-\begin{multicolfloattable}{\Cpp{} library headers}{headers.cpp}
+\begin{multicolfloattable}{\Cpp{} library headers}{tab:cpp.library.headers}
 {llll}
 \tcode{<algorithm>} \\
 \tcode{<any>} \\
 \tcode{<array>} \\
 \tcode{<atomic>} \\
-\tcode{<barrier>} \\
 \tcode{<bit>} \\
 \tcode{<bitset>} \\
 \tcode{<charconv>} \\
@@ -1174,12 +1226,11 @@ shown in \tref{headers.cpp}.
 \tcode{<complex>} \\
 \tcode{<concepts>} \\
 \tcode{<condition_variable>} \\
-\tcode{<coroutine>} \\
+\tcode{<contract>} \\
 \tcode{<deque>} \\
 \tcode{<exception>} \\
 \tcode{<execution>} \\
 \tcode{<filesystem>} \\
-\tcode{<format>} \\
 \columnbreak
 \tcode{<forward_list>} \\
 \tcode{<fstream>} \\
@@ -1192,7 +1243,6 @@ shown in \tref{headers.cpp}.
 \tcode{<iostream>} \\
 \tcode{<istream>} \\
 \tcode{<iterator>} \\
-\tcode{<latch>} \\
 \tcode{<limits>} \\
 \tcode{<list>} \\
 \tcode{<locale>} \\
@@ -1200,9 +1250,8 @@ shown in \tref{headers.cpp}.
 \tcode{<memory>} \\
 \tcode{<memory_resource>} \\
 \tcode{<mutex>} \\
-\tcode{<new>} \\
 \columnbreak
-\tcode{<numbers>} \\
+\tcode{<new>} \\
 \tcode{<numeric>} \\
 \tcode{<optional>} \\
 \tcode{<ostream>} \\
@@ -1212,18 +1261,15 @@ shown in \tref{headers.cpp}.
 \tcode{<ratio>} \\
 \tcode{<regex>} \\
 \tcode{<scoped_allocator>} \\
-\tcode{<semaphore>} \\
 \tcode{<set>} \\
 \tcode{<shared_mutex>} \\
-\tcode{<source_location>} \\
 \tcode{<span>} \\
 \tcode{<sstream>} \\
 \tcode{<stack>} \\
 \tcode{<stdexcept>} \\
-\tcode{<stop_token>} \\
 \tcode{<streambuf>} \\
-\columnbreak
 \tcode{<string>} \\
+\columnbreak
 \tcode{<string_view>} \\
 \tcode{<strstream>} \\
 \tcode{<syncstream>} \\
@@ -1245,14 +1291,14 @@ shown in \tref{headers.cpp}.
 \pnum
 The facilities of the C standard library are provided in the
 \indextext{library!C standard}%
-additional headers shown in \tref{headers.cpp.c}.%
+additional headers shown in \tref{cpp.c.headers}.%
 \footnote{It is intentional that there is no \Cpp{} header
 for any of these C headers:
 \tcode{<stdatomic.h>}\indextext{\idxhdr{stdatomic.h}!absence thereof},
 \tcode{<stdnoreturn.h>}\indextext{\idxhdr{stdnoreturn.h}!absence thereof},
 \tcode{<threads.h>}\indextext{\idxhdr{threads.h}!absence thereof}.}
 
-\begin{multicolfloattable}{\Cpp{} headers for C library facilities}{headers.cpp.c}
+\begin{multicolfloattable}{\Cpp{} headers for C library facilities}{tab:cpp.c.headers}
 {lllllll}
 \tcode{<cassert>} \\
 \tcode{<cctype>} \\
@@ -1282,23 +1328,6 @@ for any of these C headers:
 \tcode{<cwchar>} \\
 \tcode{<cwctype>} \\
 \end{multicolfloattable}
-
-\pnum
-The headers listed in \tref{headers.cpp}, or,
-for a freestanding implementation,
-the subset of such headers that are provided by the implementation,
-are collectively known as
-the \defnadj{importable}{\Cpp{} library headers}.
-\begin{note}
-Importable \Cpp{} library headers can be
-imported as module units\iref{module.import}.
-\end{note}
-\begin{example}
-\begin{codeblock}
-import <vector>;               // imports the \tcode{<vector>} header unit
-std::vector<int> vi;           // OK
-\end{codeblock}
-\end{example}
 
 \pnum
 Except as noted in \ref{library} through \ref{\lastlibchapter}
@@ -1363,7 +1392,7 @@ is declared in the global namespace.
 that may be declared in some header.
 These names are also subject to the restrictions of~\ref{macro.names}.
 
-\begin{multicolfloattable}{C standard Annex K names}{c.annex.k.names}
+\begin{multicolfloattable}{C standard Annex K names}{tab:c.annex.k.names}
 {llll}
 \tcode{abort_handler_s} \\
 \tcode{asctime_s} \\
@@ -1459,17 +1488,15 @@ describes the set of available headers.
 \pnum
 A freestanding implementation\indextext{implementation!freestanding} has an
 \impldef{headers for freestanding implementation} set of headers. This set shall
-include at least the headers shown in \tref{headers.cpp.fs}.
+include at least the headers shown in \tref{cpp.headers.freestanding}.
 
-\begin{libsumtab}{\Cpp{} headers for freestanding implementations}{headers.cpp.fs}
+\begin{libsumtab}{\Cpp{} headers for freestanding implementations}{tab:cpp.headers.freestanding}
 \ref{support.types}      & Types                     & \tcode{<cstddef>}          \\ \rowsep
-\ref{support.limits}     & Implementation properties &
-  \tcode{<cfloat>}, \tcode{<climits>}, \tcode{<limits>}, \tcode{<version>} \\ \rowsep
+\ref{support.limits}     & Implementation properties & \tcode{<cfloat>} \tcode{<limits>} \tcode{<climits>} \tcode{<version>} \\ \rowsep
 \ref{cstdint}            & Integer types             & \tcode{<cstdint>}          \\ \rowsep
 \ref{support.start.term} & Start and termination     & \tcode{<cstdlib>}          \\ \rowsep
 \ref{support.dynamic}    & Dynamic memory management & \tcode{<new>}              \\ \rowsep
 \ref{support.rtti}       & Type identification       & \tcode{<typeinfo>}         \\ \rowsep
-\ref{support.srcloc}     & Source location           & \tcode{<source_location>}  \\ \rowsep
 \ref{support.exception}  & Exception handling        & \tcode{<exception>}        \\ \rowsep
 \ref{support.initlist}   & Initializer lists         & \tcode{<initializer_list>} \\ \rowsep
 \ref{support.coroutine}  & Coroutines support        & \tcode{<coroutine>}        \\ \rowsep
@@ -1496,18 +1523,7 @@ shall declare at least the functions
 and
 \indexlibrary{\idxcode{quick_exit}}%
 \tcode{quick_exit}\iref{support.start.term}.
-The supplied version of the header \tcode{<atomic>}
-shall meet the same requirements as for a hosted implementation
-except that support for
-always lock-free integral atomic types\iref{atomics.lockfree}
-is \impldef{support for always lock-free integral atomic types in
-freestanding environments}, and
-whether or not the type aliases \tcode{atomic_signed_lock_free} and
-\tcode{atomic_unsigned_lock_free} are defined\iref{atomics.alias}
-is \impldef{type aliases \idxcode{atomic_signed_lock_free} and
-\idxcode{atomic_unsigned_lock_free} in freestanding environments}.
-The other headers listed in this table
-shall meet the same requirements as for a hosted implementation.
+The other headers listed in this table shall meet the same requirements as for a hosted implementation.
 
 \rSec2[using]{Using the library}
 
@@ -1525,12 +1541,9 @@ phase 4, while~\ref{using.linkage} describes effects during phase
 The entities in the \Cpp{} standard library are defined in headers,
 whose contents are made available to a translation unit when it contains the appropriate
 \indextext{unit!translation}%
-\indextext{\idxcode{\#include}}%
 \tcode{\#include}
-preprocessing directive\iref{cpp.include}
-or the appropriate
-\indextext{\idxcode{import}}%
-\tcode{import} declaration\iref{module.import}.
+preprocessing directive\iref{cpp.include}.%
+\indextext{\idxcode{\#include}}%
 \indextext{source file}
 
 \pnum
@@ -1552,10 +1565,7 @@ current definition of
 \pnum
 A translation unit shall include a header only outside of any
 \indextext{unit!translation}%
-declaration or definition and,
-in the case of a module unit,
-only in its \grammarterm{global-module-fragment}, and
-shall include the header or import the corresponding header unit lexically
+declaration or definition, and shall include the header lexically
 before the first reference in that translation unit to any of the entities
 declared in that header. No diagnostic is required.
 
@@ -1616,7 +1626,7 @@ allocators.
 \pnum
 The template definitions in the \Cpp{} standard library
 refer to various named requirements whose details are set out in
-Tables~\ref{tab:cpp17.equalitycomparable}--\ref{tab:cpp17.destructible}.
+Tables~\ref{tab:equalitycomparable}--\ref{tab:destructible}.
 In these tables, \tcode{T} is an object or reference type to be
 supplied by a \Cpp{} program instantiating a template;
 \tcode{a},
@@ -1635,7 +1645,7 @@ member function signatures specify \tcode{T()} as a default argument.
 signatures is called using the default argument\iref{dcl.fct.default}.
 
 \indextext{requirements!\idxoldconcept{EqualityComparable}}%
-\begin{concepttable}{\oldconcept{EqualityComparable} requirements}{cpp17.equalitycomparable}
+\begin{concepttable}{\oldconcept{EqualityComparable} requirements}{equalitycomparable}
 {x{1in}x{1in}p{3in}}
 \topline
 \hdstyle{Expression}  &   \hdstyle{Return type} &   \rhdr{Requirement} \\ \capsep
@@ -1654,7 +1664,7 @@ If \tcode{a == b} and \tcode{b == c}, then \tcode{a == c}.
 \end{concepttable}
 
 \indextext{requirements!\idxoldconcept{LessThanComparable}}%
-\begin{concepttable}{\oldconcept{LessThanComparable} requirements}{cpp17.lessthancomparable}
+\begin{concepttable}{\oldconcept{LessThanComparable} requirements}{lessthancomparable}
 {x{1in}x{1in}p{3in}}
 \topline
 \hdstyle{Expression}  &   \hdstyle{Return type} &   \hdstyle{Requirement} \\ \capsep
@@ -1665,7 +1675,7 @@ convertible to \tcode{bool} &
 
 \enlargethispage{-3\baselineskip}
 \indextext{requirements!\idxoldconcept{DefaultConstructible}}%
-\begin{concepttable}{\oldconcept{DefaultConstructible} requirements}{cpp17.defaultconstructible}
+\begin{concepttable}{\oldconcept{DefaultConstructible} requirements}{defaultconstructible}
 {x{2.15in}p{3in}}
 \topline
 \hdstyle{Expression}        &     \hdstyle{Post-condition}  \\ \capsep
@@ -1676,7 +1686,7 @@ convertible to \tcode{bool} &
 \end{concepttable}
 
 \indextext{requirements!\idxoldconcept{MoveConstructible}}%
-\begin{concepttable}{\oldconcept{MoveConstructible} requirements}{cpp17.moveconstructible}
+\begin{concepttable}{\oldconcept{MoveConstructible} requirements}{moveconstructible}
 {p{1in}p{4.15in}}
 \topline
 \hdstyle{Expression}          &   \hdstyle{Post-condition}  \\ \capsep
@@ -1691,7 +1701,7 @@ convertible to \tcode{bool} &
 \end{concepttable}
 
 \indextext{requirements!\idxoldconcept{CopyConstructible}}%
-\begin{concepttable}{\oldconcept{CopyConstructible} requirements (in addition to \oldconcept{MoveConstructible})}{cpp17.copyconstructible}
+\begin{concepttable}{\oldconcept{CopyConstructible} requirements (in addition to \oldconcept{MoveConstructible})}{copyconstructible}
 {p{1in}p{4.15in}}
 \topline
 \hdstyle{Expression}          &   \hdstyle{Post-condition}  \\ \capsep
@@ -1701,7 +1711,7 @@ convertible to \tcode{bool} &
 \end{concepttable}
 
 \indextext{requirements!\idxoldconcept{MoveAssignable}}%
-\begin{concepttable}{\oldconcept{MoveAssignable} requirements}{cpp17.moveassignable}
+\begin{concepttable}{\oldconcept{MoveAssignable} requirements}{moveassignable}
 {p{1in}p{1in}p{1in}p{1.9in}}
 \topline
 \hdstyle{Expression} & \hdstyle{Return type} & \hdstyle{Return value} & \hdstyle{Post-condition} \\ \capsep
@@ -1717,7 +1727,7 @@ convertible to \tcode{bool} &
 \end{concepttable}
 
 \indextext{requirements!\idxoldconcept{CopyAssignable}}%
-\begin{concepttable}{\oldconcept{CopyAssignable} requirements (in addition to \oldconcept{MoveAssignable})}{cpp17.copyassignable}
+\begin{concepttable}{\oldconcept{CopyAssignable} requirements (in addition to \oldconcept{MoveAssignable})}{copyassignable}
 {p{1in}p{1in}p{1in}p{1.9in}}
 \topline
 \hdstyle{Expression} & \hdstyle{Return type} & \hdstyle{Return value} & \hdstyle{Post-condition} \\ \capsep
@@ -1725,16 +1735,11 @@ convertible to \tcode{bool} &
 \end{concepttable}
 
 \indextext{requirements!\idxoldconcept{Destructible}}
-\begin{concepttable}{\oldconcept{Destructible} requirements}{cpp17.destructible}
+\begin{concepttable}{\oldconcept{Destructible} requirements}{destructible}
 {p{1in}p{4.15in}}
 \topline
 \hdstyle{Expression}      &   \hdstyle{Post-condition}  \\ \capsep
-\tcode{u.\~T()} &   All resources owned by \tcode{u} are reclaimed, no exception is propagated. \\ \rowsep
-\multicolumn{2}{|l|}{
-  \begin{note}
-  Array types and non-object types are not \oldconcept{Destructible}.
-  \end{note}
-} \\
+\tcode{u.\~T()} &   All resources owned by \tcode{u} are reclaimed, no exception is propagated. \\
 \end{concepttable}
 
 \rSec3[swappable.requirements]{Swappable requirements}
@@ -1786,8 +1791,8 @@ An rvalue or lvalue \tcode{t} is \defn{swappable} if and only if \tcode{t} is
 swappable with any rvalue or lvalue, respectively, of type \tcode{T}.
 
 \pnum
-A type \tcode{X} meeting any of the iterator requirements\iref{iterator.requirements}
-meets the \oldconcept{ValueSwappable} requirements if,
+A type \tcode{X} satisfying any of the iterator requirements\iref{iterator.requirements}
+satisfies the \oldconcept{ValueSwappable} requirements if,
 for any dereferenceable object
 \tcode{x} of type \tcode{X},
 \tcode{*x} is swappable.
@@ -1840,19 +1845,19 @@ int main() {
 
 \pnum
 A \oldconcept{NullablePointer} type is a pointer-like type that supports null values.
-A type \tcode{P} meets the \oldconcept{\-Nullable\-Pointer} requirements if:
+A type \tcode{P} satisfies the \oldconcept{\-Nullable\-Pointer} requirements if:
 
 \begin{itemize}
-\item \tcode{P} meets the \oldconcept{EqualityComparable},
+\item \tcode{P} satisfies the \oldconcept{EqualityComparable},
 \oldconcept{DefaultConstructible}, \oldconcept{CopyConstructible}, \oldconcept{\-Copy\-Assign\-able},
 and \oldconcept{Destructible} requirements,
 
 \item lvalues of type \tcode{P} are swappable\iref{swappable.requirements},
 
-\item the expressions shown in \tref{cpp17.nullablepointer} are
+\item the expressions shown in \tref{nullablepointer} are
 valid and have the indicated semantics, and
 
-\item \tcode{P} meets all the other requirements of this subclause.
+\item \tcode{P} satisfies all the other requirements of this subclause.
 \end{itemize}
 
 \pnum
@@ -1871,13 +1876,13 @@ No operation which is part of the \oldconcept{NullablePointer} requirements shal
 via an exception.
 
 \pnum
-In \tref{cpp17.nullablepointer}, \tcode{u} denotes an identifier, \tcode{t}
+In \tref{nullablepointer}, \tcode{u} denotes an identifier, \tcode{t}
 denotes a non-\tcode{const} lvalue of type \tcode{P}, \tcode{a} and \tcode{b}
 denote values of type (possibly \tcode{const}) \tcode{P}, and \tcode{np} denotes
 a value of type (possibly \tcode{const}) \tcode{std::nullptr_t}.
 
 \indextext{requirements!\idxoldconcept{NullablePointer}}%
-\begin{concepttable}{\oldconcept{NullablePointer} requirements}{cpp17.nullablepointer}
+\begin{concepttable}{\oldconcept{NullablePointer} requirements}{nullablepointer}
 {lll}
 \topline
 Expression  &   Return type   &   Operational semantics \\ \capsep
@@ -1922,19 +1927,19 @@ A type \tcode{H} meets the \oldconcept{Hash} requirements if:
 
 \begin{itemize}
 \item it is a function object type\iref{function.objects},
-\item it meets the \oldconcept{CopyConstructible} (\tref{cpp17.copyconstructible}) and
-  \oldconcept{Destructible} (\tref{cpp17.destructible}) requirements, and
-\item the expressions shown in \tref{cpp17.hash}
+\item it satisfies the \oldconcept{CopyConstructible} (\tref{copyconstructible}) and
+  \oldconcept{Destructible} (\tref{destructible}) requirements, and
+\item the expressions shown in \tref{hash}
 are valid and have the indicated semantics.
 \end{itemize}
 
 \pnum
 Given \tcode{Key} is an argument type for function objects of type \tcode{H}, in
-\tref{cpp17.hash} \tcode{h} is a value of type (possibly \tcode{const}) \tcode{H},
+\tref{hash} \tcode{h} is a value of type (possibly \tcode{const}) \tcode{H},
 \tcode{u} is an lvalue of type \tcode{Key}, and \tcode{k} is a value of a type convertible to
 (possibly \tcode{const}) \tcode{Key}.
 
-\begin{concepttable}{\oldconcept{Hash} requirements}{cpp17.hash}
+\begin{concepttable}{\oldconcept{Hash} requirements}{hash}
 {llp{.55\hsize}}
 \topline
 Expression        &     Return type     &       Requirement \\ \capsep
@@ -1970,24 +1975,24 @@ allocators.
 \pnum
 The class template \tcode{allocator_traits}\iref{allocator.traits} supplies
 a uniform interface to all allocator types.
-\tref{allocator.req.var} describes the types manipulated
-through allocators. \tref{cpp17.allocator}
+\tref{desc.var.def} describes the types manipulated
+through allocators. \tref{utilities.allocator.requirements}
 describes the requirements on allocator types
 and thus on types used to instantiate \tcode{allocator_traits}. A requirement
 is optional if the last column of
-\tref{cpp17.allocator} specifies a default for a
+\tref{utilities.allocator.requirements} specifies a default for a
 given expression. Within the standard library \tcode{allocator_traits}
 template, an optional requirement that is not supplied by an allocator is
 replaced by the specified default expression. A user specialization of
 \tcode{allocator_traits} may provide different defaults and may provide
 defaults for different requirements than the primary template. Within
-Tables~\ref{tab:allocator.req.var} and~\ref{tab:cpp17.allocator},
+Tables~\ref{tab:desc.var.def} and~\ref{tab:utilities.allocator.requirements},
 the use of \tcode{move} and \tcode{forward} always refers to \tcode{std::move}
 and \tcode{std::forward}, respectively.
 
 \begin{libreqtab2}
 {Descriptive variable definitions}
-{allocator.req.var}
+{tab:desc.var.def}
 \\ \topline
 \lhdr{Variable} &   \rhdr{Definition}   \\  \capsep
 \endfirsthead
@@ -2024,7 +2029,7 @@ type (possibly \tcode{const}) \tcode{std::nullptr_t}. \\ \rowsep
 
 \begin{libreqtab4d}
 {\oldconcept{Allocator} requirements}
-{cpp17.allocator}
+{tab:utilities.allocator.requirements}
 \\ \topline
 \lhdr{Expression}   &   \chdr{Return type}  &   \chdr{Assertion/note} & \rhdr{Default}       \\
                     &                       &   \chdr{pre-/post-condition}  &   \\ \capsep
@@ -2235,12 +2240,12 @@ above form, no default is provided.
 \pnum
 Note B:
 If \tcode{X::propagate_on_container_copy_assignment::value} is \tcode{true},
-\tcode{X} shall meet the
-\oldconcept{\-Copy\-Assign\-able} requirements (\tref{cpp17.copyassignable})
+\tcode{X} shall satisfy the
+\oldconcept{\-Copy\-Assign\-able} requirements (\tref{copyassignable})
 and the copy operation shall not throw exceptions.
 If \tcode{X::propagate_on_container_move_assignment::value} is \tcode{true},
-\tcode{X} shall meet the
-\oldconcept{\-Move\-Assign\-able} requirements (\tref{cpp17.moveassignable})
+\tcode{X} shall satisfy the
+\oldconcept{\-Move\-Assign\-able} requirements (\tref{moveassignable})
 and the move operation shall not throw exceptions.
 If \tcode{X::propagate_on_container_swap::value} is \tcode{true},
 lvalues of type \tcode{X} shall be swappable\iref{swappable.requirements}
@@ -2248,10 +2253,10 @@ and the \tcode{swap} operation shall not throw exceptions.
 
 \pnum
 An allocator type \tcode{X} shall meet the
-\oldconcept{CopyConstructible} requirements (\tref{cpp17.copyconstructible}).
+\oldconcept{CopyConstructible} requirements (\tref{copyconstructible}).
 The \tcode{X::pointer}, \tcode{X::const_pointer}, \tcode{X::void_pointer}, and
 \tcode{X::const_void_pointer} types shall meet the
-\oldconcept{Nullable\-Pointer} requirements (\tref{cpp17.nullablepointer}).
+\oldconcept{Nullable\-Pointer} requirements (\tref{nullablepointer}).
 No constructor,
 comparison function, copy operation, move operation, or swap operation on
 these pointer types shall exit via an exception. \tcode{X::pointer} and \tcode{X::const_pointer} shall also
@@ -2315,8 +2320,8 @@ for that type may fail by throwing an object of type
 
 \pnum
 \begin{example} The following is an allocator class template supporting the minimal
-interface that meets the requirements of
-\tref{cpp17.allocator}:
+interface that satisfies the requirements of
+\tref{utilities.allocator.requirements}:
 
 \begin{codeblock}
 template<class Tp>
@@ -2341,7 +2346,7 @@ bool operator!=(const SimpleAllocator<T>&, const SimpleAllocator<U>&);
 
 \pnum
 If \tcode{X} is an allocator class for type \tcode{T},
-\tcode{X} additionally meets the allocator completeness requirements if,
+\tcode{X} additionally satisfies the allocator completeness requirements if,
 whether or not \tcode{T} is a complete type:
 
 \begin{itemize}
@@ -2594,7 +2599,7 @@ and may not be used as a name for object-like macros in portable code:
 \item \indexlibrary{\idxcode{open_mode}!zombie} \tcode{open_mode},
 \item \indexlibrary{\idxcode{second_argument_type}!zombie} \tcode{second_argument_type},
 and
-\item \indexlibrary{\idxcode{seek_dir}!zombie} \tcode{seek_dir}.
+\item \indexlibrary{\idxcode{seek_dir}!zombie} \tcode{seek_dir},
 \end{itemize}
 
 \pnum
@@ -2620,8 +2625,9 @@ library header.
 A translation unit shall not \tcode{\#define} or \tcode{\#undef}
 names lexically identical
 to keywords,
-to the identifiers listed in \tref{lex.name.special}, or
-to the \grammarterm{attribute-token}{s} described in~\ref{dcl.attr},
+to the identifiers listed in \tref{identifiers.special},
+to the \grammarterm{attribute-token}{s} described in~\ref{dcl.attr}, or
+to the identifiers \tcode{expects} or \tcode{ensures},
 except that the names \tcode{likely} and \tcode{unlikely} may be
 defined as function-like macros~\iref{cpp.replace}.
 
@@ -2872,17 +2878,17 @@ In particular, the effects are undefined in the following cases:
 
 \begin{itemize}
 \item
-For replacement functions\iref{new.delete}, if the installed replacement function does not
+for replacement functions\iref{new.delete}, if the installed replacement function does not
 implement the semantics of the applicable
 \required
 paragraph.
 \item
-For handler functions~(\ref{new.handler}, \ref{terminate.handler}),
+for handler functions~(\ref{new.handler}, \ref{terminate.handler}),
 if the installed handler function does not implement the semantics of the applicable
 \required
-paragraph.
+paragraph
 \item
-For types used as template arguments when instantiating a template component,
+for types used as template arguments when instantiating a template component,
 if the operations on the type do not implement the semantics of the applicable
 \emph{Requirements}
 subclause~(\ref{allocator.requirements}, \ref{container.requirements}, \ref{iterator.requirements},
@@ -2890,13 +2896,13 @@ subclause~(\ref{allocator.requirements}, \ref{container.requirements}, \ref{iter
 Operations on such types can report a failure by throwing an exception
 unless otherwise specified.
 \item
-If any replacement function or handler function or destructor operation exits via an exception,
+if any replacement function or handler function or destructor operation exits via an exception,
 unless specifically allowed
 in the applicable
 \required
 paragraph.
 \item
-If an incomplete type\iref{basic.types} is used as a template
+if an incomplete type\iref{basic.types} is used as a template
 argument when instantiating a template component or evaluating a concept, unless specifically
 allowed for that component.
 \end{itemize}
@@ -2983,7 +2989,7 @@ results in undefined behavior.
 \rSec3[res.on.requirements]{Semantic requirements}
 \pnum
 If the semantic requirements of a declaration's
-constraints\iref{structure.requirements} are not modeled at the point of use,
+constraints\iref{structure.requirements} are not satisfied at the point of use,
 the program is ill-formed, no diagnostic required.
 
 \rSec2[conforming]{Conforming implementations}

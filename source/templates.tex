@@ -415,7 +415,6 @@ it is an lvalue and has type \tcode{const T}\iref{expr.prim.id.unqual}.
 \end{note}
 \begin{example}
 \begin{codeblock}
-using X = int;
 struct A { friend bool operator==(const A&, const A&) = default; };
 template<const X& x, int i, A a> void f() {
   i++;                          // error: change of template-parameter value
@@ -1374,8 +1373,6 @@ C<A> c;             // \tcode{V<int>} within \tcode{C<A>} uses the primary templ
 \pnum A \grammarterm{template-argument} matches a template
 \grammarterm{template-parameter} \tcode{P} when
 \tcode{P} is at least as specialized as the \grammarterm{template-argument} \tcode{A}.
-In this comparison, if \tcode{P} is unconstrained,
-the constraints on \tcode{A} are not considered.
 If \tcode{P} contains a template parameter pack, then \tcode{A} also matches \tcode{P}
 if each of \tcode{A}'s template parameters
 matches the corresponding template parameter in the
@@ -1500,7 +1497,7 @@ There are three different kinds of constraints:
 \begin{itemize}
 \item conjunctions\iref{temp.constr.op},
 \item disjunctions\iref{temp.constr.op}, and
-\item atomic constraints\iref{temp.constr.atomic}.
+\item atomic constraints\iref{temp.constr.atomic}
 \end{itemize}
 
 \pnum
@@ -1860,7 +1857,7 @@ if there exists an atomic constraint $P_{ia}$ in $P_i$ for which there exists
 an atomic constraint $Q_{jb}$ in $Q_j$ such that $P_{ia}$ subsumes $Q_{jb}$, and
 
 \item an atomic constraint $A$ subsumes another atomic constraint
-$B$ if and only if $A$ and $B$ are identical using the
+$B$ if and only if the $A$ and $B$ are identical using the
 rules described in \ref{temp.constr.atomic}.
 \end{itemize}
 %
@@ -2757,11 +2754,11 @@ the returned expression expands to
 which evaluates to \tcode{false}.
 \end{example}
 If $N$ is zero for a unary fold-expression,
-the value of the expression is shown in \tref{temp.fold.empty};
-if the operator is not listed in \tref{temp.fold.empty},
+the value of the expression is shown in \tref{fold.empty};
+if the operator is not listed in \tref{fold.empty},
 the instantiation is ill-formed.
 
-\begin{floattable}{Value of folding empty sequences}{temp.fold.empty}
+\begin{floattable}{Value of folding empty sequences}{tab:fold.empty}
 {ll}
 \topline
 \lhdr{Operator} & \rhdr{Value when pack is empty} \\
@@ -3589,11 +3586,11 @@ under the following conditions:
 equivalent types,
 \item if they declare template template parameters, their template
 parameters are equivalent, and
-\item if either is declared with a \grammarterm{type-constraint},
-they both are, and the \grammarterm{type-constraint}{s} are
+\item if either is declared with a \grammarterm{qualified-concept-name},
+they both are, and the \grammarterm{qualified-concept-name}{s} are
 equivalent.
 \end{itemize}
-When determining whether types or \grammarterm{type-constraint}{s}
+When determining whether types or \grammarterm{qualified-concept-name}{s}
 are equivalent, the rules above are used to compare expressions
 involving template parameters.
 Two \grammarterm{template-head}{s} are
@@ -3832,7 +3829,7 @@ void h(int i) {
 \pnum
 A \grammarterm{template-declaration} in which the \grammarterm{declaration} is an
 \grammarterm{alias-declaration}\iref{dcl.dcl} declares the
-\grammarterm{identifier} to be an \defnadj{alias}{template}.
+\grammarterm{identifier} to be an \defn{alias template}.
 An alias template is a name for a family of
 types. The name of the alias template is a \grammarterm{template-name}.
 
@@ -3925,7 +3922,7 @@ within its scope.
 \begin{codeblock}
 template<typename T>
 concept C = requires(T x) {
-  { x == x } -> convertible_to<bool>;
+  { x == x } -> bool;
 };
 
 template<typename T>
@@ -5088,6 +5085,11 @@ the
 template, a member of a class template, or a generic lambda,
 
 \item
+the \grammarterm{identifier} introduced in
+a postcondition\iref{dcl.attr.contract} to represent the result of
+a templated function whose declared return type contains a placeholder type,
+
+\item
 a
 \grammarterm{template-id}
 that is dependent,
@@ -5120,10 +5122,10 @@ is dependent, even if any subexpression is type-dependent:
 simple-type-specifier \terminal{(} \opt{expression-list} \terminal{)}\br
 \opt{\terminal{::}} \keyword{new} \opt{new-placement} new-type-id \opt{new-initializer}\br
 \opt{\terminal{::}} \keyword{new} \opt{new-placement} \terminal{(} type-id \terminal{)} \opt{new-initializer}\br
-\keyword{dynamic_cast} \terminal{<} type-id \terminal{>} \terminal{(} expression \terminal{)}\br
-\keyword{static_cast} \terminal{<} type-id \terminal{>} \terminal{(} expression \terminal{)}\br
-\keyword{const_cast} \terminal{<} type-id \terminal{>} \terminal{(} expression \terminal{)}\br
-\keyword{reinterpret_cast} \terminal{<} type-id \terminal{>} \terminal{(} expression \terminal{)}\br
+\keyword{dynamic_cast} \terminal{<} type-id \terminal{> (} expression \terminal{)}\br
+\keyword{static_cast} \terminal{<} type-id \terminal{> (} expression \terminal{)}\br
+\keyword{const_cast} \terminal{<} type-id \terminal{> (} expression \terminal{)}\br
+\keyword{reinterpret_cast} \terminal{<} type-id \terminal{> (} expression \terminal{)}\br
 \terminal{(} type-id \terminal{)} cast-expression
 \end{ncsimplebnf}
 
@@ -5140,7 +5142,7 @@ literal\br
 \keyword{typeid} \terminal{(} expression \terminal{)}\br
 \keyword{typeid} \terminal{(} type-id \terminal{)}\br
 \opt{\terminal{::}} \keyword{delete} cast-expression\br
-\opt{\terminal{::}} \keyword{delete} \terminal{[} \terminal{]} cast-expression\br
+\opt{\terminal{::}} \keyword{delete} \terminal{[ ]} cast-expression\br
 \keyword{throw} \opt{assignment-expression}\br
 \keyword{noexcept} \terminal{(} expression \terminal{)}
 \end{ncsimplebnf}
@@ -5247,9 +5249,9 @@ is value-dependent:
 
 \begin{ncsimplebnf}
 simple-type-specifier \terminal{(} \opt{expression-list} \terminal{)}\br
-\keyword{static_cast} \terminal{<} type-id \terminal{>} \terminal{(} expression \terminal{)}\br
-\keyword{const_cast} \terminal{<} type-id \terminal{>} \terminal{(} expression \terminal{)}\br
-\keyword{reinterpret_cast} \terminal{<} type-id \terminal{>} \terminal{(} expression \terminal{)}\br
+\keyword{static_cast} \terminal{<} type-id \terminal{> (} expression \terminal{)}\br
+\keyword{const_cast} \terminal{<} type-id \terminal{> (} expression \terminal{)}\br
+\keyword{reinterpret_cast} \terminal{<} type-id \terminal{> (} expression \terminal{)}\br
 \terminal{(} type-id \terminal{)} cast-expression
 \end{ncsimplebnf}
 
@@ -6211,6 +6213,12 @@ instantiated from its template.
 A member function, member class or static data member of a class template can
 be explicitly instantiated from the member definition associated with its class
 template.
+An explicit instantiation of a
+function template,
+member function of a class template, or
+variable template
+shall not
+use the \tcode{inline}, \tcode{constexpr}, or \tcode{consteval} specifiers.
 
 \pnum
 The syntax for explicit instantiation is:
@@ -6223,19 +6231,6 @@ The syntax for explicit instantiation is:
 There are two forms of explicit instantiation: an explicit instantiation
 definition and an explicit instantiation declaration. An explicit instantiation
 declaration begins with the \tcode{extern} keyword.
-
-\pnum
-An explicit instantiation shall not use
-a \grammarterm{storage-class-specifier}\iref{dcl.stc}
-other than \keyword{thread_local}.
-An explicit instantiation of a
-function template,
-member function of a class template, or
-variable template
-shall not
-use the \tcode{inline}, \tcode{constexpr}, or \tcode{consteval} specifiers.
-No \grammarterm{attribute-specifier-seq}\iref{dcl.attr.grammar}
-shall appertain to an explicit instantiation.
 
 \pnum
 If the explicit instantiation is for a class or member class, the
@@ -6425,10 +6420,6 @@ and is an explicit instantiation definition of only those
 members that have been defined at the point of instantiation.
 
 \pnum
-An explicit instantiation of a prospective destructor\iref{class.dtor}
-shall name the selected destructor of the class.
-
-\pnum
 Except for inline functions and variables, declarations with types deduced from their
 initializer or return value\iref{dcl.spec.auto}, \tcode{const} variables of
 literal types,
@@ -6505,7 +6496,7 @@ that is:
 
 \begin{bnf}
 \nontermdef{explicit-specialization}\br
-  \keyword{template} \terminal{<} \terminal{>} declaration
+  \keyword{template} \terminal{< >} declaration
 \end{bnf}
 
 \begin{example}
@@ -6535,11 +6526,6 @@ other
 \tcode{Array}
 types will be sorted by functions generated from the template.
 \end{example}
-
-\pnum
-An explicit specialization shall not use
-a \grammarterm{storage-class-specifier}\iref{dcl.stc}
-other than \keyword{thread_local}.
 
 \pnum
 An explicit specialization
@@ -6795,6 +6781,14 @@ template<> inline void f<>(int) { @\commentellip@ }   // OK: inline
 template<> int g<>(int) { @\commentellip@ }           // OK: not inline
 \end{codeblock}
 \end{example}
+
+\pnum
+\begin{note}
+For an explicit specialization of a function template,
+the contract conditions\iref{dcl.attr.contract}
+of the explicit specialization
+are independent of those of the primary template.
+\end{note}
 
 \pnum
 An explicit specialization of a static data member of a template
@@ -7939,7 +7933,7 @@ However, there are four cases that allow a difference:
 \item
 If the original \tcode{A} is a reference type,
 \tcode{A} can be more cv-qualified than the deduced \tcode{A}
-(i.e., the type referred to by the reference).
+(i.e., the type referred to by the reference)
 \item
 If the original \tcode{A} is a function pointer type,
 \tcode{A} can be ``pointer to function''
@@ -8618,8 +8612,6 @@ using R = C<A<2>>::Q;           // OK; \tcode{T} was deduced as \tcode{long} fro
                                 // template argument value in the type \tcode{A<2>}
 \end{codeblock}
 \end{example}
-
-\pnum
 The type of \tcode{N} in the type \tcode{T[N]} is \tcode{std::size_t}.
 \begin{example}
 \begin{codeblock}
@@ -8996,7 +8988,7 @@ any deduction guides declared for the class template are considered.
 
 \begin{bnf}
 \nontermdef{deduction-guide}\br
-    \opt{\keyword{explicit}} template-name \terminal{(} parameter-declaration-clause \terminal{)} \terminal{->} simple-template-id \terminal{;}
+    \opt{\keyword{explicit}} template-name \terminal{(} parameter-declaration-clause \terminal{) ->} simple-template-id \terminal{;}
 \end{bnf}
 
 \pnum

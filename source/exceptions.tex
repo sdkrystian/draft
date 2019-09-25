@@ -38,7 +38,7 @@ or in functions called from the handler's try block.
 %
 \begin{bnf}
 \nontermdef{handler}\br
-    \terminal{catch} \terminal{(} exception-declaration \terminal{)} compound-statement
+    \terminal{catch (} exception-declaration \terminal{)} compound-statement
 \end{bnf}
 
 \begin{bnf}
@@ -1035,6 +1035,19 @@ when execution of a function registered with
 exits via an exception\iref{support.start.term}, or
 
 \item%
+when evaluation of the predicate of a contract\iref{dcl.attr.contract}
+exits via an exception, or
+
+\item%
+when the violation handler invoked
+for a failed contract condition check\iref{dcl.attr.contract}
+on a \tcode{noexcept} function exits via an exception, or
+
+\item%
+when the violation handler has completed after a failed contract check
+and the continuation mode is \term{off}, or
+
+\item%
 when a
 \grammarterm{throw-expression}\iref{expr.throw}
 with no operand attempts to rethrow an exception and no exception is being
@@ -1055,7 +1068,7 @@ when execution of an element access function\iref{algorithms.parallel.defns}
 of the parallel algorithm exits via an exception\iref{algorithms.parallel.exceptions}, or
 
 \item%
-when the destructor or the move assignment operator is invoked on an object
+when the destructor or the copy assignment operator is invoked on an object
 of type \tcode{std::thread} that refers to a joinable thread
 (\ref{thread.thread.destr}, \ref{thread.thread.assign}), or
 
@@ -1102,10 +1115,7 @@ will eventually cause a call to the function
 An exception is considered uncaught
 after completing the initialization of the exception object\iref{except.throw}
 until completing the activation of a handler for the exception\iref{except.handle}.
-\begin{note}
-As a consequence, an exception is considered uncaught
-during any stack unwinding resulting from it being thrown.
-\end{note}
+This includes stack unwinding.
 If an exception is rethrown~(\ref{expr.throw}, \ref{propagation}),
 it is considered uncaught from the point of rethrow
 until the rethrown exception is caught.

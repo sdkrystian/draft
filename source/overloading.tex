@@ -474,12 +474,6 @@ and the best viable function is not accessible\iref{class.access} in the context
 in which it is used,
 the program is ill-formed.
 
-\pnum
-Overload resolution results in a \defnadj{usable}{function}
-if overload resolution succeeds and
-the selected function is not deleted and
-is accessible from the context in which overload resolution was performed.
-
 \rSec2[over.match.funcs]{Candidate functions and argument lists}%
 \indextext{overloading!candidate functions|(}%
 \indextext{overloading!argument lists|(}
@@ -851,11 +845,11 @@ In addition, for each non-explicit conversion function declared in \tcode{T} of 
 form
 
 \begin{ncsimplebnf}
-\keyword{operator} conversion-type-id \terminal{(\,)} \opt{cv-qualifier-seq} \opt{ref-qualifier} \opt{noexcept-specifier} \opt{attribute-specifier-seq} \terminal{;}
+\keyword{operator} conversion-type-id \terminal{(\,)} cv-qualifier \opt{ref-qualifier} \opt{noexcept-specifier} \opt{attribute-specifier-seq} \terminal{;}
 \end{ncsimplebnf}
 
-where the optional
-\grammarterm{cv-qualifier-seq}
+where
+\grammarterm{cv-qualifier}
 is the same cv-qualification as, or a greater cv-qualification than,
 \cv{},
 and where
@@ -988,12 +982,12 @@ which operator function or built-in operator is to be invoked to implement the
 operator.
 Therefore, the operator notation is first transformed
 to the equivalent function-call notation as summarized in
-\tref{over.match.oper}
+\tref{over.rel.op.func}
 (where \tcode{@} denotes one of the operators covered in the specified subclause).
 However, the operands are sequenced in the order prescribed
 for the built-in operator\iref{expr.compound}.
 
-\begin{floattable}{Relationship between operator and function call notation}{over.match.oper}
+\begin{floattable}{Relationship between operator and function call notation}{tab:over.rel.op.func}
 {l|m|m|m}
 \topline
 \hdstyle{Subclause} &   \hdstyle{Expression} &   \hdstyle{As member function} &   \hdstyle{As non-member function} \\ \capsep
@@ -1078,14 +1072,12 @@ that is not a function template specialization.
 \end{itemize}
 
 \item
-The rewritten candidate set is determined as follows:
-\begin{itemize}
-\item
 For the relational\iref{expr.rel} operators,
 the rewritten candidates include
-all non-rewritten candidates
-for the expression \tcode{x <=> y}.
-\item
+all member, non-member, and built-in candidates
+for the operator \tcode{<=>}
+for which the rewritten expression
+\tcode{(x <=> y) @ 0} is well-formed using that \tcode{operator<=>}.
 For the
 relational\iref{expr.rel} and
 three-way comparison\iref{expr.spaceship}
@@ -1093,28 +1085,30 @@ operators,
 the rewritten candidates also include
 a synthesized candidate,
 with the order of the two parameters reversed,
-for each non-rewritten candidate
-for the expression
-\tcode{y <=> x}.
-\item
+for each member, non-member, and built-in candidate
+for the operator \tcode{<=>}
+for which the rewritten expression
+\tcode{0 @ (y <=> x)} is well-formed using that \tcode{operator<=>}.
 For the \tcode{!=} operator\iref{expr.eq},
 the rewritten candidates
-include all non-rewritten candidates
-for the expression \tcode{x == y}.
-\item
+include all member, non-member, and built-in candidates
+for the operator \tcode{==}
+for which the rewritten expression \tcode{(x == y)} is well-formed
+when contextually converted to \tcode{bool} using that operator \tcode{==}.
 For the equality operators,
 the rewritten candidates also include a synthesized candidate,
 with the order of the two parameters reversed,
-for each non-rewritten candidate
-for the expression \tcode{y == x}.
-\item
-For all other operators, the rewritten candidate set is empty.
-\end{itemize}
+for each member, non-member, and built-in candidate for the operator \tcode{==}
+for which the rewritten expression \tcode{(y == x)} is well-formed
+when contextually converted to \tcode{bool} using that operator \tcode{==}.
 \begin{note}
 A candidate synthesized from a member candidate has its implicit
 object parameter as the second parameter, thus implicit conversions
 are considered for the first, but not for the second, parameter.
 \end{note}
+In each case, rewritten candidates are not considered
+in the context of the rewritten expression.
+For all other operators, the rewritten candidate set is empty.
 \end{itemize}
 
 \pnum
@@ -1165,39 +1159,26 @@ void m() {
 \end{example}
 
 \pnum
-If a rewritten \tcode{operator<=>} candidate
-is selected by overload resolution
-for an operator \tcode{@},
+If a rewritten candidate is selected by overload resolution
+for a relational or three-way comparison operator \tcode{@},
 \tcode{x @ y}
-is interpreted as
+is interpreted as the rewritten expression:
 \tcode{0 @ (y <=> x)}
 if the selected candidate is a synthesized candidate
 with reversed order of parameters,
 or \tcode{(x <=> y) @ 0} otherwise,
 using the selected rewritten \tcode{operator<=>} candidate.
-Rewritten candidates for the operator \tcode{@}
-are not considered in the context of the resulting expression.
-
-\pnum
-If a rewritten \tcode{operator==} candidate
-is selected by overload resolution
-for an operator \tcode{@},
-its return type shall be \cv{} \tcode{bool}, and
-\tcode{x @ y} is interpreted as:
-\begin{itemize}
-\item
-if \tcode{@} is \tcode{!=}
-and the selected candidate is a synthesized candidate
-with reversed order of parameters,
-\tcode{!(y == x)},
-\item
-otherwise, if \tcode{@} is \tcode{!=},
-\tcode{!(x == y)},
-\item
-otherwise (when \tcode{@} is \tcode{==}),
-\tcode{y == x},
-\end{itemize}
-in each case using the selected rewritten \tcode{operator==} candidate.
+If a rewritten candidate is selected by overload resolution
+for a \tcode{!=} operator,
+\tcode{x != y} is interpreted as \tcode{(y == x) ?\ false :\ true}
+if the selected candidate is a synthesized candidate
+with reversed order of parameters, or
+\tcode{(x == y) ?\ false :\ true} otherwise,
+using the selected rewritten \tcode{operator==} candidate.
+If a rewritten candidate is selected by overload resolution
+for an \tcode{==} operator,
+\tcode{x == y} is interpreted as \tcode{(y == x) ?\ true :\ false}
+using the selected rewritten \tcode{operator==} candidate.
 
 \pnum
 If a built-in candidate is selected by overload resolution, the
@@ -1499,8 +1480,7 @@ resolution. \end{note}
 \pnum
 When resolving a placeholder for a deduced class type\iref{dcl.type.class.deduct}
 where the \grammarterm{template-name} names a primary class template \tcode{C},
-a set of functions and function templates, called the guides of \tcode{C},
-is formed comprising:
+a set of functions and function templates is formed comprising:
 \begin{itemize}
 \item
 If \tcode{C} is defined,
@@ -1548,110 +1528,13 @@ is the \grammarterm{simple-template-id}
 of the \grammarterm{deduction-guide}.
 \end{itemize}
 \end{itemize}
-In addition, if \tcode{C} is defined
-and its definition satisfies the conditions for
-an aggregate class\iref{dcl.init.aggr}
-with the assumption that any dependent base class has
-no virtual functions and no virtual base classes, and
-the initializer is a non-empty \grammarterm{braced-init-list} or
-parenthesized \grammarterm{expression-list},
-the set contains an additional function template,
-called the \defnadj{aggregate deduction}{candidate}, defined as follows.
-Let $x_1, \dotsc, x_n$ be the elements
-of the \grammarterm{initializer-list} or
-\grammarterm{designated-initializer-list}
-of the \grammarterm{braced-init-list}, or
-of the \grammarterm{expression-list}.
-For each $x_i$, let $e_i$ be the corresponding element
-of \tcode{C} or of one of its (possibly recursive) subaggregates
-that would be initialized by $x_i$\iref{dcl.init.aggr}
-if brace elision is not considered for any element
-that has a dependent type.
-If there is no such element $e_i$, the program is ill-formed.
-The aggregate deduction candidate is derived as above
-from a hypothetical constructor $\tcode{C}(\tcode{T}_1, \dotsc, \tcode{T}_n)$,
-where $\tcode{T}_i$ is the declared type of the element $e_i$.
-
-\pnum
-When resolving a placeholder for a deduced class type\iref{dcl.type.simple}
-where the \grammarterm{template-name} names an alias template \tcode{A},
-the \grammarterm{defining-type-id} of \tcode{A} must be of the form
-\begin{ncsimplebnf}
-\opt{\keyword{typename}} \opt{nested-name-specifier} \opt{\keyword{template}} simple-template-id
-\end{ncsimplebnf}
-as specified in \ref{dcl.type.simple}.
-The guides of \tcode{A} are the set of functions or function templates
-formed as follows.
-For each function or function template \tcode{f} in the guides of
-the template named by the \grammarterm{simple-template-id}
-of the \grammarterm{defining-type-id},
-the template arguments of the return type of \tcode{f}
-are deduced
-from the \grammarterm{defining-type-id} of \tcode{A}
-according to the process in \ref{temp.deduct.type}
-with the exception that deduction does not fail
-if not all template arguments are deduced.
-Let \tcode{g} denote the result of substituting
-these deductions into \tcode{f}.
-If substitution succeeds,
-form a function or function template \tcode{f'}
-with the following properties and add it to the set
-of guides of \tcode{A}:
-\begin{itemize}
-\item
-The function type of \tcode{f'} is the function type of \tcode{g}.
-
-\item
-If \tcode{f} is a function template,
-\tcode{f'} is a function template whose
-template parameter list consists of
-all the template parameters of \tcode{A}
-(including their default template arguments)
-that appear in the above deductions or
-(recursively) in their default template arguments,
-followed by the template parameters of \tcode{f} that were not deduced
-(including their default template arguments),
-otherwise \tcode{f'} is not a function template.
-
-\item
-The associated constraints\iref{temp.constr.decl} are
-the conjunction of the associated constraints of \tcode{g} and
-a constraint that is satisfied if and only if
-the arguments of \tcode{A} are deducible (see below) from the return type.
-
-\item
-If \tcode{f} is a copy deduction candidate\iref{over.match.class.deduct},
-then \tcode{f'} is considered to be so as well.
-
-\item
-If \tcode{f} was generated
-from a \grammarterm{deduction-guide}\iref{over.match.class.deduct},
-then \tcode{f'} is considered to be so as well.
-
-\item
-The \grammarterm{explicit-specifier} of \tcode{f'} is
-the \grammarterm{explicit-specifier} of \tcode{g} (if any).
-\end{itemize}
-
-\indextext{template!deducible arguments of}%
-\pnum
-The arguments of a template \tcode{A} are said to be
-deducible from a type \tcode{T} if, given a class template
-\begin{codeblock}
-template <typename> class AA;
-\end{codeblock}
-with a single partial specialization
-whose template parameter list is that of \tcode{A} and
-whose template argument list is a specialization of \tcode{A}
-with the template argument list of \tcode{A}\iref{temp.dep.type},
-\tcode{AA<T>} matches the partial specialization.
 
 \pnum
 Initialization and overload resolution are performed as described
 in \ref{dcl.init} and \ref{over.match.ctor}, \ref{over.match.copy},
 or \ref{over.match.list} (as appropriate for the type of initialization
 performed) for an object of a hypothetical class type, where
-the guides of the template named by the placeholder are considered to be the
+the selected functions and function templates are considered to be the
 constructors of that class type for the purpose of forming an overload
 set, and the initializer is provided by the context in which class
 template argument deduction was performed.
@@ -1659,9 +1542,8 @@ As an exception, the first phase in \ref{over.match.list}
 (considering initializer-list constructors)
 is omitted if the initializer list consists of
 a single expression of type \cv{}~\tcode{U},
-where \tcode{U} is, or is derived from,
-a specialization of the class template
-directly or indirectly named by the placeholder.
+where \tcode{U} is a specialization of \tcode{C} or
+a class derived from a specialization of \tcode{C}.
 If the function or function template was generated from
 a constructor or \grammarterm{deduction-guide}
 that had an \grammarterm{explicit-specifier},
@@ -1700,102 +1582,6 @@ template <class T> struct B {
 };
 
 B b{(int*)0, (char*)0};         // OK, deduces \tcode{B<char*>}
-
-template <typename T>
-struct S {
-  T x;
-  T y;
-};
-
-template <typename T>
-struct C {
-  S<T> s;
-  T t;
-};
-
-template <typename T>
-struct D {
-  S<int> s;
-  T t;
-};
-
-C c1 = {1, 2};                  // error: deduction failed
-C c2 = {1, 2, 3};               // error: deduction failed
-C c3 = {{1u, 2u}, 3};           // OK, deduces \tcode{C<int>}
-
-D d1 = {1, 2};                  // error: deduction failed
-D d2 = {1, 2, 3};               // OK, braces elided, deduces \tcode{D<int>}
-
-template <typename T>
-struct E {
-  T t;
-  decltype(t) t2;
-};
-
-E e1 = {1, 2};                  // OK, deduces \tcode{E<int>}
-\end{codeblock}
-\end{example}
-
-\pnum
-\begin{example}
-\begin{codeblock}
-template <class T, class U> struct C {
-  C(T, U);                                      // \#1
-};
-template<class T, class U>
-  C(T, U) -> C<T, std::type_identity_t<U>>;     // \#2
-
-template<class V> using A = C<V *, V *>;
-template<std::integral W> using B = A<W>;
-
-int i{};
-double d{};
-A a1(&i, &i);   // deduces \tcode{A<int>}
-A a2(i, i);     // error: cannot deduce \tcode{V *} from \tcode{i}
-A a3(&i, &d);   // error: \#1: cannot deduce \tcode{(V*, V*)} from \tcode{(int *, double *)}
-                // \#2: cannot deduce \tcode{A<V>} from \tcode{C<int *, double *>}
-B b1(&i, &i);   // deduces \tcode{B<int>}
-B b2(&d, &d);   // error: cannot deduce \tcode{B<W>} from \tcode{C<double *, double *>}
-\end{codeblock}
-Possible exposition-only implementation of the above procedure:
-\begin{codeblock}
-// The following concept ensures a specialization of \tcode{A} is deduced.
-template <class> class AA;
-template <class V> class AA<A<V>> { };
-template <class T> concept deduces_A = requires { sizeof(AA<T>); };
-
-// \tcode{f1} is formed from the constructor \#1 of \tcode{C}, generating the following function template
-template<T, U>
-  auto f1(T, U) -> C<T, U>;
-
-// Deducing arguments for \tcode{C<T, U>} from \tcode{C<V *, V*>} deduces \tcode{T} as \tcode{V *} and \tcode{U} as \tcode{V *};
-// \tcode{f1'} is obtained by transforming \tcode{f1} as described by the above procedure.
-template<class V> requires deduces_A<C<V *, V *>>
-  auto f1_prime(V *, V*) -> C<V *, V *>;
-
-// \tcode{f2} is formed from the deduction-guide \#2 of \tcode{C}
-template<class T, class U> auto f2(T, U) -> C<T, std::type_identity_t<U>>;
-
-// Deducing arguments for \tcode{C<T, std::type_identity_t<U>>} from \tcode{C<V *, V*>} deduces \tcode{T} as \tcode{V *};
-// \tcode{f2'} is obtained by transforming \tcode{f2} as described by the above procedure.
-template<class V, class U>
-  requires deduces_A<C<V *, std::type_identity_t<U>>>
-  auto f2_prime(V *, U) -> C<V *, std::type_identity_t<U>>;
-
-// The following concept ensures a specialization of \tcode{B} is deduced.
-template <class> class BB;
-template <class V> class BB<B<V>> { };
-template <class T> concept deduces_B = requires { sizeof(BB<T>); };
-
-// The guides for \tcode{B} derived from the above \tcode{f1'} and \tcode{f2'} for \tcode{A} are as follows:
-template<std::integral W>
-  requires deduces_A<C<W *, W *>> && deduces_B<C<W *, W *>>
-  auto f1_prime_for_B(W *, W *) -> C<W *, W *>;
-
-template<std::integral W, class U>
-  requires deduces_A<C<W *, std::type_identity_t<U>>> &&
-    deduces_B<C<W *, std::type_identity_t<U>>>
-  auto f2_prime_for_B(W *, U) -> C<W *, std::type_identity_t<U>>;
 \end{codeblock}
 \end{example}%
 \indextext{overloading!argument lists|)}%
@@ -2354,7 +2140,7 @@ are defined in the following subclauses.
 \rSec4[over.ics.scs]{Standard conversion sequences}
 
 \pnum
-\tref{over.ics.scs}
+\tref{over.conversions}
 summarizes the conversions defined in \ref{conv} and
 partitions them into four disjoint categories: Lvalue Transformation,
 Qualification Adjustment, Promotion, and Conversion.
@@ -2386,7 +2172,7 @@ or
 
 \pnum
 \indextext{conversion rank}%
-Each conversion in \tref{over.ics.scs}
+Each conversion in \tref{over.conversions}
 also has an associated rank (Exact
 Match, Promotion, or Conversion).
 These are used
@@ -2399,7 +2185,7 @@ sequence has Conversion rank; otherwise, if any of those has Promotion rank,
 the sequence has Promotion rank; otherwise, the sequence has Exact
 Match rank.
 
-\begin{floattable}{Conversions}{over.ics.scs}{l|c|c|c}
+\begin{floattable}{Conversions}{tab:over.conversions}{l|c|c|c}
 \topline
 \hdstyle{Conversion}            &   \hdstyle{Category}          &   \hdstyle{Rank}  &   \hdstyle{Subclause} \\ \capsep
 No conversions required         &   Identity                    &                   &                       \\ \cline{1-2}\cline{4-4}
@@ -2626,13 +2412,10 @@ h({ 1, 2, 3 });                 // OK: identity conversion
 \end{example}
 
 \pnum
-Otherwise, if the parameter type is ``array of \tcode{N} \tcode{X}''
-or ``array of unknown bound of \tcode{X}'',
-if there exists an implicit conversion sequence
-from each element of the initializer list
-(and from \tcode{\{\}} in the former case
-if \tcode{N} exceeds the number of elements in the initializer list)
-to \tcode{X}, the implicit conversion sequence is
+Otherwise, if the parameter type is ``array of \tcode{N} \tcode{X}'',
+if there exists an implicit conversion sequence for each element of the array
+from the corresponding element of the initializer list (or from \tcode{\{\}}
+if there is no such element), the implicit conversion sequence is
 the worst such implicit conversion sequence.
 
 \pnum
@@ -2801,35 +2584,19 @@ list-initialization sequence \tcode{L2} if
 \tcode{L2} does not, or, if not that,
 
 \item
-\tcode{L1} and \tcode{L2} convert to arrays of the same element type, and
-either the number of elements $n_1$ initialized by \tcode{L1}
-is less than the number of elements $n_2$ initialized by \tcode{L2}, or
-$n_1 = n_2$ and
-\tcode{L2} converts to an array of unknown bound and \tcode{L1} does not,
+\tcode{L1} converts to type ``array of \tcode{N1} \tcode{T}'', \tcode{L2} converts to
+type ``array of \tcode{N2} \tcode{T}'', and \tcode{N1} is smaller than \tcode{N2},
 \end{itemize}
 even if one of the other rules in this paragraph would otherwise apply.
 \begin{example}
 \begin{codeblock}
-void f1(int);                                   // \#1
-void f1(std::initializer_list<long>);           // \#2
-void g1() { f1({42}); }                         // chooses \#2
+  void f1(int);                                 // \#1
+  void f1(std::initializer_list<long>);         // \#2
+  void g1() { f1({42}); }                       // chooses \#2
 
-void f2(std::pair<const char*, const char*>);   // \#3
-void f2(std::initializer_list<std::string>);    // \#4
-void g2() { f2({"foo","bar"}); }                // chooses \#4
-\end{codeblock}
-\end{example}
-\begin{example}
-\begin{codeblock}
-void f(int    (&&)[] );         // \#1
-void f(double (&&)[] );         // \#2
-void f(int    (&&)[2]);         // \#3
-
-f( {1} );           // Calls \#1: Better than \#2 due to conversion, better than \#3 due to bounds
-f( {1.0} );         // Calls \#2: Identity conversion is better than floating-integral conversion
-f( {1.0, 2.0} );    // Calls \#2: Identity conversion is better than floating-integral conversion
-f( {1, 2} );        // Calls \#3: Converting to array of known bound is better than to unknown bound,
-                    // and an identity conversion is better than floating-integral conversion
+  void f2(std::pair<const char*, const char*>); // \#3
+  void f2(std::initializer_list<std::string>);  // \#4
+  void g2() { f2({"foo","bar"}); }              // chooses \#4
 \end{codeblock}
 \end{example}
 
@@ -2913,10 +2680,16 @@ int i1 = f(g);                  // calls \#1
 or, if not that,
 
 \item
-\tcode{S1} and \tcode{S2} differ only
-in their qualification conversion\iref{conv.qual} and
-yield similar types \tcode{T1} and \tcode{T2}, respectively,
-where \tcode{T1} can be converted to \tcode{T2} by a qualification conversion.
+\tcode{S1}
+and
+\tcode{S2}
+differ only in their qualification conversion and yield similar types
+\tcode{T1}
+and
+\tcode{T2}\iref{conv.qual}, respectively, and the cv-qualification signature of type
+\tcode{T1}
+is a proper subset of the cv-qualification signature of type
+\tcode{T2}
 \begin{example}
 \begin{codeblock}
 int f(const volatile int *);
