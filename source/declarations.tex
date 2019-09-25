@@ -35,9 +35,10 @@ the form
 \begin{bnf}
 \nontermdef{block-declaration}\br
     simple-declaration\br
-    asm-definition\br
+    asm-declaration\br
     namespace-alias-definition\br
     using-declaration\br
+    using-enum-declaration\br
     using-directive\br
     static_assert-declaration\br
     alias-declaration\br
@@ -78,7 +79,7 @@ the form
 \end{bnf}
 
 \begin{note}
-\grammarterm{asm-definition}{s} are described in~\ref{dcl.asm}, and
+\grammarterm{asm-declaration}{s} are described in~\ref{dcl.asm}, and
 \grammarterm{linkage-specification}{s} are described in~\ref{dcl.link};
 \grammarterm{function-definition}{s} are described in~\ref{dcl.fct.def} and
 \grammarterm{template-declaration}{s} and
@@ -227,8 +228,7 @@ declaration are added to a function declaration to make a
 a definition unless it contains the \tcode{extern} specifier and has no
 initializer\iref{basic.def}.
 \indextext{initialization!definition and}%
-A
-definition causes the appropriate amount of storage to be reserved and
+An object definition causes storage of appropriate size and alignment to be reserved and
 any appropriate initialization\iref{dcl.init} to be done.
 
 \pnum
@@ -257,6 +257,7 @@ The specifiers that can be used in a declaration are
     \keyword{typedef}\br
     \keyword{constexpr}\br
     \keyword{consteval}\br
+    \keyword{constinit}\br
     \keyword{inline}
 \end{bnf}
 
@@ -276,8 +277,9 @@ same type.
 Each \grammarterm{decl-specifier}
 shall appear at most once in a complete \grammarterm{decl-specifier-seq},
 except that \tcode{long} may appear twice.
-The \tcode{constexpr} and \tcode{consteval} \grammarterm{decl-specifier}{s}
-shall not both appear in a \grammarterm{decl-specifier-seq}.
+At most one of
+the \keyword{constexpr}, \keyword{consteval}, and \keyword{constinit} keywords
+shall appear in a \grammarterm{decl-specifier-seq}.
 
 \pnum
 \indextext{ambiguity!declaration type}%
@@ -356,11 +358,11 @@ global namespace, which shall be declared
 \tcode{static}\iref{class.union.anon}). The
 \grammarterm{storage-class-specifier} applies to the name declared by each
 \grammarterm{init-declarator} in the list and not to any names declared by
-other specifiers. A \grammarterm{storage-class-specifier}
-other than \tcode{thread_local}
-shall not be
-specified in an explicit specialization\iref{temp.expl.spec} or an
-explicit instantiation\iref{temp.explicit} directive.
+other specifiers.
+\begin{note}
+See \ref{temp.expl.spec} and \ref{temp.explicit} for restrictions
+in explicit specializations and explicit instantiations, respectively.
+\end{note}
 
 \pnum
 \begin{note}
@@ -491,10 +493,12 @@ class X {
 \end{example}
 
 \pnum
+\begin{note}
 The \tcode{mutable} specifier on a class data member nullifies a
 \tcode{const} specifier applied to the containing class object and
 permits modification of the mutable class member even though the rest of
-the object is const\iref{dcl.type.cv}.
+the object is const~(\ref{basic.type.qualifier}, \ref{dcl.type.cv}).
+\end{note}
 
 \rSec2[dcl.fct.spec]{Function specifiers}%
 \indextext{specifier!function}%
@@ -735,6 +739,26 @@ typedef decltype([]{}) C;       // the closure type has no name for linkage purp
 \end{codeblock}
 \end{example}
 
+\pnum
+An unnamed class with a typedef name for linkage purposes shall not
+\begin{itemize}
+\item
+  declare any members
+  other than non-static data members, member enumerations, or member classes,
+\item
+  have any base classes or default member initializers, or
+\item
+  contain a \grammarterm{lambda-expression},
+\end{itemize}
+and all member classes shall also satisfy these requirements (recursively).
+\begin{example}
+\begin{codeblock}
+typedef struct {
+  int f() {}
+} X;                            // error: struct with typedef name for linkage has member functions
+\end{codeblock}
+\end{example}
+
 \rSec2[dcl.friend]{The \tcode{friend} specifier}%
 \indextext{specifier!\idxcode{friend}}
 
@@ -792,26 +816,23 @@ extern constexpr int memsz;     // error: not a definition
 
 \pnum
 A \tcode{constexpr} or \tcode{consteval} specifier
-used in the declaration of a function that is not a constructor
+used in the declaration of a function
 declares that function to be
 a \defnx{constexpr function}{specifier!\idxcode{constexpr}!function}.
-Similarly, a \tcode{constexpr} or \tcode{consteval} specifier used in
-a constructor declaration declares that constructor to be
-a \defnx{constexpr constructor}{specifier!\idxcode{constexpr}!constructor}.
 A function or constructor declared with the \tcode{consteval} specifier
 is called an \defn{immediate function}.
 A destructor, an allocation function, or a deallocation function
 shall not be declared with the \tcode{consteval} specifier.
 
 \pnum
-\indextext{specifier!\idxcode{constexpr}!function}
-\indextext{constexpr function}
+\indextext{specifier!\idxcode{constexpr}!function}%
+\indextext{constexpr function}%
 The definition of a constexpr function shall satisfy the following
 requirements:
 
 \begin{itemize}
 \item
-its return type shall be a literal type;
+its return type (if any) shall be a literal type;
 
 \item
 each of its parameter types shall be a literal type;
@@ -820,15 +841,17 @@ each of its parameter types shall be a literal type;
 it shall not be a coroutine\iref{dcl.fct.def.coroutine};
 
 \item
+if the function is a constructor or destructor,
+its class shall not have any virtual base classes;
+
+\item
 its \grammarterm{function-body} shall not enclose\iref{stmt.stmt}
 \begin{itemize}
-\item an \grammarterm{asm-definition},
 \item a \tcode{goto} statement,
 \item an identifier label\iref{stmt.label},
 \item a definition of a variable
 of non-literal type or
-of static or thread storage duration or
-for which no initialization is performed.
+of static or thread storage duration.
 \end{itemize}
 \begin{note}
 A \grammarterm{function-body} that is \tcode{= delete} or \tcode{= default}
@@ -852,8 +875,8 @@ constexpr int first(int n) {
   return value;
 }
 constexpr int uninit() {
-  int a;                        // error: variable is uninitialized
-  return a;
+  struct { int a; } s;
+  return s.a;                   // error: uninitialized read of \tcode{s.a}
 }
 constexpr int prev(int x)
   { return --x; }               // OK
@@ -867,28 +890,10 @@ constexpr int g(int x, int n) { // OK
 
 \pnum
 \indextext{specifier!\idxcode{constexpr}!constructor}%
-The definition of a constexpr constructor shall satisfy the
-following requirements:
+The definition of a constexpr constructor
+whose \grammarterm{function-body} is not \tcode{= delete}
+shall additionally satisfy the following requirements:
 \begin{itemize}
-\item
-the class shall not have any virtual base classes;
-
-\item
-each of the parameter types shall be a literal type.
-\end{itemize}
-
-In addition, either its \grammarterm{function-body} shall be
-\tcode{= delete}, or it shall satisfy the following requirements:
-\begin{itemize}
-\item
-either its \grammarterm{function-body} shall be \tcode{= default}, or the \grammarterm{compound-statement} of its \grammarterm{function-body}
-shall satisfy the requirements for a \grammarterm{function-body} of a
-constexpr function;
-
-\item
-every non-variant non-static data member and base class subobject
-shall be initialized\iref{class.base.init};
-
 \item
 if the class is a union having variant members\iref{class.union}, exactly one of them
 shall be initialized;
@@ -917,12 +922,24 @@ private:
 \end{example}
 
 \pnum
+The definition of a constexpr destructor
+whose \grammarterm{function-body} is not \tcode{= delete}
+shall additionally satisfy the following requirement:
+\begin{itemize}
+\item
+  for every subobject of class type or
+  (possibly multi-dimensional) array thereof,
+  that class type shall have a constexpr destructor.
+\end{itemize}
+
+\pnum
 For a constexpr function or constexpr constructor
 that is neither defaulted nor a template,
 if no argument values exist such that
 an invocation of the function or constructor could be an evaluated subexpression of a core
 constant expression\iref{expr.const}, or,
-for a constructor, a constant initializer for some object\iref{basic.start.static},
+for a constructor, an evaluated subexpression of
+the initialization full-expression of some constant-initialized object\iref{basic.start.static},
 the program is ill-formed, no diagnostic required.
 \begin{example}
 \begin{codeblock}
@@ -949,12 +966,12 @@ If the instantiated template specialization of a constexpr function
 template
 or member function of a class template
 would fail to satisfy the requirements for a constexpr
-function or constexpr constructor,
-that specialization is still a constexpr function or constexpr
-constructor, even though a call to such a function cannot appear in a constant
+function,
+that specialization is still a constexpr function,
+even though a call to such a function cannot appear in a constant
 expression. If no specialization of the template would satisfy the
-requirements for a constexpr function or constexpr constructor
-when considered as a non-template function or constructor, the template is
+requirements for a constexpr function
+when considered as a non-template function, the template is
 ill-formed, no diagnostic required.
 
 \pnum
@@ -970,7 +987,7 @@ copy elision is not performed in a constant expression\iref{class.copy.elision}.
 
 \pnum
 The \tcode{constexpr} and \tcode{consteval} specifiers have no
-effect on the type of a constexpr function or a constexpr constructor.
+effect on the type of a constexpr function.
 \begin{example}
 \begin{codeblock}
 constexpr int bar(int x, int y)         // OK
@@ -990,6 +1007,7 @@ shall be initialized.
 In any \tcode{constexpr} variable declaration,
 the full-expression of the initialization
 shall be a constant expression\iref{expr.const}.
+A \tcode{constexpr} variable shall have constant destruction.
 \begin{example}
 \begin{codeblock}
 struct pixel {
@@ -997,6 +1015,35 @@ struct pixel {
 };
 constexpr pixel ur = { 1294, 1024 };    // OK
 constexpr pixel origin;                 // error: initializer missing
+\end{codeblock}
+\end{example}
+
+\rSec2[dcl.constinit]{The \tcode{constinit} specifier}
+\indextext{specifier!\idxcode{constinit}}
+
+\pnum
+The \keyword{constinit} specifier shall be applied only
+to a declaration of a variable with static or thread storage duration.
+If the specifier is applied to any declaration of a variable,
+it shall be applied to the initializing declaration.
+No diagnostic is required if no \keyword{constinit} declaration
+is reachable at the point of the initializing declaration.
+
+\pnum
+If a variable declared with the \keyword{constinit} specifier has
+dynamic initialization\iref{basic.start.dynamic}, the program is ill-formed.
+\begin{note}
+The \keyword{constinit} specifier ensures that the variable
+is initialized during static initialization\iref{basic.start.static}.
+\end{note}
+
+\pnum
+\begin{example}
+\begin{codeblock}
+const char * g() { return "dynamic initialization"; }
+constexpr const char * f(bool p) { return p ? "constant initializer" : g(); }
+constinit const char * c = f(true);     // OK
+constinit const char * d = f(false);    // ill-formed
 \end{codeblock}
 \end{example}
 
@@ -1214,8 +1261,7 @@ subverted without casting\iref{expr.const.cast}.
 
 \pnum
 \indextext{const object!undefined change to}%
-Except that any class member declared \tcode{mutable}\iref{dcl.stc}
-can be modified, any attempt to modify~(\ref{expr.ass},
+Any attempt to modify~(\ref{expr.ass},
 \ref{expr.post.incr}, \ref{expr.pre.incr}) a
 const object\iref{basic.type.qualifier} during its
 lifetime\iref{basic.life} results in undefined behavior.
@@ -1339,7 +1385,16 @@ A \grammarterm{type-specifier} of the form
 \opt{\tcode{typename}} \opt{\grammarterm{nested-name-specifier}} \grammarterm{template-name}
 is a placeholder for
 a deduced class type\iref{dcl.type.class.deduct}.
-The \grammarterm{template-name} shall name a class template.
+The \grammarterm{nested-name-specifier}, if any, shall be non-dependent and
+the \grammarterm{template-name} shall name a deducible template.
+A \defnadj{deducible}{template} is either a class template or
+is an alias template whose \grammarterm{defining-type-id} is of the form
+\begin{ncsimplebnf}
+\opt{\keyword{typename}} \opt{nested-name-specifier} \opt{\keyword{template}} simple-template-id
+\end{ncsimplebnf}
+where the \grammarterm{nested-name-specifier} (if any) is non-dependent and
+the \grammarterm{template-name} of the \grammarterm{simple-template-id}
+names a deducible template.
 \begin{note}
 An injected-class-name is never interpreted as a \grammarterm{template-name}
 in contexts where class template argument deduction would be performed\iref{temp.local}.
@@ -1349,14 +1404,14 @@ The other
 specify either a previously-declared type, a type determined from an
 expression, or one of the
 fundamental types\iref{basic.fundamental}.
-\tref{simple.type.specifiers}
+\tref{dcl.type.simple}
  summarizes the valid combinations of
 \grammarterm{simple-type-specifier}{s}
 and the types they specify.
 
 \begin{simpletypetable}
 {\grammarterm{simple-type-specifier}{s} and the types they specify}
-{tab:simple.type.specifiers}
+{dcl.type.simple}
 {ll}
 \topline
 \hdstyle{Specifier(s)}            &   \hdstyle{Type}                  \\ \capsep
@@ -1422,6 +1477,11 @@ forces \tcode{char} objects to be signed; it is redundant in other contexts.
     class-key \opt{attribute-specifier-seq} \opt{nested-name-specifier} identifier\br
     class-key simple-template-id\br
     class-key nested-name-specifier \opt{\keyword{template}} simple-template-id\br
+    elaborated-enum-specifier
+\end{bnf}
+
+\begin{bnf}
+\nontermdef{elaborated-enum-specifier}\br
     \keyword{enum} \opt{nested-name-specifier} identifier
 \end{bnf}
 
@@ -1495,6 +1555,8 @@ declared using the \tcode{class} or \tcode{struct}
 \begin{codeblock}
 enum class E { a, b };
 enum E x = E::a;                // OK
+struct S { } s;
+class S* p = &s;                // OK
 \end{codeblock}
 \end{example}
 
@@ -1969,7 +2031,18 @@ If a placeholder for a deduced class type
 appears as a \grammarterm{decl-specifier}
 in the \grammarterm{decl-specifier-seq}
 of an initializing declaration\iref{dcl.init} of a variable,
-the placeholder is replaced by the return type
+the declared type of the variable shall be \cv{}~\tcode{T},
+where \tcode{T} is the placeholder.
+\begin{example}
+\begin{codeblock}
+template <class ...T> struct A {
+  A(T...) {}
+};
+A x[29]{};    // error: no declarator operators allowed
+const A& y{}; // error: no declarator operators allowed
+\end{codeblock}
+\end{example}
+The placeholder is replaced by the return type
 of the function selected by overload resolution
 for class template deduction\iref{over.match.class.deduct}.
 If the \grammarterm{decl-specifier-seq}
@@ -2944,6 +3017,7 @@ a member with reference type,
 or
 ``\cv{}~\tcode{void}''.
 
+\pnum
 \begin{note}
 See also~\ref{expr.unary} and~\ref{expr.mptr.oper}.
 The type ``pointer to member'' is distinct from the type ``pointer'',
@@ -2956,89 +3030,76 @@ There is no ``reference-to-member'' type in \Cpp{}.
 \indextext{declarator!array}
 
 \pnum
-In a declaration
-\tcode{T}
-\tcode{D}
-where
-\tcode{D}
-has the form
+In a declaration \tcode{T} \tcode{D} where \tcode{D} has the form
 
 \begin{ncsimplebnf}
-\terminal{D1 [} \opt{constant-expression} \terminal{]} \opt{attribute-specifier-seq}
+\terminal{D1} \terminal{[} \opt{constant-expression} \terminal{]} \opt{attribute-specifier-seq}
 \end{ncsimplebnf}
 
-and the type of the identifier in the declaration
-\tcode{T}
-\tcode{D1}
-is
-``\placeholder{derived-declarator-type-list}
-\tcode{T}'',
-then the type of the identifier of
-\tcode{D}
-is an array type; if the type of the identifier of \tcode{D}
-contains the \tcode{auto} \grammarterm{type-specifier},
-the program is ill-formed.
-\tcode{T}
-is called the array
-\term{element type};
-this type shall not be a reference type, \cv{}~\tcode{void},
-or a function type.
-\indextext{declaration!array}%
-If the
-\grammarterm{constant-expression}\iref{expr.const}
-is present, it shall be a converted constant
-expression of type \tcode{std::size_t} and
-its value shall be greater than zero.
-The constant expression specifies the
-\indextext{array!bound}%
+and the type of the contained \grammarterm{declarator-id}
+in the declaration \tcode{T} \tcode{D1}
+is ``\placeholder{derived-declarator-type-list} \tcode{T}'',
+the type of the \grammarterm{declarator-id} in \tcode{D} is
+``\placeholder{derived-declarator-type-list} array of \tcode{N} \tcode{T}''.
+The \grammarterm{constant-expression}
+shall be a converted constant expression of type \tcode{std::size_t}\iref{expr.const}.
 \indextext{bound, of array}%
-\term{bound}
-of (number of elements in) the array.
-If the value of the constant expression is
-\tcode{N},
-the array has
-\tcode{N}
-elements numbered
-\tcode{0}
-to
-\tcode{N-1},
-and the type of the identifier of
-\tcode{D}
-is ``\placeholder{derived-declarator-type-list} array of
-\tcode{N}
-\tcode{T}''.
-An object of array type contains a contiguously allocated non-empty set of
-\tcode{N}
-subobjects of type
-\tcode{T}.
-Except as noted below, if
-the constant expression is omitted, the type of the identifier of
-\tcode{D}
-is ``\placeholder{derived-declarator-type-list} array of unknown bound of
-\tcode{T}'',
-an incomplete object type.
-The type ``\placeholder{derived-declarator-type-list} array of
-\tcode{N}
-\tcode{T}''
-is a different type from the type
-``\placeholder{derived-declarator-type-list} array of unknown bound of
-\tcode{T}'',
-see~\ref{basic.types}.
-Any type of the form
-``\grammarterm{cv-qualifier-seq} array of
-\tcode{N}
-\tcode{T}''
-is adjusted to
-``array of
-\tcode{N}
-\grammarterm{cv-qualifier-seq}
-\tcode{T}'',
-and similarly for
-``array of unknown bound of
-\tcode{T}''.
-The optional \grammarterm{attribute-specifier-seq} appertains to the array.
-\begin{example}
+Its value \tcode{N} specifies the \defnx{array bound}{array!bound},
+i.e., the number of elements in the array;
+\tcode{N} shall be greater than zero.
 
+\pnum
+In a declaration \tcode{T} \tcode{D} where \tcode{D} has the form
+
+\begin{ncsimplebnf}
+\terminal{D1 [ ]} \opt{attribute-specifier-seq}
+\end{ncsimplebnf}
+
+and the type of the contained \grammarterm{declarator-id}
+in the declaration \tcode{T} \tcode{D1}
+is ``\placeholder{derived-declarator-type-list} \tcode{T}'',
+the type of the \grammarterm{declarator-id} in \tcode{D} is
+``\placeholder{derived-declarator-type-list} array of unknown bound of \tcode{T}'', except as specified below.
+
+\pnum
+\indextext{declaration!array}%
+A type of the form ``array of \tcode{N} \tcode{U}'' or
+``array of unknown bound of \tcode{U}'' is an \defn{array type}.
+The optional \grammarterm{attribute-specifier-seq}
+appertains to the array type.
+
+\pnum
+\tcode{U} is called the array \defn{element type};
+this type shall not be
+a placeholder type\iref{dcl.spec.auto},
+a reference type,
+a function type,
+an array of unknown bound, or
+\cv{}~\tcode{void}.
+\begin{note}
+An array can be constructed
+from one of the fundamental types (except \tcode{void}),
+from a pointer,
+from a pointer to member,
+from a class,
+from an enumeration type,
+or from an array of known bound.
+\end{note}
+\begin{example}
+\begin{codeblock}
+float fa[17], *afp[17];
+\end{codeblock}
+declares an array of \tcode{float} numbers and
+an array of pointers to \tcode{float} numbers.
+\end{example}
+
+\pnum
+Any type of the form
+``\grammarterm{cv-qualifier-seq} array of \tcode{N} \tcode{U}''
+is adjusted to
+``array of \tcode{N} \grammarterm{cv-qualifier-seq} \tcode{U}'',
+and similarly for ``array of unknown bound of \tcode{U}''.
+\begin{example}
 \begin{codeblock}
 typedef int A[5], AA[2][3];
 typedef const A CA;             // type is ``array of 5 \tcode{const int}''
@@ -3046,69 +3107,60 @@ typedef const AA CAA;           // type is ``array of 2 array of 3 \tcode{const 
 \end{codeblock}
 \end{example}
 \begin{note}
-An
-``array of
-\tcode{N}
-\grammarterm{cv-qualifier-seq}
-\tcode{T}''
+An ``array of \tcode{N} \grammarterm{cv-qualifier-seq} \tcode{U}''
 has cv-qualified type; see~\ref{basic.type.qualifier}.
 \end{note}
 
 \pnum
-An array can be constructed from one of the fundamental types
-(except
-\tcode{void}),
-from a pointer,
-from a pointer to member, from a class,
-from an enumeration type,
-or from another array.
+An object of type ``array of \tcode{N} \tcode{U}'' contains
+a contiguously allocated non-empty set
+of \tcode{N} subobjects of type \tcode{U},
+known as the \defnx{elements}{array!element} of the array,
+and numbered \tcode{0} to \tcode{N-1}.
 
 \pnum
-\indextext{declarator!multidimensional array}%
-When several ``array of'' specifications are adjacent, a
-multidimensional array
-type is created;
-only the first of
-the constant expressions that specify the bounds
-of the arrays may be omitted.
 In addition to declarations in which an incomplete object type is allowed,
 an array bound may be omitted in some cases in the declaration of a function
 parameter\iref{dcl.fct}.
 An array bound may also be omitted
-when the declarator is followed by an
-\grammarterm{initializer}\iref{dcl.init},
-when a declarator for a static data member is followed by a
-\grammarterm{brace-or-equal-initializer}\iref{class.mem},
-or in an explicit type conversion\iref{expr.type.conv}.
-In these cases, the bound is calculated from the number
+when an object (but not a non-static data member) of array type is initialized
+and the declarator is followed by an initializer
+(\ref{dcl.init}, \ref{class.mem}, \ref{expr.type.conv}, \ref{expr.new}).
 \indextext{array size!default}%
-of initial elements (say,
-\tcode{N})
+In these cases, the array bound is calculated
+from the number of initial elements (say, \tcode{N})
 supplied\iref{dcl.init.aggr},
-and the type of the identifier of
-\tcode{D}
-is ``array of
-\tcode{N}
-\tcode{T}''.
+and the type of the array is ``array of \tcode{N} \tcode{U}''.
+
+\pnum
 Furthermore, if there is a preceding declaration of the entity in the same
 scope in which the bound was specified, an omitted array bound is taken to
 be the same as in that earlier declaration, and similarly for the definition
 of a static data member of a class.
-
-\pnum
 \begin{example}
 \begin{codeblock}
-float fa[17], *afp[17];
+extern int x[10];
+struct S {
+  static int y[10];
+};
+
+int x[];                // OK: bound is 10
+int S::y[];             // OK: bound is 10
+
+void f() {
+  extern int x[];
+  int i = sizeof(x);    // error: incomplete object type
+}
 \end{codeblock}
-declares an array of
-\tcode{float}
-numbers and an array of
-pointers to
-\tcode{float}
-numbers.
 \end{example}
 
 \pnum
+\indextext{declarator!multidimensional array}%
+\begin{note}
+When several ``array of'' specifications are adjacent,
+a multidimensional array type is created;
+only the first of the constant expressions
+that specify the bounds of the arrays may be omitted.
 \begin{example}
 \begin{codeblock}
 int x3d[3][5][7];
@@ -3163,29 +3215,10 @@ the $\tcode{i}^\text{th}$ array element of
 \tcode{x3d}
 (an integer).
 \end{example}
-\begin{note}
 The first subscript in the declaration helps determine
 the amount of storage consumed by an array
 but plays no other part in subscript calculations.
 \end{note}
-
-\pnum
-\begin{example}
-\begin{codeblock}
-extern int x[10];
-struct S {
-  static int y[10];
-};
-
-int x[];                // OK: bound is 10
-int S::y[];             // OK: bound is 10
-
-void f() {
-  extern int x[];
-  int i = sizeof(x);    // error: incomplete object type
-}
-\end{codeblock}
-\end{example}
 
 \pnum
 \begin{note}
@@ -3210,7 +3243,7 @@ where
 \tcode{D}
 has the form
 \begin{ncsimplebnf}
-\terminal{D1 (} parameter-declaration-clause \terminal{)} \opt{cv-qualifier-seq}\br
+\terminal{D1} \terminal{(} parameter-declaration-clause \terminal{)} \opt{cv-qualifier-seq}\br
 \bnfindent\opt{ref-qualifier} \opt{noexcept-specifier} \opt{attribute-specifier-seq}
 \end{ncsimplebnf}
 and the type of the contained
@@ -3247,7 +3280,7 @@ where
 has the form
 
 \begin{ncsimplebnf}
-\terminal{D1 (} parameter-declaration-clause \terminal{)} \opt{cv-qualifier-seq}\br
+\terminal{D1} \terminal{(} parameter-declaration-clause \terminal{)} \opt{cv-qualifier-seq}\br
 \bnfindent\opt{ref-qualifier} \opt{noexcept-specifier} \opt{attribute-specifier-seq} trailing-return-type
 \end{ncsimplebnf}
 
@@ -3285,7 +3318,7 @@ A type of either form is a \term{function type}.\footnote{As indicated by syntax
 \begin{bnf}
 \nontermdef{parameter-declaration-clause}\br
     \opt{parameter-declaration-list} \opt{\terminal{...}}\br
-    parameter-declaration-list \terminal{, ...}
+    parameter-declaration-list \terminal{,} \terminal{...}
 \end{bnf}
 
 \begin{bnf}
@@ -3327,6 +3360,8 @@ list.
 \indextext{parameter!\idxcode{void}}%
 Except for this special case, a parameter shall not have type \term{cv}
 \tcode{void}.
+A parameter with \tcode{volatile}-qualified type is deprecated;
+see~\ref{depr.volatile.type}.
 If the
 \grammarterm{parameter-declaration-clause}
 \indextext{argument type!unknown}%
@@ -3485,6 +3520,10 @@ Functions shall not have a return type of type array or function,
 although they may have a return type of type pointer or reference to such things.
 There shall be no arrays of functions, although there can be arrays of pointers
 to functions.
+
+\pnum
+A \tcode{volatile}-qualified return type is deprecated;
+see~\ref{depr.volatile.type}.
 
 \pnum
 Types shall not be defined in return or parameter types.
@@ -3803,11 +3842,12 @@ parameter with a default argument shall have a default argument
 supplied in this or a previous declaration,
 unless the parameter was expanded from a parameter pack,
 or shall be a function parameter pack.
+\begin{note}
 A default argument
-shall not be redefined by a later declaration (not even to the
-same value).
+cannot be redefined by a later declaration
+(not even to the same value)\iref{basic.def.odr}.
+\end{note}
 \begin{example}
-
 \begin{codeblock}
 void g(int = 0, ...);           // OK, ellipsis is not a parameter so it can follow
                                 // a parameter with a default argument
@@ -3835,8 +3875,7 @@ C<int> c;                       // OK, instantiates declaration \tcode{void C::f
 \end{example}
 For a given inline function defined in different translation units,
 the accumulated sets of default arguments at the end of the
-translation units shall be the same;
-see~\ref{basic.def.odr}.
+translation units shall be the same; no diagnostic is required.
 If a friend declaration specifies a default argument expression,
 that declaration shall be a definition and shall be the only
 declaration of the function or function template in the translation unit.
@@ -4620,7 +4659,7 @@ An \defn{aggregate} is an array or a class\iref{class} with
 \item
 no user-declared or inherited constructors\iref{class.ctor},
 \item
-no private or protected non-static data members\iref{class.access},
+no private or protected direct non-static data members\iref{class.access},
 \item
 no virtual functions\iref{class.virtual}, and
 \item
@@ -5691,10 +5730,14 @@ int x2 {2.0};                       // error: narrowing
 \end{codeblock}
 \end{example}
 
-\item Otherwise, if \tcode{T} is a reference type, a prvalue of the type
-referenced by \tcode{T} is generated.
+\item Otherwise, if \tcode{T} is a reference type, a prvalue is generated.
 The prvalue initializes its result object by copy-list-initialization.
 The prvalue is then used to direct-initialize the reference.
+The type of the temporary is the type referenced by \tcode{T},
+unless \tcode{T} is ``reference to array of unknown bound of \tcode{U}'',
+in which case the type of the temporary is
+the type of \tcode{x} in the declaration \tcode{U x[] $H$},
+where $H$ is the initializer list.
 \begin{note} As usual, the binding will fail and the program is ill-formed if
 the reference type is an lvalue reference to a non-const type. \end{note}
 
@@ -6026,9 +6069,8 @@ A function that is explicitly defaulted shall
 \item not have default arguments.
 \end{itemize}
 
-% FIXME: there's no such thing as an implicit declaration of a comparison operator
 \pnum
-The type \tcode{T}$_1$ of an explicitly defaulted function \tcode{F}
+The type \tcode{T}$_1$ of an explicitly defaulted special member function \tcode{F}
 is allowed to differ from the type \tcode{T}$_2$ it would have had
 if it were implicitly declared, as follows:
 \begin{itemize}
@@ -6095,9 +6137,15 @@ U u2 = static_cast<U&&>(u1);            // OK, calls \tcode{std::terminate} if \
 Explicitly-defaulted functions and implicitly-declared functions are collectively
 called \defn{defaulted} functions, and the implementation
 shall provide implicit definitions
-for them~(\ref{class.ctor}
+for them~(\ref{class.ctor},
 \ref{class.dtor}, \ref{class.copy.ctor}, \ref{class.copy.assign}),
 which might mean defining them as deleted.
+A defaulted prospective destructor\iref{class.dtor}
+that is not a destructor is defined as deleted.
+A defaulted special member function
+that is neither a prospective destructor nor
+an eligible special member function\iref{special}
+is defined as deleted.
 A function is
 \defn{user-provided} if it is user-declared and not explicitly
 defaulted or deleted on its first declaration. A user-provided explicitly-defaulted function
@@ -6250,7 +6298,7 @@ task<void> g3(int a, ...) {     // error: variable parameter list not allowed
 \end{example}
 
 \pnum
-\indextext{promise type|see{coroutine!promise type}}%
+\indextext{promise type|see{coroutine, promise type}}%
 The \defnx{promise type}{coroutine!promise type} of a coroutine is
 \tcode{std::coroutine_traits<R, P$_1$, $\dotsc$, P$_n$>::promise_type},
 where
@@ -6277,7 +6325,7 @@ A coroutine behaves as if its \grammarterm{function-body} were replaced by:
 % FIXME: \bnfindent \exposid{promise}\terminal{.get_return_object()} \terminal{;}
 % ... except that it's not a discarded-value expression
 \bnfindent \terminal{co_await} \terminal{\exposid{promise}.initial_suspend()} \terminal{;}\br
-\bnfindent \terminal{try \{}\br
+\bnfindent \terminal{try} \terminal{\{}\br
 \bnfindent\bnfindent function-body\br
 \bnfindent \terminal{\} catch ( ... ) \{}\br
 \bnfindent\bnfindent \terminal{\exposid{promise}.unhandled_exception()} \terminal{;}\br
@@ -6488,6 +6536,8 @@ Let \cv{} denote the \grammarterm{cv-qualifier}{s} in
 the \grammarterm{decl-specifier-seq} and
 \placeholder{S} consist of the \grammarterm{storage-class-specifier}{s} of
 the \grammarterm{decl-specifier-seq} (if any).
+A \cv{} that includes \tcode{volatile} is deprecated;
+see~\ref{depr.volatile.type}.
 First, a variable with a unique name \exposid{e} is introduced. If the
 \grammarterm{assignment-expression} in the \grammarterm{initializer}
 has array type \tcode{A} and no \grammarterm{ref-qualifier} is present,
@@ -6609,7 +6659,9 @@ The type of the \grammarterm{id-expression} \tcode{x} is ``\tcode{const int}'',
 the type of the \grammarterm{id-expression} \tcode{y} is ``\tcode{const volatile double}''.
 \end{example}
 
-\rSec1[dcl.enum]{Enumeration declarations}%
+\rSec1[enum]{Enumerations}%
+
+\rSec2[dcl.enum]{Enumeration declarations}%
 \indextext{enumeration}%
 \indextext{\idxcode{\{\}}!enum declaration@\tcode{enum} declaration}%
 \indextext{\idxcode{enum}!type of}
@@ -6626,7 +6678,7 @@ constants. Its name becomes an \grammarterm{enum-name} within its scope.
 \begin{bnf}
 \nontermdef{enum-specifier}\br
     enum-head \terminal{\{} \opt{enumerator-list} \terminal{\}}\br
-    enum-head \terminal{\{} enumerator-list \terminal{, \}}
+    enum-head \terminal{\{} enumerator-list \terminal{,} \terminal{\}}
 \end{bnf}
 
 \begin{bnf}
@@ -6929,6 +6981,60 @@ void g(X* p) {
 \end{codeblock}
 \end{example}
 
+\rSec2[enum.udecl]{The \tcode{using enum} declaration}%
+\indextext{enumeration!using declaration}%
+
+\begin{bnf}
+\nontermdef{using-enum-declaration}\br
+    \terminal{using} elaborated-enum-specifier \terminal{;}
+\end{bnf}
+
+\pnum
+The \grammarterm{elaborated-enum-specifier}
+shall not name a dependent type
+and the type shall have a reachable \grammarterm{enum-specifier}.
+
+\pnum
+A \grammarterm{using-enum-declaration}
+introduces the enumerator names of the named enumeration
+as if by a \grammarterm{using-declaration} for each enumerator.
+
+\pnum
+\begin{note}
+A \grammarterm{using-enum-declaration} in class scope
+adds the enumerators of the named enumeration as members to the scope.
+This means they are accessible for member lookup.
+\begin{example}
+\begin{codeblock}
+enum class fruit { orange, apple };
+struct S {
+  using enum fruit;             // OK, introduces \tcode{orange} and \tcode{apple} into \tcode{S}
+};
+void f() {
+  S s;
+  s.orange;                     // OK, names \tcode{fruit::orange}
+  S::orange;                    // OK, names \tcode{fruit::orange}
+}
+\end{codeblock}
+\end{example}
+\end{note}
+
+\pnum
+\begin{note}
+Two \grammarterm{using-enum-declaration}s
+that introduce two enumerators of the same name conflict.
+\begin{example}
+\begin{codeblock}
+enum class fruit { orange, apple };
+enum class color { red, orange };
+void f() {
+  using enum fruit;             // OK
+  using enum color;             // ill-formed: \tcode{color::orange} and \tcode{fruit::orange} conflict
+}
+\end{codeblock}
+\end{example}
+\end{note}
+
 \rSec1[basic.namespace]{Namespaces}%
 \indextext{namespaces|(}
 
@@ -7006,8 +7112,7 @@ see~\ref{basic.scope.namespace}.
 \end{bnf}
 
 \pnum
-Every \grammarterm{namespace-definition} shall appear in the global scope
-or in a namespace scope\iref{basic.scope.namespace}.
+Every \grammarterm{namespace-definition} shall appear at namespace scope\iref{basic.scope.namespace}.
 
 \pnum
 In a \grammarterm{named-namespace-definition},
@@ -7141,7 +7246,7 @@ An \grammarterm{unnamed-namespace-definition} behaves as if it were
 replaced by
 
 \begin{ncsimplebnf}
-\opt{\keyword{inline}} \keyword{namespace} \exposid{unique} \terminal{\{ /* empty body */ \}}\br
+\opt{\keyword{inline}} \keyword{namespace} \exposid{unique} \terminal{\{} \terminal{/* empty body */} \terminal{\}}\br
 \keyword{using} \keyword{namespace} \exposid{unique} \terminal{;}\br
 \keyword{namespace} \exposid{unique} \terminal{\{} namespace-body \terminal{\}}
 \end{ncsimplebnf}
@@ -7345,7 +7450,7 @@ namespace CWVLN = CWVLN;
 \end{codeblock}
 \end{example}
 
-\rSec2[namespace.udir]{Using directive}%
+\rSec2[namespace.udir]{Using namespace directive}%
 \indextext{using-directive|(}
 
 \begin{bnf}
@@ -7625,8 +7730,20 @@ struct D : B {
 \pnum
 In a \grammarterm{using-declaration} used as a
 \grammarterm{member-declaration},
-each \grammarterm{using-declarator}{'s} \grammarterm{nested-name-specifier}
-shall name a base class of the class being defined. If a
+each \grammarterm{using-declarator}
+shall either name an enumerator
+or have a \grammarterm{nested-name-specifier}
+naming a base class of the class being defined.
+\begin{example}
+\begin{codeblock}
+enum class button { up, down };
+struct S {
+  using button::up;
+  button b = up;                // OK
+};
+\end{codeblock}
+\end{example}
+If a
 \grammarterm{using-declarator} names a constructor, its
 \grammarterm{nested-name-specifier} shall name a direct base class of the class
 being defined.
@@ -7693,10 +7810,9 @@ struct B : A {
 A \grammarterm{using-declaration} shall not name a namespace.
 
 \pnum
-A \grammarterm{using-declaration} shall not name a scoped enumerator.
-
-\pnum
-A \grammarterm{using-declaration} that names a class member shall be a
+A \grammarterm{using-declaration} that names a class member
+other than an enumerator
+shall be a
 \grammarterm{member-declaration}.
 \begin{example}
 \begin{codeblock}
@@ -8054,14 +8170,14 @@ specifies a dependent name\iref{temp.dep}, the name introduced by the
 An \tcode{asm} declaration has the form
 
 \begin{bnf}
-\nontermdef{asm-definition}\br
-    \opt{attribute-specifier-seq} \keyword{asm} \terminal{(} string-literal \terminal{) ;}
+\nontermdef{asm-declaration}\br
+    \opt{attribute-specifier-seq} \keyword{asm} \terminal{(} string-literal \terminal{)} \terminal{;}
 \end{bnf}
 
 The \tcode{asm} declaration is conditionally-supported; its meaning is
 \impldef{meaning of \tcode{asm} declaration}.
 The optional \grammarterm{attribute-specifier-seq} in
-an \grammarterm{asm-definition} appertains to the \tcode{asm} declaration.
+an \grammarterm{asm-declaration} appertains to the \tcode{asm} declaration.
 \begin{note}
 Typically it is used to pass information through the implementation to
 an assembler.
@@ -8320,7 +8436,6 @@ such as types, variables, names, blocks, or translation units.
 \begin{bnf}
 \nontermdef{attribute-specifier}\br
   \terminal{[} \terminal{[} \opt{attribute-using-prefix} attribute-list \terminal{]} \terminal{]}\br
-  contract-attribute-specifier\br
   alignment-specifier
 \end{bnf}
 
@@ -8438,8 +8553,11 @@ entity or statement contains an \grammarterm{attribute} or \grammarterm{alignmen
 is not allowed to apply to that
 entity or statement, the program is ill-formed. If an \grammarterm{attribute-specifier-seq}
 appertains to a friend declaration\iref{class.friend}, that declaration shall be a
-definition. No \grammarterm{attribute-specifier-seq} shall appertain to an explicit
-instantiation\iref{temp.explicit}.
+definition.
+\begin{note}
+An \grammarterm{attribute-specifier-seq} cannot appeartain to
+an explicit instantiation\iref{temp.explicit}.
+\end{note}
 
 \pnum
 For an \grammarterm{attribute-token}
@@ -8651,393 +8769,6 @@ implementation might need to insert a fence prior to the second call to
 \indextext{attribute|)}%
 \indextext{declaration|)}
 
-\rSec2[dcl.attr.contract]{Contract attributes}%
-\indextext{attribute!contracts|(}
-
-\rSec3[dcl.attr.contract.syn]{Syntax}
-
-\pnum
-Contract attributes are used to specify
-preconditions, postconditions, and assertions for functions.
-
-\begin{bnf}
-\nontermdef{contract-attribute-specifier}\br
-  \terminal{[} \terminal{[} \keyword{expects} \opt{contract-level} \terminal{:} conditional-expression \terminal{]} \terminal{]}\br
-  \terminal{[} \terminal{[} \keyword{ensures} \opt{contract-level} \opt{identifier} \terminal{:} conditional-expression \terminal{]} \terminal{]}\br
-    \terminal{[} \terminal{[} \keyword{assert} \opt{contract-level} \terminal{:} conditional-expression \terminal{]} \terminal{]}
-\end{bnf}
-
-\begin{bnf}
-\nontermdef{contract-level}\br
-  \keyword{default}\br
-  \keyword{audit}\br
-  \keyword{axiom}
-\end{bnf}
-
-
-An ambiguity between
-a \grammarterm{contract-level} and an \grammarterm{identifier}
-is resolved in favor of \grammarterm{contract-level}.
-
-\pnum
-A \grammarterm{contract-attribute-specifier} using \tcode{expects}
-is a \defn{precondition}.
-It expresses a function's expectation on its arguments and/or
-the state of other objects using a predicate
-that is intended to hold upon entry into the function.
-The attribute may be applied to the function type of a function declaration.
-
-\pnum
-A \grammarterm{contract-attribute-specifier} using \tcode{ensures}
-is a \defn{postcondition}.
-It expresses a condition that a function should ensure
-for the return value and/or the state of objects
-using a predicate that is intended to hold upon exit from the function.
-The attribute may be applied to the function type of a function declaration.
-A postcondition may introduce an identifier to represent
-the glvalue result or the prvalue result object of the function.
-When the declared return type of a non-templated function
-contains a placeholder type,
-the optional \grammarterm{identifier} shall only be present in a definition.
-\begin{example}
-\begin{codeblock}
-int f(char * c)
-  [[ensures res: res > 0 && c != nullptr]];
-
-int g(double * p)
-  [[ensures audit res: res != 0 && p != nullptr && *p <= 0.0]];
-
-auto h(int x)
-  [[ensures res: true]];       // error: cannot name the return value
-\end{codeblock}
-\end{example}
-
-\pnum
-A \grammarterm{contract-attribute-specifier} using \tcode{assert}
-is an \defn{assertion}.
-It expresses a condition that is intended to be satisfied
-where it appears in a function body.
-The attribute may be applied to a null statement\iref{stmt.expr}.
-An assertion is checked by evaluating its predicate
-as part of the evaluation of the null statement
-it applies to.
-
-\pnum
-Preconditions, postconditions, and assertions
-are collectively called \defnx{contracts}{contract}.
-The \grammarterm{conditional-expression} in a contract
-is contextually converted to \tcode{bool}\iref{conv};
-the converted expression is called
-the \defnx{predicate}{contract!predicate} of the contract.
-\begin{note}
-The predicate of a contract is potentially evaluated\iref{basic.def.odr}.
-\end{note}
-
-\pnum
-The only side effects of a predicate
-that are allowed in a \grammarterm{contract-attribute-specifier}
-are modifications of non-volatile objects
-whose lifetime began and ended within the evaluation of the predicate.
-An evaluation of a predicate that exits via an exception
-invokes the function \tcode{std::terminate}\iref{except.terminate}.
-The behavior of any other side effect is undefined.
-\begin{example}
-\begin{codeblock}
-void push(int x, queue & q)
-  [[expects: !q.full()]]
-  [[ensures: !q.empty()]]
-{
-  @\commentellip@
-  [[assert: q.is_valid()]];
-  @\commentellip@
-}
-
-int min = -42;
-constexpr int max = 42;
-
-constexpr int g(int x)
-  [[expects: min <= x]]                         // error
-  [[expects: x < max]]                          // OK
-{
-  @\commentellip@
-  [[assert: 2*x < max]];
-  [[assert: ++min > 0]];                        // undefined behavior
-  @\commentellip@
-}
-\end{codeblock}
-\end{example}
-
-\rSec3[dcl.attr.contract.cond]{Contract conditions}
-
-\pnum
-A \defn{contract condition} is a precondition or a postcondition.
-The first declaration of a function shall specify
-all contract conditions (if any) of the function.
-Subsequent declarations shall either specify no contract conditions
-or the same list of contract conditions;
-no diagnostic is required
-if corresponding conditions will always evaluate to the same value.
-The list of contract conditions of a function shall be the same
-if the declarations of that function appear in different translation units;
-no diagnostic required.
-If a friend declaration
-is the first declaration of the function in a translation unit
-and has a contract condition,
-the declaration shall be a definition and
-shall be the only declaration of the function in the translation unit.
-
-\pnum
-Two lists of contract conditions are the same
-if they consist of the same contract conditions in the same order.
-Two contract conditions are the same
-if their contract levels are the same and their predicates are the same.
-Two predicates contained in \grammarterm{contract-attribute-specifier}{s}
-are the same
-if they would satisfy the one-definition rule\iref{basic.def.odr}
-were they to appear in function definitions,
-except for renaming of parameters,
-return value identifiers (if any),
-and template parameters.
-
-\pnum
-\begin{note}
-A function pointer cannot include contract conditions.
-\begin{example}
-\begin{codeblock}
-typedef int (*fpt)() [[ensures r: r != 0]];     // error: contract condition not on a function declaration
-
-int g(int x)
-  [[expects: x >= 0]]
-  [[ensures r: r > x]]
-{
-  return x+1;
-}
-
-int (*pf)(int) = g;                             // OK
-int x = pf(5);                                  // contract conditions of \tcode{g} are checked
-\end{codeblock}
-\end{example}
-\end{note}
-
-\pnum
-The predicate of a contract condition has the same semantic restrictions
-as if it appeared as the first \grammarterm{expression-statement}
-in the body of the function it applies to,
-except that the return type of the function is
-known in a contract condition appertaining to its definition,
-even if the return type contains a placeholder type.
-
-\pnum
-A precondition is checked by evaluating its predicate
-immediately before starting evaluation of the function body.
-\begin{note}
-The function body includes
-the \grammarterm{function-try-block}\iref{except} and
-the \grammarterm{ctor-initializer}\iref{class.base.init}.
-\end{note}
-A postcondition is checked by evaluating its predicate
-immediately before returning control to the caller of the function.
-\begin{note}
-The lifetime of local variables and temporaries has ended.
-Exiting via an exception or via \tcode{longjmp}\iref{csetjmp.syn}
-is not considered returning control to the caller of the function.
-\end{note}
-
-\pnum
-If a function has multiple preconditions,
-their evaluation (if any) will be performed
-in the order they appear lexically.
-If a function has multiple postconditions,
-their evaluation (if any) will be performed
-in the order they appear lexically.
-\begin{example}
-\begin{codeblock}
-void f(int * p)
-  [[expects: p != nullptr]]                     // \#1
-  [[ensures: *p == 1]]                          // \#3
-  [[expects: *p == 0]]                          // \#2
-{
-  *p = 1;
-}
-\end{codeblock}
-\end{example}
-
-\pnum
-If a postcondition odr-uses\iref{basic.def.odr}
-a non-reference parameter in its predicate
-and the function body makes direct or indirect modifications of
-the value of that parameter,
-the behavior is undefined.
-\begin{example}
-\begin{codeblock}
-int f(int x)
-  [[ensures r: r == x]]
-{
-  return ++x;                   // undefined behavior
-}
-
-void g(int * p)
-  [[ensures: p != nullptr]]
-{
-  *p = 42;                      // OK, \tcode{p} is not modified
-}
-
-int h(int x)
-  [[ensures r: r == x]]
-{
-  potentially_modify(x);        // undefined behavior if \tcode{x} is modified
-  return x;
-}
-\end{codeblock}
-\end{example}
-
-\rSec3[dcl.attr.contract.check]{Checking contracts}
-
-\pnum
-If the \grammarterm{contract-level}
-of a \grammarterm{contract-attribute-specifier} is absent,
-it is assumed to be \tcode{default}.
-\begin{note}
-A \tcode{default} \grammarterm{contract-level} is expected to be used
-for those contracts where
-the cost of run-time checking is assumed to be
-small (or at least not expensive) compared to
-the cost of executing the function.
-An \tcode{audit} \grammarterm{contract-level} is expected to be used
-for those contracts where
-the cost of run-time checking is assumed to be
-large (or at least significant) compared to
-the cost of executing the function.
-An \tcode{axiom} \grammarterm{contract-level} is expected to be used
-for those contracts that are formal comments
-and are not evaluated at run-time.
-\end{note}
-
-\pnum
-\begin{note}
-Multiple contract conditions may be applied to a function type
-with the same or different \grammarterm{contract-level}{s}.
-\begin{example}
-\begin{codeblock}
-int z;
-
-bool is_prime(int k);
-
-void f(int x)
-  [[expects: x > 0]]
-  [[expects audit: is_prime(x)]]
-  [[ensures: z > 10]]
-{
-  @\commentellip@
-}
-\end{codeblock}
-\end{example}
-\end{note}
-
-\pnum
-A translation may be performed
-with one of the following \defnx{build levels}{build level}:
-\term{off}, \term{default}, or \term{audit}.
-A translation with build level set to \term{off}
-performs no checking for any contract.
-A translation with build level set to \term{default}
-performs checking for \tcode{default} contracts.
-A translation with build level set to \term{audit}
-performs checking for \tcode{default} and \tcode{audit} contracts.
-If no build level is explicitly selected, the build level is \term{default}.
-The mechanism for selecting the build level is
-\impldef{mechanism for selecting the build level}.
-The translation of a program consisting of translation units
-where the build level is not the same in all translation units
-is conditionally-supported.
-There should be no programmatic way of setting, modifying, or querying
-the build level of a translation unit.
-
-\pnum
-During constant expression evaluation\iref{expr.const},
-only predicates of checked contracts are evaluated.
-In other contexts,
-it is unspecified whether the predicate for a contract
-that is not checked under the current build level is evaluated;
-if the predicate of such a contract
-would evaluate to \tcode{false}, the behavior is undefined.
-
-\pnum
-The \defn{violation handler} of a program is a function of type
-``\opt{\tcode{noexcept}} function of
-(lvalue reference to \tcode{const std::contract_violation})
-returning \tcode{void}''.
-The violation handler is invoked
-when the predicate of a checked contract evaluates to \tcode{false}
-(called a \defn{contract violation}).
-There should be no programmatic way of
-setting or modifying the violation handler.
-It is \impldef{establishing of and argument for violation handler}
-how the violation handler is established for a program and
-how
-the \tcode{std::contract_violation}\iref{support.contract.cviol} argument value
-is set,
-except as specified below.
-If a precondition is violated, the source location of the violation is
-\impldef{source location of precondition violation}.
-\begin{note}
-Implementations are encouraged but not required to report the caller site.
-\end{note}
-If a postcondition is violated, the source location of the violation is
-the source location of the function definition.
-If an assertion is violated, the source location of the violation is
-the source location of the statement to which the assertion is applied.
-
-\pnum
-If a violation handler exits by throwing an exception
-and a contract is violated on a call to a function
-with a non-throwing exception specification,
-then the behavior is as if the exception escaped the function body.
-\begin{note}
-The function \tcode{std::terminate} is invoked\iref{except.terminate}.
-\end{note}
-\begin{example}
-\begin{codeblock}
-void f(int x) noexcept [[expects: x > 0]];
-
-void g() {
-  f(0);                                         // \tcode{std::terminate()} if violation handler throws
-  @\commentellip@
-}
-\end{codeblock}
-\end{example}
-
-\pnum
-A translation may be performed with one of the following
-\defnx{violation continuation modes}{violation continuation mode}:
-\term{off} or \term{on}.
-A translation with violation continuation mode set to \term{off}
-terminates execution
-by invoking the function \tcode{std::terminate}\iref{except.terminate}
-after completing the execution of the violation handler.
-A translation with a violation continuation mode set to \term{on}
-continues execution after completing the execution of the violation handler.
-If no continuation mode is explicitly selected,
-the default continuation mode is \term{off}.
-\begin{note}
-A continuation mode set to \term{on} provides the opportunity
-to install a logging handler to instrument a pre-existing code base
-and fix errors before enforcing checks.
-\end{note}
-\begin{example}
-\begin{codeblock}
-void f(int x) [[expects: x > 0]];
-
-void g() {
-  f(0);         // \tcode{std::terminate()} after handler if continuation mode is off;
-                // proceeds after handler if continuation mode is on
-  @\commentellip@
-}
-\end{codeblock}
-\end{example}
-
-\indextext{attribute!contracts|)}
-
 \rSec2[dcl.attr.deprecated]{Deprecated attribute}%
 \indextext{attribute!deprecated}
 
@@ -9048,9 +8779,9 @@ whose use is still allowed, but is discouraged for some reason. \begin{note} In 
 unsafe. \end{note} It shall appear at most once in each \grammarterm{attribute-list}. An
 \grammarterm{attribute-argument-clause} may be present and, if present, it shall have the form:
 
-\begin{codeblock}
-( @\grammarterm{string-literal}@ )
-\end{codeblock}
+\begin{ncbnf}
+\terminal{(} string-literal \terminal{)}
+\end{ncbnf}
 \begin{note} The \grammarterm{string-literal} in the \grammarterm{attribute-argument-clause}
 could be used to explain the rationale for deprecation and/or to suggest a replacing entity.
 \end{note}
@@ -9098,7 +8829,10 @@ A fallthrough statement may only appear within
 an enclosing \tcode{switch} statement\iref{stmt.switch}.
 The next statement that would be executed after a fallthrough statement
 shall be a labeled statement whose label is a case label or
-default label for the same \tcode{switch} statement.
+default label for the same \tcode{switch} statement and,
+if the fallthrough statement is contained in an iteration statement,
+the next statement shall be part of the same execution of
+the substatement of the innermost enclosing iteration statement.
 The program is ill-formed if there is no such statement.
 
 \pnum
@@ -9122,6 +8856,18 @@ void f(int n) {
     g();
     [[fallthrough]];
   case 3:                       // warning on fallthrough discouraged
+    do {
+      [[fallthrough]];          // error: next statement is not part of the same substatement execution
+    } while (false);
+  case 6:
+    do {
+      [[fallthrough]];          // error: next statement is not part of the same substatement execution
+    } while (n--);
+  case 7:
+    while (false) {
+      [[fallthrough]];          // error: next statement is not part of the same substatement execution
+    }
+  case 5:
     h();
   case 4:                       // implementation may warn on fallthrough
     i();
@@ -9243,29 +8989,81 @@ whether or not \tcode{NDEBUG} is defined.
 The \grammarterm{attribute-token} \tcode{nodiscard}
 may be applied to the \grammarterm{declarator-id}
 in a function declaration or to the declaration of a class or enumeration.
-It shall appear at most once in each \grammarterm{attribute-list} and
-no \grammarterm{attribute-argument-clause} shall be present.
+It shall appear at most once in each \grammarterm{attribute-list}.
+An \grammarterm{attribute-argument-clause} may be present
+and, if present, shall have the form:
+
+\begin{ncbnf}
+\terminal{(} string-literal \terminal{)}
+\end{ncbnf}
+
+\pnum
+A name or entity declared without the \tcode{nodiscard} attribute
+can later be redeclared with the attribute and vice-versa.
+\begin{note}
+Thus, an entity initially declared without the attribute
+can be marked as \tcode{nodiscard}
+by a subsequent redeclaration.
+However, after an entity is marked as \tcode{nodiscard},
+later redeclarations do not remove the \tcode{nodiscard}
+from the entity.
+\end{note}
+Redeclarations using different forms of the attribute
+(with or without the \grammarterm{attribute-argument-clause}
+or with different \grammarterm{attribute-argument-clause}s)
+are allowed.
+
+\pnum
+A \defnadj{nodiscard}{type} is
+a (possibly cv-qualified) class or enumeration type
+marked \tcode{nodiscard} in a reachable declaration.
+A \defnadj{nodiscard}{call} is either
+\begin{itemize}
+\item
+  a function call expression\iref{expr.call}
+  that calls a function declared \tcode{nodiscard} in a reachable declaration or
+  whose return type is a nodiscard type, or
+\item
+  an explicit type
+  conversion~(\ref{expr.static.cast}, \ref{expr.cast}, \ref{expr.type.conv})
+  that constructs an object through
+  a constructor declared \tcode{nodiscard} in a reachable declaration, or
+  that initializes an object of a nodiscard type.
+\end{itemize}
 
 \pnum
 \begin{note}
-A nodiscard call is a function call expression that
-calls a function previously declared \tcode{nodiscard}, or
-whose return type is a possibly cv-qualified class or enumeration type
-marked \tcode{nodiscard}. Appearance of a nodiscard call as
+Appearance of a nodiscard call as
 a potentially-evaluated discarded-value expression\iref{expr.prop}
 is discouraged unless explicitly cast to \tcode{void}.
 Implementations should issue a warning in such cases.
 This is typically because discarding the return value
 of a nodiscard call has surprising consequences.
+The \grammarterm{string-literal}
+in a \tcode{nodiscard} \grammarterm{attribute-argument-clause}
+is intended to be used in the message of the warning
+as the rationale for why the result should not be discarded.
 \end{note}
 
 \pnum
 \begin{example}
 \begin{codeblock}
+struct [[nodiscard]] my_scopeguard { @\commentellip@ };
+struct my_unique {
+  my_unique() = default;                                // does not acquire resource
+  [[nodiscard]] my_unique(int fd) { @\commentellip@ }         // acquires resource
+  ~my_unique() noexcept { @\commentellip@ }                   // releases resource, if any
+  @\commentellip@
+};
 struct [[nodiscard]] error_info { @\commentellip@ };
 error_info enable_missile_safety_mode();
 void launch_missiles();
 void test_missiles() {
+  my_scopeguard();              // warning encouraged
+  (void)my_scopeguard(),        // warning not encouraged, cast to \tcode{void}
+    launch_missiles();          // comma operator, statement continues
+  my_unique(42);                // warning encouraged
+  my_unique();                  // warning not encouraged
   enable_missile_safety_mode(); // warning encouraged
   launch_missiles();
 }

@@ -18,15 +18,15 @@ a class template that holds the
 result of a regular expression match, a series of algorithms that allow a character
 sequence to be operated upon by a regular expression,
 and two iterator types for
-enumerating regular expression matches, as summarized in \tref{re.lib.summary}.
+enumerating regular expression matches, as summarized in \tref{re.summary}.
 
-\begin{libsumtab}{Regular expressions library summary}{tab:re.lib.summary}
+\begin{libsumtab}{Regular expressions library summary}{re.summary}
 \ref{re.def}        &   Definitions                 &                       \\
 \ref{re.req}        &   Requirements                &                       \\ \rowsep
-\ref{re.const}      &   Constants                   &                       \\
+\ref{re.const}      &   Constants                   & \tcode{<regex>}       \\
 \ref{re.badexp}     &   Exception type              &                       \\
 \ref{re.traits}     &   Traits                      &                       \\
-\ref{re.regex}      &   Regular expression template &   \tcode{<regex>}     \\
+\ref{re.regex}      &   Regular expression template &                       \\
 \ref{re.submatch}   &   Submatches                  &                       \\
 \ref{re.results}    &   Match results               &                       \\
 \ref{re.alg}        &   Algorithms                  &                       \\
@@ -87,7 +87,7 @@ been marked by parenthesis.
 This subclause defines requirements on classes representing regular
 expression traits.  \begin{note} The class template
 \tcode{regex_traits}, defined in \ref{re.traits},
-satisfies these requirements.  \end{note}
+meets these requirements.  \end{note}
 
 \pnum
 The class template \tcode{basic_regex}, defined in
@@ -108,7 +108,7 @@ expression traits class \tcode{Traits}, use \tcode{basic_regex<CharT, Traits>}.
 \indextext{requirements!regular expression traits}%
 \indextext{regular expression!requirements}%
 \indextext{locale}%
-In \tref{re:RegexpTraits} \tcode{X} denotes a traits class
+In \tref{re.req} \tcode{X} denotes a traits class
 defining types and functions for the character container
 type \tcode{charT}; \tcode{u} is an object of
 type \tcode{X}; \tcode{v} is an object of type \tcode{const
@@ -125,7 +125,7 @@ and \tcode{loc} is an object of type \tcode{X::locale_type}.
 
 \begin{libreqtab3}
   {Regular expression traits class requirements}
-  {tab:re:RegexpTraits}
+  {re.req}
 \\ \topline
 \lhdr{Expression} & \chdr{Return type} & \rhdr{Assertion/note pre-/post-condition } \\ \capsep
 \endfirsthead
@@ -246,7 +246,7 @@ and \tcode{loc} is an object of type \tcode{X::locale_type}.
 
 \pnum
 \begin{note}
-Class template \tcode{regex_traits} satisfies the requirements for a
+Class template \tcode{regex_traits} meets the requirements for a
 regular expression traits class when it is specialized for
 \tcode{char} or \tcode{wchar_t}.  This class template is described in
 the header \tcode{<regex>}, and is described in \ref{re.traits}.
@@ -298,141 +298,30 @@ namespace std {
   template<class BiIter>
     bool operator==(const sub_match<BiIter>& lhs, const sub_match<BiIter>& rhs);
   template<class BiIter>
-    bool operator!=(const sub_match<BiIter>& lhs, const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator<(const sub_match<BiIter>& lhs, const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator>(const sub_match<BiIter>& lhs, const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator<=(const sub_match<BiIter>& lhs, const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator>=(const sub_match<BiIter>& lhs, const sub_match<BiIter>& rhs);
-
-  template<class BiIter, class ST, class SA>
-    bool operator==(
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& lhs,
-      const sub_match<BiIter>& rhs);
-  template<class BiIter, class ST, class SA>
-    bool operator!=(
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& lhs,
-      const sub_match<BiIter>& rhs);
-  template<class BiIter, class ST, class SA>
-    bool operator<(
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& lhs,
-      const sub_match<BiIter>& rhs);
-  template<class BiIter, class ST, class SA>
-    bool operator>(
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& lhs,
-      const sub_match<BiIter>& rhs);
-  template<class BiIter, class ST, class SA>
-    bool operator<=(
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& lhs,
-      const sub_match<BiIter>& rhs);
-  template<class BiIter, class ST, class SA>
-    bool operator>=(
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& lhs,
-      const sub_match<BiIter>& rhs);
+    auto operator<=>(const sub_match<BiIter>& lhs, const sub_match<BiIter>& rhs);
 
   template<class BiIter, class ST, class SA>
     bool operator==(
       const sub_match<BiIter>& lhs,
       const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& rhs);
   template<class BiIter, class ST, class SA>
-    bool operator!=(
+    auto operator<=>(
       const sub_match<BiIter>& lhs,
       const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& rhs);
-  template<class BiIter, class ST, class SA>
-    bool operator<(
-      const sub_match<BiIter>& lhs,
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& rhs);
-  template<class BiIter, class ST, class SA>
-    bool operator>(
-      const sub_match<BiIter>& lhs,
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& rhs);
-  template<class BiIter, class ST, class SA>
-    bool operator<=(
-      const sub_match<BiIter>& lhs,
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& rhs);
-  template<class BiIter, class ST, class SA>
-    bool operator>=(
-      const sub_match<BiIter>& lhs,
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& rhs);
-
-  template<class BiIter>
-    bool operator==(const typename iterator_traits<BiIter>::value_type* lhs,
-                    const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator!=(const typename iterator_traits<BiIter>::value_type* lhs,
-                    const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator<(const typename iterator_traits<BiIter>::value_type* lhs,
-                   const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator>(const typename iterator_traits<BiIter>::value_type* lhs,
-                   const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator<=(const typename iterator_traits<BiIter>::value_type* lhs,
-                    const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator>=(const typename iterator_traits<BiIter>::value_type* lhs,
-                    const sub_match<BiIter>& rhs);
 
   template<class BiIter>
     bool operator==(const sub_match<BiIter>& lhs,
                     const typename iterator_traits<BiIter>::value_type* rhs);
   template<class BiIter>
-    bool operator!=(const sub_match<BiIter>& lhs,
-                    const typename iterator_traits<BiIter>::value_type* rhs);
-  template<class BiIter>
-    bool operator<(const sub_match<BiIter>& lhs,
-                   const typename iterator_traits<BiIter>::value_type* rhs);
-  template<class BiIter>
-    bool operator>(const sub_match<BiIter>& lhs,
-                   const typename iterator_traits<BiIter>::value_type* rhs);
-  template<class BiIter>
-    bool operator<=(const sub_match<BiIter>& lhs,
-                    const typename iterator_traits<BiIter>::value_type* rhs);
-  template<class BiIter>
-    bool operator>=(const sub_match<BiIter>& lhs,
-                    const typename iterator_traits<BiIter>::value_type* rhs);
-
-  template<class BiIter>
-    bool operator==(const typename iterator_traits<BiIter>::value_type& lhs,
-                    const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator!=(const typename iterator_traits<BiIter>::value_type& lhs,
-                    const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator<(const typename iterator_traits<BiIter>::value_type& lhs,
-                   const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator>(const typename iterator_traits<BiIter>::value_type& lhs,
-                   const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator<=(const typename iterator_traits<BiIter>::value_type& lhs,
-                    const sub_match<BiIter>& rhs);
-  template<class BiIter>
-    bool operator>=(const typename iterator_traits<BiIter>::value_type& lhs,
-                    const sub_match<BiIter>& rhs);
+    auto operator<=>(const sub_match<BiIter>& lhs,
+                     const typename iterator_traits<BiIter>::value_type* rhs);
 
   template<class BiIter>
     bool operator==(const sub_match<BiIter>& lhs,
                     const typename iterator_traits<BiIter>::value_type& rhs);
   template<class BiIter>
-    bool operator!=(const sub_match<BiIter>& lhs,
-                    const typename iterator_traits<BiIter>::value_type& rhs);
-  template<class BiIter>
-    bool operator<(const sub_match<BiIter>& lhs,
-                   const typename iterator_traits<BiIter>::value_type& rhs);
-  template<class BiIter>
-    bool operator>(const sub_match<BiIter>& lhs,
-                   const typename iterator_traits<BiIter>::value_type& rhs);
-  template<class BiIter>
-    bool operator<=(const sub_match<BiIter>& lhs,
-                    const typename iterator_traits<BiIter>::value_type& rhs);
-  template<class BiIter>
-    bool operator>=(const sub_match<BiIter>& lhs,
-                    const typename iterator_traits<BiIter>::value_type& rhs);
+    auto operator<=>(const sub_match<BiIter>& lhs,
+                     const typename iterator_traits<BiIter>::value_type& rhs);
 
   template<class charT, class ST, class BiIter>
     basic_ostream<charT, ST>&
@@ -451,9 +340,6 @@ namespace std {
   // \tcode{match_results} comparisons
   template<class BidirectionalIterator, class Allocator>
     bool operator==(const match_results<BidirectionalIterator, Allocator>& m1,
-                    const match_results<BidirectionalIterator, Allocator>& m2);
-  template<class BidirectionalIterator, class Allocator>
-    bool operator!=(const match_results<BidirectionalIterator, Allocator>& m1,
                     const match_results<BidirectionalIterator, Allocator>& m2);
 
   // \ref{re.results.swap}, \tcode{match_results} swap
@@ -654,14 +540,14 @@ namespace std::regex_constants {
 \indexlibrary{\idxcode{syntax_option_type}!\idxcode{egrep}}%
 The type \tcode{syntax_option_type} is an \impldef{type of \tcode{syntax_option_type}} bitmask
 type\iref{bitmask.types}. Setting its elements has the effects listed in
-\tref{re:syntaxoption}.  A valid value of type
+\tref{re.synopt}.  A valid value of type
 \tcode{syntax_option_type} shall have at most one of the grammar elements
 \tcode{ECMAScript}, \tcode{basic}, \tcode{extended}, \tcode{awk}, \tcode{grep}, \tcode{egrep}, set.
 If no grammar element is set, the default grammar is \tcode{ECMAScript}.
 
 \begin{libefftab}
   {\tcode{syntax_option_type} effects}
-  {tab:re:syntaxoption}
+  {re.synopt}
 %
 \tcode{icase} &
 Specifies that matching of regular expressions against a character
@@ -794,13 +680,13 @@ The constants of that type, except for \tcode{match_default} and
 \tcode{format_default} constants are empty bitmasks.
 Matching a regular expression against a sequence of characters
 \range{first}{last} proceeds according to the rules of the grammar specified for the regular
-expression object, modified according to the effects listed in \tref{re:matchflag} for
+expression object, modified according to the effects listed in \tref{re.matchflag} for
 any bitmask elements set.
 
 \begin{longlibefftab}
   {\tcode{regex_constants::match_flag_type} effects when obtaining a match against a
      character container sequence \range{first}{last}.}
-  {tab:re:matchflag}
+  {re.matchflag}
 %
 \indexlibrary{\idxcode{match_not_bol}}%
 \tcode{match_not_bol} &
@@ -913,11 +799,11 @@ namespace std::regex_constants {
 The type \tcode{error_type} is an \impldef{type of
 \tcode{regex_constants::error_type}} enumerated type\iref{enumerated.types}.
 Values of type \tcode{error_type} represent the error
-conditions described in \tref{re:errortype}:
+conditions described in \tref{re.err}:
 
 \begin{longliberrtab}
   {\tcode{error_type} values in the C locale}
-  {tab:re:errortype}
+  {re.err}
 \tcode{error_collate}
 &
 The expression contained an invalid collating element name.  \\ \rowsep
@@ -1052,7 +938,7 @@ namespace std {
 \indextext{requirements!regular expression traits}%
 \indextext{\idxcode{regex_traits}!specializations}%
 The specializations \tcode{regex_traits<char>} and
-\tcode{regex_traits<wchar_t>} shall be valid and shall satisfy the
+\tcode{regex_traits<wchar_t>} shall be valid and shall meet the
 requirements for a regular expression traits class\iref{re.req}.
 
 \indexlibrarymember{regex_traits}{char_class_type}%
@@ -1279,7 +1165,7 @@ in effect at the time of construction of \tcode{*this}, otherwise a copy of
 the last argument passed to \tcode{imbue}.
 \end{itemdescr}
 
-\begin{floattable}{Character class names and corresponding \tcode{ctype} masks}{tab:re.traits.classnames}{lll}
+\begin{floattable}{Character class names and corresponding \tcode{ctype} masks}{re.traits.classnames}{lll}
 \topline
 \lhdr{Narrow character name} & \chdr{Wide character name} & \rhdr{Corresponding \tcode{ctype_base::mask} value} \\\capsep
 \tcode{"alnum"}  & \tcode{L"alnum"}  & \tcode{ctype_base::alnum}  \\ \rowsep
@@ -1317,7 +1203,7 @@ representation. It is not specified what form this representation
 takes, nor how it is accessed by algorithms that operate on regular
 expressions. \begin{note} Implementations will typically declare
 some function templates as friends of \tcode{basic_regex} to achieve
-this \end{note}
+this. \end{note}
 
 \pnum
 \indexlibrary{\idxcode{regex_error}}%
@@ -1696,7 +1582,7 @@ template<class InputIterator>
 \begin{itemdescr}
 \pnum
 \requires
-\tcode{InputIterator} shall satisfy the
+\tcode{InputIterator} shall meet the
 \oldconcept{InputIterator} requirements\iref{input.iterators}.
 
 \pnum
@@ -1903,6 +1789,12 @@ int compare(const value_type* s) const;
 
 \rSec2[re.submatch.op]{Non-member operators}
 
+\pnum
+Let \tcode{\placeholdernc{SM-CAT}(I)} be
+\begin{codeblock}
+compare_three_way_result_t<basic_string<typename iterator_traits<I>::value_type>>
+\end{codeblock}
+
 \indexlibrarymember{sub_match}{operator==}%
 \begin{itemdecl}
 template<class BiIter>
@@ -1913,134 +1805,14 @@ template<class BiIter>
 \pnum\returns \tcode{lhs.compare(rhs) == 0}.
 \end{itemdescr}
 
-\indexlibrarymember{sub_match}{operator"!=}%
+\indexlibrarymember{sub_match}{operator<=>}%
 \begin{itemdecl}
 template<class BiIter>
-  bool operator!=(const sub_match<BiIter>& lhs, const sub_match<BiIter>& rhs);
+  auto operator<=>(const sub_match<BiIter>& lhs, const sub_match<BiIter>& rhs);
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum\returns \tcode{lhs.compare(rhs) != 0}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator<}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator<(const sub_match<BiIter>& lhs, const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{lhs.compare(rhs) < 0}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator>}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator>(const sub_match<BiIter>& lhs, const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{lhs.compare(rhs) > 0}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator<=}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator<=(const sub_match<BiIter>& lhs, const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{lhs.compare(rhs) <= 0}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator>=}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator>=(const sub_match<BiIter>& lhs, const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{lhs.compare(rhs) >= 0}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator==}%
-\begin{itemdecl}
-template<class BiIter, class ST, class SA>
-  bool operator==(
-    const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& lhs,
-    const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns
-\begin{codeblock}
-rhs.compare(typename sub_match<BiIter>::string_type(lhs.data(), lhs.size())) == 0
-\end{codeblock}
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator"!=}%
-\begin{itemdecl}
-template<class BiIter, class ST, class SA>
-  bool operator!=(
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& lhs,
-      const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{!(lhs == rhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator<}%
-\begin{itemdecl}
-template<class BiIter, class ST, class SA>
-  bool operator<(
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& lhs,
-      const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns
-\begin{codeblock}
-rhs.compare(typename sub_match<BiIter>::string_type(lhs.data(), lhs.size())) > 0
-\end{codeblock}
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator>}%
-\begin{itemdecl}
-template<class BiIter, class ST, class SA>
-  bool operator>(
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& lhs,
-      const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{rhs < lhs}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator<=}%
-\begin{itemdecl}
-template<class BiIter, class ST, class SA>
-  bool operator<=(
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& lhs,
-      const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{!(rhs < lhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator>=}%
-\begin{itemdecl}
-template<class BiIter, class ST, class SA>
-  bool operator>=(
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& lhs,
-      const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{!(lhs < rhs)}.
+\pnum\returns \tcode{static_cast<\placeholdernc{SM-CAT}(BiIter)>(lhs.compare(rhs) <=> 0)}.
 \end{itemdescr}
 
 \indexlibrarymember{operator==}{sub_match}%
@@ -2059,136 +1831,22 @@ lhs.compare(typename sub_match<BiIter>::string_type(rhs.data(), rhs.size())) == 
 \end{codeblock}
 \end{itemdescr}
 
-\indexlibrary{\idxcode{operator"!=}!\idxcode{sub_match}}%
-\indexlibrary{\idxcode{sub_match}!\idxcode{operator"!=}}%
+\indexlibrarymember{operator<=>}{sub_match}%
 \begin{itemdecl}
 template<class BiIter, class ST, class SA>
-  bool operator!=(
+  auto operator<=>(
       const sub_match<BiIter>& lhs,
       const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& rhs);
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum\returns \tcode{!(lhs == rhs)}.
-\end{itemdescr}
-
-\indexlibrary{\idxcode{operator>}!\idxcode{sub_match}}%
-\indexlibrary{\idxcode{sub_match}!\idxcode{operator<}}%
-\begin{itemdecl}
-template<class BiIter, class ST, class SA>
-  bool operator<(
-      const sub_match<BiIter>& lhs,
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns
+\pnum\returns
 \begin{codeblock}
-lhs.compare(typename sub_match<BiIter>::string_type(rhs.data(), rhs.size())) < 0
+static_cast<@\placeholdernc{SM-CAT}@(BiIter)>(lhs.compare(
+    typename sub_match<BiIter>::string_type(rhs.data(), rhs.size()))
+      <=> 0
+    )
 \end{codeblock}
-\end{itemdescr}
-
-\indexlibrarymember{operator>}{sub_match}%
-\begin{itemdecl}
-template<class BiIter, class ST, class SA>
-  bool operator>(
-      const sub_match<BiIter>& lhs,
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{rhs < lhs}.
-\end{itemdescr}
-
-\indexlibrarymember{operator<=}{sub_match}%
-\begin{itemdecl}
-template<class BiIter, class ST, class SA>
-  bool operator<=(
-      const sub_match<BiIter>& lhs,
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{!(rhs < lhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{operator>=}{sub_match}%
-\begin{itemdecl}
-template<class BiIter, class ST, class SA>
-  bool operator>=(
-      const sub_match<BiIter>& lhs,
-      const basic_string<typename iterator_traits<BiIter>::value_type, ST, SA>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{!(lhs < rhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator==}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator==(const typename iterator_traits<BiIter>::value_type* lhs,
-                  const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{rhs.compare(lhs) == 0}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator"!=}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator!=(const typename iterator_traits<BiIter>::value_type* lhs,
-                  const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{!(lhs == rhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator<}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator<(const typename iterator_traits<BiIter>::value_type* lhs,
-                 const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{rhs.compare(lhs) > 0}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator>}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator>(const typename iterator_traits<BiIter>::value_type* lhs,
-                 const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{rhs < lhs}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator<=}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator<=(const typename iterator_traits<BiIter>::value_type* lhs,
-                  const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{!(rhs < lhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator>=}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator>=(const typename iterator_traits<BiIter>::value_type* lhs,
-                  const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{!(lhs < rhs)}.
 \end{itemdescr}
 
 \indexlibrarymember{sub_match}{operator==}%
@@ -2202,132 +1860,16 @@ template<class BiIter>
 \pnum\returns \tcode{lhs.compare(rhs) == 0}.
 \end{itemdescr}
 
-\indexlibrarymember{sub_match}{operator"!=}%
+\indexlibrarymember{sub_match}{operator<=>}%
 \begin{itemdecl}
 template<class BiIter>
-  bool operator!=(const sub_match<BiIter>& lhs,
-                  const typename iterator_traits<BiIter>::value_type* rhs);
+  auto operator<=>(const sub_match<BiIter>& lhs,
+                   const typename iterator_traits<BiIter>::value_type* rhs);
 \end{itemdecl}
 
 \begin{itemdescr}
-\pnum\returns \tcode{!(lhs == rhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator<}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator<(const sub_match<BiIter>& lhs,
-                 const typename iterator_traits<BiIter>::value_type* rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{lhs.compare(rhs) < 0}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator>}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator>(const sub_match<BiIter>& lhs,
-                 const typename iterator_traits<BiIter>::value_type* rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{rhs < lhs}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator<=}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator<=(const sub_match<BiIter>& lhs,
-                  const typename iterator_traits<BiIter>::value_type* rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{!(rhs < lhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator>=}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator>=(const sub_match<BiIter>& lhs,
-                  const typename iterator_traits<BiIter>::value_type* rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{!(lhs < rhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator==}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator==(const typename iterator_traits<BiIter>::value_type& lhs,
-                  const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{rhs.compare(typename sub_match<BiIter>::string_type(1, lhs)) == 0}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator"!=}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator!=(const typename iterator_traits<BiIter>::value_type& lhs,
-                  const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{!(lhs == rhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator<}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator<(const typename iterator_traits<BiIter>::value_type& lhs,
-                 const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{rhs.compare(typename sub_match<BiIter>::string_type(1, lhs)) > 0}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator>}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator>(const typename iterator_traits<BiIter>::value_type& lhs,
-                 const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{rhs < lhs}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator<=}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator<=(const typename iterator_traits<BiIter>::value_type& lhs,
-                  const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{!(rhs < lhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator>=}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator>=(const typename iterator_traits<BiIter>::value_type& lhs,
-                  const sub_match<BiIter>& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{!(lhs < rhs)}.
+\pnum\returns
+\tcode{static_cast<\placeholdernc{SM-CAT}(BiIter)>(lhs.compare(rhs) <=> 0)}.
 \end{itemdescr}
 
 \indexlibrarymember{sub_match}{operator==}%
@@ -2342,64 +1884,22 @@ template<class BiIter>
 \returns \tcode{lhs.compare(typename sub_match<BiIter>::string_type(1, rhs)) == 0}.
 \end{itemdescr}
 
-\indexlibrarymember{sub_match}{operator"!=}%
+\indexlibrarymember{sub_match}{operator<=>}%
 \begin{itemdecl}
 template<class BiIter>
-  bool operator!=(const sub_match<BiIter>& lhs,
-                  const typename iterator_traits<BiIter>::value_type& rhs);
+  auto operator<=>(const sub_match<BiIter>& lhs,
+                   const typename iterator_traits<BiIter>::value_type& rhs);
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
-\returns \tcode{!(lhs == rhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator<}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator<(const sub_match<BiIter>& lhs,
-                 const typename iterator_traits<BiIter>::value_type& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{lhs.compare(typename sub_match<BiIter>::string_type(1, rhs)) < 0}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator>}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator>(const sub_match<BiIter>& lhs,
-                 const typename iterator_traits<BiIter>::value_type& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{rhs < lhs}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator<=}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator<=(const sub_match<BiIter>& lhs,
-                  const typename iterator_traits<BiIter>::value_type& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{!(rhs < lhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{sub_match}{operator>=}%
-\begin{itemdecl}
-template<class BiIter>
-  bool operator>=(const sub_match<BiIter>& lhs,
-                  const typename iterator_traits<BiIter>::value_type& rhs);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{!(lhs < rhs)}.
+\returns
+\begin{codeblock}
+static_cast<@\placeholdernc{SM-CAT}@(BiIter)>(lhs.compare(
+    typename sub_match<BiIter>::string_type(1, rhs))
+      <=> 0
+    )
+\end{codeblock}
 \end{itemdescr}
 
 \indexlibrary{\idxcode{basic_ostream}}%
@@ -2426,7 +1926,7 @@ by the member functions of class template \tcode{match_results}.
 \indextext{requirements!container}%
 \indextext{requirements!sequence}%
 \indextext{\idxcode{match_results}!as sequence}%
-The class template \tcode{match_results} satisfies the requirements of an
+The class template \tcode{match_results} meets the requirements of an
 allocator-aware container and of a sequence container
 (\ref{container.requirements.general}, \ref{sequence.reqmts})
 except that only
@@ -2573,7 +2073,7 @@ match_results(match_results&& m) noexcept;
 \begin{itemdescr}
 \pnum
 \effects\ Move constructs an object of class \tcode{match_results} from \tcode{m}
-satisfying the same postconditions as \tref{re:results:assign}. Additionally,
+satisfying the same postconditions as \tref{re.results.const}. Additionally,
 the stored \tcode{Allocator} value is move constructed from \tcode{m.get_allocator()}.
 
 \pnum
@@ -2588,7 +2088,7 @@ match_results& operator=(const match_results& m);
 \begin{itemdescr}
 \pnum
 \effects  Assigns \tcode{m} to \tcode{*this}. The postconditions of this
-function are indicated in \tref{re:results:assign}.
+function are indicated in \tref{re.results.const}.
 \end{itemdescr}
 
 \indexlibrarymember{match_results}{operator=}%
@@ -2599,12 +2099,12 @@ match_results& operator=(match_results&& m);
 \begin{itemdescr}
 \pnum
 \effects\ Move-assigns \tcode{m} to \tcode{*this}. The postconditions of this function
-are indicated in \tref{re:results:assign}.
+are indicated in \tref{re.results.const}.
 \end{itemdescr}
 
 \begin{libefftabvalue}
   {\tcode{match_results} assignment operator effects}
-  {tab:re:results:assign}
+  {re.results.const}
 \tcode{ready()}         & \tcode{m.ready()}       \\ \rowsep
 \tcode{size()}          & \tcode{m.size()}        \\ \rowsep
 \tcode{str(n)}          & \tcode{m.str(n)} for all integers \tcode{n < m.size()} \\ \rowsep
@@ -2790,7 +2290,7 @@ template<class OutputIter>
 
 \begin{itemdescr}
 \pnum
-\requires \tcode{ready() == true} and \tcode{OutputIter} shall satisfy the requirements for a
+\requires \tcode{ready() == true} and \tcode{OutputIter} shall meet the requirements for a
 \oldconcept{OutputIterator}\iref{output.iterators}.
 
 \pnum
@@ -2944,19 +2444,6 @@ other is not. If both match results are ready, returns \tcode{true} only if:
 \begin{note} The algorithm \tcode{equal} is defined in \ref{algorithms}. \end{note}
 \end{itemdescr}
 
-\indexlibrary{\idxcode{operator"!=}!\idxcode{match_results}}%
-\indexlibrary{\idxcode{match_results}!\idxcode{operator"!=}}%
-\begin{itemdecl}
-template<class BidirectionalIterator, class Allocator>
-bool operator!=(const match_results<BidirectionalIterator, Allocator>& m1,
-                const match_results<BidirectionalIterator, Allocator>& m2);
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{!(m1 == m2)}.
-\end{itemdescr}
-
 \rSec1[re.alg]{Regular expression algorithms}
 
 \rSec2[re.except]{Exceptions}
@@ -2979,7 +2466,7 @@ template<class BidirectionalIterator, class Allocator, class charT, class traits
 \begin{itemdescr}
 \pnum
 \requires
-The type \tcode{BidirectionalIterator} shall satisfy the
+The type \tcode{BidirectionalIterator} shall meet the
 \oldconcept{BidirectionalIterator} requirements\iref{bidirectional.iterators}.
 
 \pnum
@@ -3009,12 +2496,12 @@ If the function returns \tcode{false}, then the effect
 on parameter \tcode{m} is unspecified except that \tcode{m.size()}
 returns \tcode{0} and \tcode{m.empty()} returns \tcode{true}.
 Otherwise the effects on parameter \tcode{m} are given in
-\tref{re:alg:match}.
+\tref{re.alg.match}.
 \end{itemdescr}
 
 \begin{longlibefftabvalue}
   {Effects of \tcode{regex_match} algorithm}
-  {tab:re:alg:match}
+  {re.alg.match}
 \tcode{m.size()}
 &
 \tcode{1 + e.mark_count()}
@@ -3163,7 +2650,7 @@ template<class BidirectionalIterator, class Allocator, class charT, class traits
 \begin{itemdescr}
 \pnum
 \requires
-Type \tcode{BidirectionalIterator} shall satisfy the
+Type \tcode{BidirectionalIterator} shall meet the
 \oldconcept{BidirectionalIterator} requirements\iref{bidirectional.iterators}.
 
 \pnum
@@ -3178,12 +2665,12 @@ exists, \tcode{false} otherwise.
 If the function returns \tcode{false}, then the effect
 on parameter \tcode{m} is unspecified except that \tcode{m.size()}
 returns \tcode{0} and \tcode{m.empty()} returns \tcode{true}.  Otherwise
-the effects on parameter \tcode{m} are given in \tref{re:alg:search}.
+the effects on parameter \tcode{m} are given in \tref{re.alg.search}.
 \end{itemdescr}
 
 \begin{longlibefftabvalue}
   {Effects of \tcode{regex_search} algorithm}
-  {tab:re:alg:search}
+  {re.alg.search}
 \tcode{m.size()}
 &
 \tcode{1 + e.mark_count()}
@@ -3494,7 +2981,6 @@ namespace std {
       regex_iterator(const regex_iterator&);
       regex_iterator& operator=(const regex_iterator&);
       bool operator==(const regex_iterator&) const;
-      bool operator!=(const regex_iterator&) const;
       const value_type& operator*() const;
       const value_type* operator->() const;
       regex_iterator& operator++();
@@ -3565,15 +3051,6 @@ iterators or if the following conditions all hold:
 \item \tcode{match[0] == right.match[0]};
 \end{itemize}
 otherwise \tcode{false}.
-\end{itemdescr}
-
-\indexlibrarymember{regex_iterator}{operator"!=}%
-\begin{itemdecl}
-bool operator!=(const regex_iterator& right) const;
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{!(*this == right)}.
 \end{itemdescr}
 
 \rSec3[re.regiter.deref]{Indirection}
@@ -3791,7 +3268,6 @@ namespace std {
       regex_token_iterator(const regex_token_iterator&);
       regex_token_iterator& operator=(const regex_token_iterator&);
       bool operator==(const regex_token_iterator&) const;
-      bool operator!=(const regex_token_iterator&) const;
       const value_type& operator*() const;
       const value_type* operator->() const;
       regex_token_iterator& operator++();
@@ -3823,7 +3299,7 @@ final sequence.
 \begin{note} For a suffix iterator, data
 member \tcode{suffix.first} is the same as the end of the last match
 found, and \tcode{suffix\brk.second} is the same as the end of the target
-sequence \end{note}
+sequence. \end{note}
 
 \pnum
 The \textit{current match} is \tcode{(*position).prefix()} if \tcode{subs[N] == -1}, or
@@ -3902,15 +3378,6 @@ or if \tcode{*this} and \tcode{right} are both suffix iterators and \tcode{suffi
 otherwise returns \tcode{false} if \tcode{*this} or \tcode{right} is an end-of-sequence
 iterator or a suffix iterator. Otherwise returns \tcode{true} if \tcode{position == right.position},
 \tcode{N == right.N}, and \tcode{subs == right.subs}. Otherwise returns \tcode{false}.
-\end{itemdescr}
-
-\indexlibrarymember{regex_token_iterator}{operator"!=}%
-\begin{itemdecl}
-bool operator!=(const regex_token_iterator& right) const;
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum\returns \tcode{!(*this == right)}.
 \end{itemdescr}
 
 \rSec3[re.tokiter.deref]{Indirection}
@@ -4050,7 +3517,7 @@ equivalent to that of the same features in regular expressions in POSIX.
 The regular expression grammar may be modified by
 any \tcode{regex_constants::syntax_option_type} flags specified when
 constructing an object of type specialization of \tcode{basic_regex}
-according to the rules in Table \ref{tab:re:syntaxoption}.
+according to the rules in \tref{re.synopt}.
 
 \pnum
 A \tcode{ClassName} production, when used in \tcode{ClassAtomExClass},

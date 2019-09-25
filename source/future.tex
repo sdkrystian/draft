@@ -54,6 +54,24 @@ struct X {
 \end{codeblock}
 \end{example}
 
+\rSec1[depr.comma.subscript]{Comma operator in subscript expressions}
+
+\pnum
+A comma expression\iref{expr.comma}
+appearing as the \grammarterm{expr-or-braced-init-list}
+of a subscripting expression\iref{expr.sub} is deprecated.
+\begin{note}
+A parenthesized comma expression is not deprecated.
+\end{note}
+\begin{example}
+\begin{codeblock}
+void f(int *a, int b, int c) {
+    a[b,c];                     // deprecated
+    a[(b,c)];                   // OK
+}
+\end{codeblock}
+\end{example}
+
 \rSec1[depr.array.comp]{Array comparisons}
 
 \pnum
@@ -72,6 +90,27 @@ bool same = arr1 == arr2;       // deprecated, same as \tcode{\&arr1[0] == \&arr
 auto cmp = arr1 <=> arr2;       // ill-formed
 \end{codeblock}
 \end{example}
+
+\rSec1[depr.volatile.type]{Deprecated \tcode{volatile} types}
+
+\pnum
+Postfix \tcode{++} and \tcode{\dcr} expressions\iref{expr.post.incr} and
+prefix \tcode{++} and \tcode{\dcr} expressions\iref{expr.pre.incr}
+of \tcode{volatile}-qualified arithmetic and pointer types are deprecated.
+
+\pnum
+Certain assignments
+where the left operand is a \tcode{volatile}-qualified non-class type
+are deprecated; see~\ref{expr.ass}.
+
+\pnum
+A function type\iref{dcl.fct}
+with a parameter with \tcode{volatile}-qualified type or
+with a \tcode{volatile}-qualified return type is deprecated.
+
+\pnum
+A structured binding\iref{dcl.struct.bind} of a \tcode{volatile}-qualified type
+is deprecated.
 
 \rSec1[depr.static.constexpr]{Redeclaration of \tcode{static constexpr} data members}
 
@@ -109,9 +148,9 @@ could become deleted\iref{dcl.fct.def}.
 For compatibility with the
 \indextext{library!C standard}%
 C standard library, the \Cpp{} standard library provides
-the \defnx{C headers}{headers!C library} shown in \tref{future.c.headers}.
+the \defnx{C headers}{headers!C library} shown in \tref{depr.c.headers}.
 
-\begin{multicolfloattable}{C headers}{tab:future.c.headers}
+\begin{multicolfloattable}{C headers}{depr.c.headers}
 {lllll}
 \tcode{<assert.h>} \\
 \tcode{<complex.h>} \\
@@ -269,7 +308,6 @@ It is unspecified whether these names are first declared or defined within
 namespace scope\iref{basic.scope.namespace} of the namespace
 \tcode{std} and are then injected into the global namespace scope by
 explicit \grammarterm{using-declaration}{s}\iref{namespace.udecl}.
-\indextext{namespace}%
 
 \pnum
 \begin{example}
@@ -316,7 +354,7 @@ template<class T> bool operator!=(const T& x, const T& y);
 \begin{itemdescr}
 \pnum
 \requires
-Type \tcode{T} is \oldconcept{EqualityComparable} (\tref{equalitycomparable}).
+Type \tcode{T} is \oldconcept{EqualityComparable} (\tref{cpp17.equalitycomparable}).
 
 \pnum
 \returns
@@ -331,7 +369,7 @@ template<class T> bool operator>(const T& x, const T& y);
 \begin{itemdescr}
 \pnum
 \requires
-Type \tcode{T} is \oldconcept{LessThanComparable} (\tref{lessthancomparable}).
+Type \tcode{T} is \oldconcept{LessThanComparable} (\tref{cpp17.lessthancomparable}).
 
 \pnum
 \returns
@@ -346,7 +384,7 @@ template<class T> bool operator<=(const T& x, const T& y);
 \begin{itemdescr}
 \pnum
 \requires
-Type \tcode{T} is \oldconcept{LessThanComparable} (\tref{lessthancomparable}).
+Type \tcode{T} is \oldconcept{LessThanComparable} (\tref{cpp17.lessthancomparable}).
 
 \pnum
 \returns
@@ -361,7 +399,7 @@ template<class T> bool operator>=(const T& x, const T& y);
 \begin{itemdescr}
 \pnum
 \requires
-Type \tcode{T} is \oldconcept{LessThanComparable} (\tref{lessthancomparable}).
+Type \tcode{T} is \oldconcept{LessThanComparable} (\tref{cpp17.lessthancomparable}).
 
 \pnum
 \returns
@@ -515,10 +553,10 @@ Constructs an object of class
 \tcode{strstreambuf},
 initializing the base class with
 \tcode{streambuf()}.
-The postconditions of this function are indicated in \tref{future.strstreambuf.effects}.
+The postconditions of this function are indicated in \tref{depr.strstreambuf.cons.sz}.
 \end{itemdescr}
 
-\begin{libtab2}{\tcode{strstreambuf(streamsize)} effects}{tab:future.strstreambuf.effects}
+\begin{libtab2}{\tcode{strstreambuf(streamsize)} effects}{depr.strstreambuf.cons.sz}
 {ll}
 {Element}{Value}
 \tcode{strmode}	&	\tcode{dynamic}		\\
@@ -539,10 +577,10 @@ Constructs an object of class
 \tcode{strstreambuf},
 initializing the base class with
 \tcode{streambuf()}.
-The postconditions of this function are indicated in \tref{future.strstreambuf1.effects}.
+The postconditions of this function are indicated in \tref{depr.strstreambuf.cons.alloc}.
 
 \begin{libtab2}{\tcode{strstreambuf(void* (*)(size_t), void (*)(void*))} effects}
-{tab:future.strstreambuf1.effects}
+{depr.strstreambuf.cons.alloc}
 {ll}
 {Element}{Value}
 \tcode{strmode}	&	\tcode{dynamic}			\\
@@ -569,10 +607,10 @@ Constructs an object of class
 \tcode{strstreambuf},
 initializing the base class with
 \tcode{streambuf()}.
-The postconditions of this function are indicated in \tref{future.strstreambuf2.effects}.
+The postconditions of this function are indicated in \tref{depr.strstreambuf.cons.ptr}.
 
 \begin{libtab2}{\tcode{strstreambuf(charT*, streamsize, charT*)} effects}
-{tab:future.strstreambuf2.effects}
+{depr.strstreambuf.cons.ptr}
 {ll}
 {Element}{Value}
 \tcode{strmode}	&	0						\\
@@ -898,9 +936,9 @@ pos_type seekoff(off_type off, seekdir way, openmode which = in | out) override;
 \pnum
 \effects
 Alters the stream position within one of the
-controlled sequences, if possible, as indicated in \tref{future.seekoff.positioning}.
+controlled sequences, if possible, as indicated in \tref{depr.strstreambuf.seekoff.pos}.
 
-\begin{libtab2}{\tcode{seekoff} positioning}{tab:future.seekoff.positioning}
+\begin{libtab2}{\tcode{seekoff} positioning}{depr.strstreambuf.seekoff.pos}
 {p{2.5in}l}{Conditions}{Result}
 \tcode{(which \& ios::in) != 0}	&
  positions the input sequence	\\ \rowsep
@@ -920,9 +958,9 @@ Otherwise	&
 For a sequence to be positioned, if its next pointer is a null pointer,
 the positioning operation fails.
 Otherwise, the function determines \tcode{newoff} as indicated in
-\tref{future.newoff.values}.
+\tref{depr.strstreambuf.seekoff.newoff}.
 
-\begin{libtab2}{\tcode{newoff} values}{tab:future.newoff.values}
+\begin{libtab2}{\tcode{newoff} values}{depr.strstreambuf.seekoff.newoff}
 {p{2.0in}p{2.0in}}{Condition}{\tcode{newoff} Value}
 \tcode{way == ios::beg}	&
  0	\\ \rowsep
@@ -2251,7 +2289,7 @@ transmission of elements of type \tcode{Elem}, whose character traits are
 described by the class \tcode{Tr}, to and from a byte stream buffer of type
 \tcode{streambuf}. Conversion between a sequence of \tcode{Elem} values and
 multibyte sequences is performed by an object of class
-\tcode{Codecvt}, which shall satisfy the requirements
+\tcode{Codecvt}, which shall meet the requirements
 of the standard code-conversion facet \tcode{codecvt<Elem, char, mbstate_t>}.
 
 \pnum
@@ -2341,7 +2379,7 @@ to \tcode{pcvt}, and initializes \tcode{cvtstate} to \tcode{state}.
 \pnum
 The \tcode{ctype} locale category includes the following facets
 as if they were specified
-in table \tref{localization.category.facets} of \ref{locale.category}.
+in table \tref{locale.category.facets} of \ref{locale.category}.
 
 \begin{codeblock}
 codecvt<char16_t, char, mbstate_t>
@@ -2351,7 +2389,7 @@ codecvt<char32_t, char, mbstate_t>
 \pnum
 The \tcode{ctype} locale category includes the following facets
 as if they were specified
-in table \tref{localization.required.specializations} of \ref{locale.category}.
+in table \tref{locale.spec} of \ref{locale.category}.
 
 \begin{codeblock}
 codecvt_byname<char16_t, char, mbstate_t>
@@ -2380,7 +2418,7 @@ template<class InputIterator>
 \pnum
 \requires The \tcode{source} and \range{first}{last}
   sequences are UTF-8 encoded. The value type of \tcode{Source}
-  and \tcode{InputIterator} is \tcode{char}.
+  and \tcode{InputIterator} is \tcode{char} or \tcode{char8_t}.
   \tcode{Source} meets the requirements specified in \ref{fs.path.req}.
 
 \pnum

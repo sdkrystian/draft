@@ -14,22 +14,20 @@ and components for
 sequence containers and
 associative containers,
 as summarized in
-\tref{containers.lib.summary}.
+\tref{containers.summary}.
 
-\begin{libsumtab}{Containers library summary}{tab:containers.lib.summary}
+\begin{libsumtab}{Containers library summary}{containers.summary}
 \ref{container.requirements} & Requirements                     &                           \\ \rowsep
-\ref{sequences}              & Sequence containers              & \tcode{<array>}         \\
-                             &                                  & \tcode{<deque>}         \\
-                             &                                  & \tcode{<forward_list>}  \\
-                             &                                  & \tcode{<list>}          \\
-                             &                                  & \tcode{<vector>}        \\ \rowsep
-\ref{associative}            & Associative containers           & \tcode{<map>}           \\
-                             &                                  & \tcode{<set>}           \\ \rowsep
-\ref{unord}                  & Unordered associative containers & \tcode{<unordered_map>} \\
-                             &                                  & \tcode{<unordered_set>} \\ \rowsep
-\ref{container.adaptors}     & Container adaptors               & \tcode{<queue>}         \\
-                             &                                  & \tcode{<stack>}         \\ \rowsep
-\ref{views}                  & Views                            & \tcode{<span>}          \\ \rowsep
+\ref{sequences}              & Sequence containers              &
+  \tcode{<array>}, \tcode{<deque>}, \tcode{<forward_list>},
+  \tcode{<list>}, \tcode{<vector>} \\ \rowsep
+\ref{associative}            & Associative containers           &
+  \tcode{<map>}, \tcode{<set>}     \\ \rowsep
+\ref{unord}                  & Unordered associative containers &
+  \tcode{<unordered_map>}, \tcode{<unordered_set>}    \\ \rowsep
+\ref{container.adaptors}     & Container adaptors               &
+  \tcode{<queue>}, \tcode{<stack>}     \\ \rowsep
+\ref{views}                  & Views                            & \tcode{<span>} \\ \rowsep
 \end{libsumtab}
 
 
@@ -70,19 +68,19 @@ aligned buffers and call \tcode{construct} to place the element into the buffer.
 \end{note}
 
 \pnum
-In Tables~\ref{tab:containers.container.requirements},
-\ref{tab:containers.reversible.requirements}, and
-\ref{tab:containers.optional.operations}
-\tcode{X} denotes a container class containing objects of type
-\tcode{T}, \tcode{a} and \tcode{b}
-denote values of type \tcode{X}, \tcode{u}
-denotes an identifier, \tcode{r} denotes
-a non-const value of type \tcode{X}, and \tcode{rv}
-denotes a non-const rvalue of type \tcode{X}.
+In Tables~\ref{tab:container.req},
+\ref{tab:container.rev.req}, and
+\ref{tab:container.opt}
+\tcode{X} denotes a container class containing objects of type \tcode{T},
+\tcode{a} and \tcode{b} denote values of type \tcode{X},
+\tcode{i} and \tcode{j} denote values of type (possibly const) \tcode{X::iterator},
+\tcode{u} denotes an identifier,
+\tcode{r} denotes a non-const value of type \tcode{X}, and
+\tcode{rv} denotes a non-const rvalue of type \tcode{X}.
 
 \begin{libreqtab5}
 {Container requirements}
-{tab:containers.container.requirements}
+{container.req}
 \\ \topline
 \lhdr{Expression}       &   \chdr{Return type}  &   \chdr{Operational}  &
 \chdr{Assertion/note}   &   \rhdr{Complexity}   \\
@@ -213,6 +211,14 @@ denotes a non-const rvalue of type \tcode{X}.
                             &
  constant                   \\ \rowsep
 
+\tcode{i <=> j}             &
+  \tcode{strong_ordering}
+  if \tcode{X::iterator} meets the random access iterator requirements,
+  otherwise \tcode{strong_equality} &
+                             &
+                             &
+ constant                   \\ \rowsep
+
 \tcode{a == b}                  &
  convertible to \tcode{bool}    &
  \tcode{==} is an equivalence relation.
@@ -295,6 +301,7 @@ i < j
 i <= j
 i >= j
 i > j
+i <=> j
 i - j
 \end{codeblock}
 where \tcode{i} and \tcode{j} denote objects of a container's \tcode{iterator}
@@ -360,12 +367,12 @@ If the iterator type of a container belongs to the bidirectional or
 random access iterator categories\iref{iterator.requirements},
 the container is called
 \term{reversible}
-and satisfies the additional requirements
-in \tref{containers.reversible.requirements}.
+and meets the additional requirements
+in \tref{container.rev.req}.
 
 \begin{libreqtab4a}
 {Reversible container requirements}
-{tab:containers.reversible.requirements}
+{container.rev.req}
 \\ \topline
 \lhdr{Expression}       &   \chdr{Return type}  &
 \chdr{Assertion/note}   &   \rhdr{Complexity}   \\
@@ -458,21 +465,21 @@ is a container
 whose member types \tcode{iterator} and \tcode{const_iterator}
 meet the
 \oldconcept{RandomAccessIterator} requirements\iref{random.access.iterators} and
-model \libconcept{ContiguousIterator}\iref{iterator.concept.contiguous}.
+model \libconcept{contiguous_iterator}\iref{iterator.concept.contiguous}.
 
 \pnum
-\tref{containers.optional.operations} lists operations that are provided
+\tref{container.opt} lists operations that are provided
 for some types of containers but not others. Those containers for which the
 listed operations are provided shall implement the semantics described in
-\tref{containers.optional.operations} unless otherwise stated.
-If the iterators passed to \tcode{lexicographical_compare}
-satisfy the constexpr iterator requirements\iref{iterator.requirements.general}
-then the operations described in \tref{containers.optional.operations}
+\tref{container.opt} unless otherwise stated.
+If the iterators passed to \tcode{lexicographical_compare_three_way}
+meet the constexpr iterator requirements\iref{iterator.requirements.general}
+then the operations described in \tref{container.opt}
 are implemented by constexpr functions.
 
 \begin{libreqtab5}
 {Optional container operations}
-{tab:containers.optional.operations}
+{container.opt}
 \\ \topline
 \lhdr{Expression}       &   \chdr{Return type}  &   \chdr{Operational}  &
 \chdr{Assertion/note}   &   \rhdr{Complexity}   \\
@@ -485,39 +492,26 @@ are implemented by constexpr functions.
     &   &   \chdr{semantics}    &   \chdr{pre-/post-condition}   &      \\ \capsep
 \endhead
 
-\tcode{a < b}                   &
- convertible to \tcode{bool}    &
- \tcode{lexicographical_compare( a.begin(), a.end(), b.begin(), b.end())} &
- \expects \tcode{<} is defined for values of type (possibly \tcode{const}) \tcode{T}. \tcode{<} is a total ordering relationship.    &
- linear                     \\ \rowsep
-
-\tcode{a > b}                   &
- convertible to \tcode{bool}    &
- \tcode{b < a}                  &
-                                &
- linear                         \\ \rowsep
-
-\tcode{a <= b}                  &
- convertible to \tcode{bool}    &
- \tcode{!(a > b)}               &
-                                &
- linear                         \\ \rowsep
-
-\tcode{a >= b}                  &
- convertible to \tcode{bool}    &
- \tcode{!(a < b)}               &
-                                &
+\tcode{a <=> b}                  &
+ \tcode{\placeholdernc{synth-three-\brk{}way-result}\brk{}<value_type>} &
+ \tcode{lexicographical_compare_three_way(a.begin(), a.end(),
+    b.begin(), b.end(), \placeholdernc{synth-three-way})} &
+ \expects
+ Either \tcode{<=>} is defined for values of type (possibly const) \tcode{T},
+ or \tcode{<} is defined for values of type (possibly const) \tcode{T} and
+ \tcode{<} is a total ordering relationship.  &
  linear                         \\
 \end{libreqtab5}
 
 \begin{note}
-The algorithm \tcode{lexicographical_compare()} is defined in \ref{algorithms}.
+The algorithm \tcode{lexicographical_compare_three_way}
+is defined in \ref{algorithms}.
 \end{note}
 
 \pnum
 All of the containers defined in this Clause and in~\ref{basic.string} except \tcode{array}
 meet the additional requirements of an allocator-aware container, as described in
-\tref{containers.allocatoraware}.
+\tref{container.alloc.req}.
 
 Given an allocator type \tcode{A}
 and given a container type \tcode{X} having a \tcode{value_type} identical to \tcode{T}
@@ -602,7 +596,7 @@ but specialized allocators may choose a different definition.
 \end{note}
 
 \pnum
-In \tref{containers.allocatoraware}, \tcode{X} denotes an allocator-aware container class
+In \tref{container.alloc.req}, \tcode{X} denotes an allocator-aware container class
 with a \tcode{value_type} of \tcode{T} using allocator of type \tcode{A}, \tcode{u} denotes a
 variable,
 \tcode{a} and \tcode{b} denote non-const lvalues of type \tcode{X},
@@ -611,7 +605,7 @@ non-const rvalue of type \tcode{X}, and \tcode{m} is a value of type \tcode{A}.
 
 \begin{libreqtab4a}
 {Allocator-aware container requirements}
-{tab:containers.allocatoraware}
+{container.alloc.req}
 \\ \topline
 \lhdr{Expression}       &   \chdr{Return type}  &
 \chdr{Assertion/note}   &   \rhdr{Complexity}   \\
@@ -716,7 +710,7 @@ iterator is unspecified, except that as a minimum integral types shall not quali
 as input iterators.
 Likewise, the extent to which an implementation determines that a type cannot be
 an allocator is unspecified, except that as a minimum a type \tcode{A} shall not qualify
-as an allocator unless it satisfies both of the following conditions:
+as an allocator unless it meets both of the following conditions:
 
 \begin{itemize}
 \item The \grammarterm{qualified-id} \tcode{A::value_type}
@@ -782,8 +776,8 @@ leave a comment to explain if you choose from the rest!
 \end{note}
 
 \pnum
-In Tables~\ref{tab:containers.sequence.requirements}
-and \ref{tab:containers.sequence.optional},
+In Tables~\ref{tab:container.seq.req}
+and \ref{tab:container.seq.opt},
 \tcode{X} denotes a sequence container class,
 \tcode{a} denotes a value of type \tcode{X} containing elements of type \tcode{T},
 \tcode{u} denotes the name of a variable being declared,
@@ -792,7 +786,7 @@ the \grammarterm{qualified-id} \tcode{X::allocator_type} is valid and denotes a
 type\iref{temp.deduct} and
 \tcode{allocator<T>} if it doesn't,
 \tcode{i} and \tcode{j}
-denote iterators satisfying input iterator requirements
+denote iterators that meet the \oldconcept{InputIterator} requirements
 and refer to elements implicitly convertible to \tcode{value_type},
 \tcode{[i, j)}
 denotes a valid range,
@@ -816,7 +810,7 @@ The complexities of the expressions are sequence dependent.
 
 \begin{libreqtab3}
 {Sequence container requirements (in addition to container)}
-{tab:containers.sequence.requirements}
+{container.seq.req}
 \\ \topline
 \lhdr{Expression}       &   \chdr{Return type}  &   \rhdr{Assertion/note}       \\
                         &                       &   \rhdr{pre-/post-condition}   \\ \capsep
@@ -1045,7 +1039,7 @@ qualify as an allocator is deduced for that parameter.
 \end{itemize}
 
 \pnum
-\tref{containers.sequence.optional} lists operations
+\tref{container.seq.opt} lists operations
 that are provided for some types of
 sequence containers but not others.
 An implementation shall provide
@@ -1055,7 +1049,7 @@ time.
 
 \begin{libreqtab4a}
 {Optional sequence container operations}
-{tab:containers.sequence.optional}
+{container.seq.opt}
 \\ \topline
 \lhdr{Expression}       &   \chdr{Return type}  &   \chdr{Operational semantics}       &   \rhdr{Container}    \\ \capsep
 \endfirsthead
@@ -1216,9 +1210,9 @@ associative container\iref{unord.req}. It may be used to transfer that
 ownership to another container with compatible nodes.  Containers with
 compatible nodes have the same node handle type. Elements may be transferred in
 either direction between container types in the same row of
-\tref{containers.node.compat}.
+\tref{container.node.compat}.
 
-\begin{floattable}{Container types with compatible nodes}{tab:containers.node.compat}
+\begin{floattable}{Container types with compatible nodes}{container.node.compat}
 {ll}
 \topline
 \tcode{map<K, T, C1, A>}               & \tcode{map<K, T, C2, A>}                    \\
@@ -1257,7 +1251,7 @@ undefined.
 template<@\unspecnc@>
 class @\placeholder{node-handle}@ {
 public:
-  // These type declarations are described in Tables \ref{tab:containers.associative.requirements} and \ref{tab:HashRequirements}.
+  // These type declarations are described in Tables \ref{tab:container.assoc.req} and \ref{tab:container.hash.req}.
   using value_type     = @\seebelownc{}@;     // not present for map containers
   using key_type       = @\seebelownc{}@;     // not present for set containers
   using mapped_type    = @\seebelownc{}@;     // not present for set containers
@@ -1580,18 +1574,18 @@ are the same type.
 The associative containers meet all the requirements of Allocator-aware
 containers\iref{container.requirements.general}, except that for
 \tcode{map} and \tcode{multimap}, the requirements placed on \tcode{value_type}
-in \tref{containers.allocatoraware} apply instead to \tcode{key_type}
+in \tref{container.alloc.req} apply instead to \tcode{key_type}
 and \tcode{mapped_type}. \begin{note} For example, in some cases \tcode{key_type} and \tcode{mapped_type}
 are required to be \oldconcept{CopyAssignable} even though the associated
 \tcode{value_type}, \tcode{pair<const key_type, mapped_type>}, is not
 \oldconcept{CopyAssignable}. \end{note}
 
 \pnum
-In \tref{containers.associative.requirements},
+In \tref{container.assoc.req},
 \tcode{X} denotes an associative container class,
 \tcode{a} denotes a value of type \tcode{X},
 \tcode{a2} denotes a value of a type with nodes compatible with type
-\tcode{X} (\tref{containers.node.compat}),
+\tcode{X} (\tref{container.node.compat}),
 \tcode{b} denotes a possibly \tcode{const} value of type \tcode{X},
 \tcode{u} denotes the name of a variable being declared,
 \tcode{a_uniq} denotes a value of type \tcode{X}
@@ -1603,7 +1597,7 @@ when the \grammarterm{qualified-id}
 \tcode{X::key_compare::is_transparent} is valid
 and denotes a type\iref{temp.deduct},
 \tcode{i} and \tcode{j}
-satisfy input iterator requirements and refer to elements
+meet the \oldconcept{InputIterator} requirements and refer to elements
 implicitly convertible to
 \tcode{value_type}, \range{i}{j}
 denotes a valid range,
@@ -1638,7 +1632,7 @@ and \tcode{nh} denotes a non-const rvalue of type \tcode{X::node_type}.
 
 \begin{libreqtab4b}
 {Associative container requirements (in addition to container)}
-{tab:containers.associative.requirements}
+{container.assoc.req}
 \\ \topline
 \lhdr{Expression}       &   \chdr{Return type}  &   \chdr{Assertion/note}       &   \rhdr{Complexity}   \\
                         &                       &   \chdr{pre-/post-condition}   &                       \\ \capsep
@@ -2250,7 +2244,7 @@ equivalent elements.
 The unordered associative containers meet all the requirements of Allocator-aware
 containers\iref{container.requirements.general}, except that for
 \tcode{unordered_map} and \tcode{unordered_multimap}, the requirements placed on \tcode{value_type}
-in \tref{containers.allocatoraware} apply instead to \tcode{key_type}
+in \tref{container.alloc.req} apply instead to \tcode{key_type}
 and \tcode{mapped_type}. \begin{note} For example, \tcode{key_type} and \tcode{mapped_type}
 are sometimes required to be \oldconcept{CopyAssignable} even though the associated
 \tcode{value_type}, \tcode{pair<const key_type, mapped_type>}, is not
@@ -2263,12 +2257,12 @@ are sometimes required to be \oldconcept{CopyAssignable} even though the associa
 \indextext{unordered associative containers!unique keys}%
 \indextext{unordered associative containers!equivalent keys}%
 \indextext{requirements!container}%
-In \tref{HashRequirements}:
+In \tref{container.hash.req}:
 \begin{itemize}
 \item \tcode{X} denotes an unordered associative container class,
 \item \tcode{a} denotes a value of type \tcode{X},
 \item \tcode{a2} denotes a value of a type with nodes compatible
-  with type \tcode{X} (\tref{containers.node.compat}),
+  with type \tcode{X} (\tref{container.node.compat}),
 \item \tcode{b} denotes a possibly const value of type \tcode{X},
 \item \tcode{a_uniq} denotes a value of type \tcode{X}
   when \tcode{X} supports unique keys,
@@ -2298,9 +2292,8 @@ In \tref{HashRequirements}:
   \end{itemize}
   where \tcode{r1} and \tcode{r2} are keys of elements in \tcode{a_tran},
 \item \tcode{n} denotes a value of type \tcode{size_type},
-\item \tcode{z} denotes a value of type \tcode{float},
-\item \tcode{nh} denotes a non-const rvalue of type \tcode{X::node_type}, and
-\item \tcode{hk} and \tcode{hke} denote values of type \tcode{size_t}.
+\item \tcode{z} denotes a value of type \tcode{float}, and
+\item \tcode{nh} denotes a non-const rvalue of type \tcode{X::node_type}.
 \end{itemize}
 
 % Local command to index names as members of all unordered containers.
@@ -2314,7 +2307,7 @@ In \tref{HashRequirements}:
 
 \begin{libreqtab4d}
   {Unordered associative container requirements (in addition to container)}
-  {tab:HashRequirements}
+  {container.hash.req}
 \\ \topline
 \lhdr{Expression} & \chdr{Return type}   & \chdr{Assertion/note}      & \rhdr{Complexity} \\
                   &                      & \chdr{pre-/post-condition} & \\ \capsep
@@ -2508,7 +2501,7 @@ from \tcode{[i, j)} into it.
 \tcode{X(b)}\br \tcode{X a(b);}
 &   \tcode{X}
 &   Copy constructor.  In addition to the requirements
-    of \tref{containers.container.requirements}, copies the
+    of \tref{container.req}, copies the
   hash function, predicate, and maximum load factor.
 &   Average case linear in \tcode{b.size()}, worst case quadratic.
 \\ \rowsep
@@ -2516,7 +2509,7 @@ from \tcode{[i, j)} into it.
 \tcode{a = b}
 &   \tcode{X\&}
 &   Copy assignment operator.  In addition to the
-    requirements of \tref{containers.container.requirements}, copies
+    requirements of \tref{container.req}, copies
   the hash function, predicate, and maximum load factor.
 &   Average case linear in \tcode{b.size()}, worst case quadratic.
 \\ \rowsep
@@ -2622,8 +2615,8 @@ start.  Implementations are permitted to ignore the hint.%
 &   \expects \tcode{value_type} is \oldconcept{EmplaceConstructible} into \tcode{X} from \tcode{*i}.
     Neither \tcode{i} nor \tcode{j} are iterators into \tcode{a}.\br
     \effects Equivalent to \tcode{a.insert(t)} for each element in \tcode{[i,j)}.%
-&   Average case \bigoh{N}, where $N$ is \tcode{distance(i, j)}.
-    Worst case \bigoh{N(\tcode{a.size()}\brk{}+\brk{}1)}.
+&   Average case \bigoh{N}, where $N$ is \tcode{distance(i, j)},
+    worst case \bigoh{N(\tcode{a.size()}\brk{}+\brk{}1)}.
 \\ \rowsep
 %
 \tcode{a.insert(il)}
@@ -2703,15 +2696,15 @@ start.  Implementations are permitted to ignore the hint.%
  to the transferred elements and all iterators referring to \tcode{a} will
  be invalidated, but iterators to elements remaining in \tcode{a2} will
  remain valid. &
- Average case \bigoh{N}, where $N$ is \tcode{a2.size()}.
- Worst case \bigoh{N\tcode{*a.size()}\br\tcode{+} N}.  \\ \rowsep
+ Average case \bigoh{N}, where $N$ is \tcode{a2.size()},
+ worst case \bigoh{N\tcode{*a.size()}\br\tcode{+} N}.  \\ \rowsep
 %
 \indexunordmem{erase}%
 \tcode{a.erase(k)}
 &   \tcode{size_type}
 &   \effects Erases all elements with key equivalent to \tcode{k}.\br
     \returns The number of elements erased.
-&   Average case \bigoh{\tcode{a.count(k)}}.  Worst case
+&   Average case \bigoh{\tcode{a.count(k)}}, worst case
     \bigoh{\tcode{a.size()}}.
 \\ \rowsep
 %
@@ -2754,27 +2747,10 @@ start.  Implementations are permitted to ignore the hint.%
 &   Average case \bigoh{1}, worst case \bigoh{\tcode{b.size()}}.
 \\ \rowsep
 %
-\tcode{b.find(k, hk)}
-&   \tcode{iterator}; \br \tcode{const_iterator} for const \tcode{b}.
-&   \expects \tcode{b.hash_function()(k)} equals \tcode{hk}.\br
-    \returns An iterator pointing to an element with key equivalent to
-    \tcode{k}, or \tcode{b.end()} if no such element exists.
-&   Average case \bigoh{1}, worst case \bigoh{\tcode{b.size()}}.
-\\ \rowsep
-%
 \tcode{a_tran.find(ke)}
 &   \tcode{iterator}; \br \tcode{const_iterator} for const \tcode{a_tran}.
 &   \returns An iterator pointing to an element with key equivalent to
     \tcode{ke}, or \tcode{a_tran.end()} if no such element exists.
-&   Average case \bigoh{1},
-    worst case \bigoh{\tcode{a_tran.}\br{}\tcode{size()}}. % avoid overfull
-\\ \rowsep
-%
-\tcode{a_tran.find(ke, hke)}
-&   \tcode{iterator}; \br \tcode{const_iterator} for const \tcode{a_tran}.
-&   \expects \tcode{a_tran.hash_function()(ke)} equals \tcode{hke}.\br
-    \returns An iterator pointing to an element with key equivalent to
-    \tcode{ke}, or \tcode{a_tran.end()} if no such element exists.%
 &   Average case \bigoh{1},
     worst case \bigoh{\tcode{a_tran.}\br{}\tcode{size()}}. % avoid overfull
 \\ \rowsep
@@ -2786,25 +2762,9 @@ start.  Implementations are permitted to ignore the hint.%
 &   Average case \bigoh{\tcode{b.count(k)}}, worst case \bigoh{\tcode{b.size()}}.
 \\ \rowsep
 %
-\tcode{b.count(k, hk)}
-&   \tcode{size_type}
-&   \expects \tcode{b.hash_function()(k)} equals \tcode{hk}.\br
-    \returns The number of elements with key equivalent to \tcode{k}.%
-&   Average case \bigoh{\tcode{b.count(k)}}, worst case \bigoh{\tcode{b.size()}}.
-\\ \rowsep
-%
 \tcode{a_tran.count(ke)}
 &   \tcode{size_type}
 &   \returns The number of elements with key equivalent to \tcode{ke}.%
-&   Average case
-    \bigoh{\tcode{a_tran.}\br{}\tcode{count(ke)}}, % avoid overfull
-    worst case \bigoh{\tcode{a_tran.}\br{}\tcode{size()}}. % avoid overfull
-\\ \rowsep
-%
-\tcode{a_tran.count(ke, hke)}
-&   \tcode{size_type}
-&   \expects \tcode{b.hash_function()(ke)} equals \tcode{hke}.\br
-    \returns The number of elements with key equivalent to \tcode{ke}.%
 &   Average case
     \bigoh{\tcode{a_tran.}\br{}\tcode{count(ke)}}, % avoid overfull
     worst case \bigoh{\tcode{a_tran.}\br{}\tcode{size()}}. % avoid overfull
@@ -2817,24 +2777,9 @@ start.  Implementations are permitted to ignore the hint.%
 &   Average case \bigoh{1}, worst case \bigoh{\tcode{b.size()}}.
 \\ \rowsep
 %
-\tcode{b.contains(k, hk)}
-&   \tcode{bool}
-&   \expects \tcode{b.hash_function()(ke)} equals \tcode{hke}.\br
-    \effects Equivalent to \tcode{b.find(k) != b.end()}%
-&   Average case \bigoh{1}, worst case \bigoh{\tcode{b.size()}}.
-\\ \rowsep
-%
 \tcode{a_tran.contains(ke)}
 &   \tcode{bool}
 &   \effects Equivalent to \tcode{a_tran.find(ke) != a_tran.end()}%
-&   Average case \bigoh{1},
-    worst case \bigoh{\tcode{a_tran.}\br{}\tcode{size()}}. % avoid overfull
-\\ \rowsep
-%
-\tcode{a_tran.contains(ke, hke)}
-&   \tcode{bool}
-&   \expects \tcode{a_tran.hash_function()(ke)} equals \tcode{hke}.\br
-    \effects Equivalent to \tcode{a_tran.find(ke, hke) != a_tran.end()}%
 &   Average case \bigoh{1},
     worst case \bigoh{\tcode{a_tran.}\br{}\tcode{size()}}. % avoid overfull
 \\ \rowsep
@@ -2846,18 +2791,7 @@ start.  Implementations are permitted to ignore the hint.%
 &   \returns A range containing all elements with keys equivalent to
     \tcode{k}.  Returns \tcode{make_pair(b.end(), b.end())} if
     no such elements exist.%
-&   Average case \bigoh{\tcode{b.count(k)}}.  Worst case
-    \bigoh{\tcode{b.size()}}.
-\\ \rowsep
-%
-\tcode{b.equal_range(k, hk)}
-&   \tcode{pair<iterator, iterator>}; \br
-    \tcode{pair<const_iterator, const_iterator>} for const \tcode{b}.
-&   \expects \tcode{b.hash_function()(k)} equals \tcode{hk}.\br
-    \returns A range containing all elements with keys equivalent to
-    \tcode{k}.  Returns \tcode{make_pair(b.end(), b.end())} if
-    no such elements exist.%
-&   Average case \bigoh{\tcode{b.count(k)}}.  Worst case
+&   Average case \bigoh{\tcode{b.count(k)}}, worst case
     \bigoh{\tcode{b.size()}}.
 \\ \rowsep
 %
@@ -2868,21 +2802,10 @@ start.  Implementations are permitted to ignore the hint.%
     \tcode{ke}.  Returns \tcode{make_pair(a_tran.end(), a_tran.end())} if
     no such elements exist.%
 &   Average case
-    \bigoh{\tcode{a_tran.}\br{}\tcode{count(ke)}}. % avoid overfull
-    Worst case \bigoh{\tcode{a_tran.}\br{}\tcode{size()}}. % avoid overfull
+    \bigoh{\tcode{a_tran.}\br{}\tcode{count(ke)}}, % avoid overfull
+    worst case \bigoh{\tcode{a_tran.}\br{}\tcode{size()}}. % avoid overfull
 \\ \rowsep
 %
-\tcode{a_tran.equal_range(ke, hke)}
-&   \tcode{pair<iterator, iterator>}; \br
-    \tcode{pair<const_iterator, const_iterator>} for const \tcode{a_tran}.
-&   \expects \tcode{a_tran.hash_function()(ke)} equals \tcode{hke}.\br
-    \returns A range containing all elements with keys equivalent to
-    \tcode{ke}.  Returns \tcode{make_pair(a_tran.end(), a_tran.end())} if
-    no such elements exist.%
-&   Average case
-    \bigoh{\tcode{a_tran.}\br{}\tcode{count(ke)}}. % avoid overfull
-    Worst case \bigoh{\tcode{a_tran.}\br{}\tcode{size()}}. % avoid overfull
-\\ \rowsep
 \indexunordmem{bucket_count}%
 \tcode{b.bucket_count()}
 &   \tcode{size_type}
@@ -3152,21 +3075,15 @@ namespace std {
   template<class T, size_t N> struct array;
 
   template<class T, size_t N>
-    constexpr bool operator==(const array<T, N>& x, const array<T, N>& y);
-  template<class T, size_t N>
-    constexpr bool operator!=(const array<T, N>& x, const array<T, N>& y);
-  template<class T, size_t N>
-    constexpr bool operator< (const array<T, N>& x, const array<T, N>& y);
-  template<class T, size_t N>
-    constexpr bool operator> (const array<T, N>& x, const array<T, N>& y);
-  template<class T, size_t N>
-    constexpr bool operator<=(const array<T, N>& x, const array<T, N>& y);
-  template<class T, size_t N>
-    constexpr bool operator>=(const array<T, N>& x, const array<T, N>& y);
-  template<class T, size_t N>
     constexpr void swap(array<T, N>& x, array<T, N>& y) noexcept(noexcept(x.swap(y)));
 
-  // \ref{array.tuple}, tuple interface to class template \tcode{array}
+  // \ref{array.creation}, array creation functions
+  template<class T, size_t N>
+    constexpr array<remove_cv_t<T>, N> to_array(T (&a)[N]);
+  template<class T, size_t N>
+    constexpr array<remove_cv_t<T>, N> to_array(T (&&a)[N]);
+
+  // \ref{array.tuple}, tuple interface
   template<class T> struct tuple_size;
   template<size_t I, class T> struct tuple_element;
   template<class T, size_t N>
@@ -3198,15 +3115,8 @@ namespace std {
   template<class T, class Allocator>
     bool operator==(const deque<T, Allocator>& x, const deque<T, Allocator>& y);
   template<class T, class Allocator>
-    bool operator!=(const deque<T, Allocator>& x, const deque<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator< (const deque<T, Allocator>& x, const deque<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator> (const deque<T, Allocator>& x, const deque<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator<=(const deque<T, Allocator>& x, const deque<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator>=(const deque<T, Allocator>& x, const deque<T, Allocator>& y);
+    @\placeholder{synth-three-way-result}@<T> operator<=>(const deque<T, Allocator>& x,
+    @\itcorr@                                      const deque<T, Allocator>& y);
 
   template<class T, class Allocator>
     void swap(deque<T, Allocator>& x, deque<T, Allocator>& y)
@@ -3238,15 +3148,8 @@ namespace std {
   template<class T, class Allocator>
     bool operator==(const forward_list<T, Allocator>& x, const forward_list<T, Allocator>& y);
   template<class T, class Allocator>
-    bool operator!=(const forward_list<T, Allocator>& x, const forward_list<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator< (const forward_list<T, Allocator>& x, const forward_list<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator> (const forward_list<T, Allocator>& x, const forward_list<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator<=(const forward_list<T, Allocator>& x, const forward_list<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator>=(const forward_list<T, Allocator>& x, const forward_list<T, Allocator>& y);
+    @\placeholder{synth-three-way-result}@<T> operator<=>(const forward_list<T, Allocator>& x,
+    @\itcorr@                                      const forward_list<T, Allocator>& y);
 
   template<class T, class Allocator>
     void swap(forward_list<T, Allocator>& x, forward_list<T, Allocator>& y)
@@ -3278,15 +3181,8 @@ namespace std {
   template<class T, class Allocator>
     bool operator==(const list<T, Allocator>& x, const list<T, Allocator>& y);
   template<class T, class Allocator>
-    bool operator!=(const list<T, Allocator>& x, const list<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator< (const list<T, Allocator>& x, const list<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator> (const list<T, Allocator>& x, const list<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator<=(const list<T, Allocator>& x, const list<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator>=(const list<T, Allocator>& x, const list<T, Allocator>& y);
+    @\placeholder{synth-three-way-result}@<T> operator<=>(const list<T, Allocator>& x,
+    @\itcorr@                                      const list<T, Allocator>& y);
 
   template<class T, class Allocator>
     void swap(list<T, Allocator>& x, list<T, Allocator>& y)
@@ -3316,26 +3212,19 @@ namespace std {
   template<class T, class Allocator = allocator<T>> class vector;
 
   template<class T, class Allocator>
-    bool operator==(const vector<T, Allocator>& x, const vector<T, Allocator>& y);
+    constexpr bool operator==(const vector<T, Allocator>& x, const vector<T, Allocator>& y);
   template<class T, class Allocator>
-    bool operator!=(const vector<T, Allocator>& x, const vector<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator< (const vector<T, Allocator>& x, const vector<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator> (const vector<T, Allocator>& x, const vector<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator<=(const vector<T, Allocator>& x, const vector<T, Allocator>& y);
-  template<class T, class Allocator>
-    bool operator>=(const vector<T, Allocator>& x, const vector<T, Allocator>& y);
+    constexpr @\placeholder{synth-three-way-result}@<T> operator<=>(const vector<T, Allocator>& x,
+              @\itcorr@                                      const vector<T, Allocator>& y);
 
   template<class T, class Allocator>
-    void swap(vector<T, Allocator>& x, vector<T, Allocator>& y)
+    constexpr void swap(vector<T, Allocator>& x, vector<T, Allocator>& y)
       noexcept(noexcept(x.swap(y)));
 
   template<class T, class Allocator, class U>
-    void erase(vector<T, Allocator>& c, const U& value);
+    constexpr void erase(vector<T, Allocator>& c, const U& value);
   template<class T, class Allocator, class Predicate>
-    void erase_if(vector<T, Allocator>& c, Predicate pred);
+    constexpr void erase_if(vector<T, Allocator>& c, Predicate pred);
 
   // \ref{vector.bool}, class \tcode{vector<bool>}
   template<class Allocator> class vector<bool, Allocator>;
@@ -3373,10 +3262,10 @@ to \tcode{N} elements whose types are convertible to \tcode{T}.
 
 \pnum
 \indextext{requirements!container}%
-An \tcode{array} satisfies all of the requirements of a container and
+An \tcode{array} meets all of the requirements of a container and
 of a reversible container\iref{container.requirements}, except that a default
 constructed \tcode{array} object is not empty and that \tcode{swap} does not have constant
-complexity. An \tcode{array} satisfies some of the requirements of a sequence
+complexity. An \tcode{array} meets some of the requirements of a sequence
 container\iref{sequence.reqmts}.
 Descriptions are provided here
 only for operations on \tcode{array} that are not described in
@@ -3384,7 +3273,7 @@ one of these tables and
 for operations where there is additional semantic information.
 
 \pnum
-The types \tcode{iterator} and \tcode{const_iterator} satisfy
+The types \tcode{iterator} and \tcode{const_iterator} meet
 the constexpr iterator requirements\iref{iterator.requirements.general}.
 
 \indexlibrary{\idxcode{array}}%
@@ -3447,6 +3336,10 @@ namespace std {
 
     constexpr T *       data() noexcept;
     constexpr const T * data() const noexcept;
+
+    friend constexpr bool operator==(const array&, const array&) = default;
+    friend constexpr @\placeholder{synth-three-way-result}@<value_type>
+      operator<=>(const array&, const array&);
   };
 
   template<class T, class... U>
@@ -3562,6 +3455,49 @@ undefined.
 Member function \tcode{swap()} shall have a
 non-throwing exception specification.
 
+\rSec3[array.creation]{Array creation functions}
+\indextext{\idxcode{array}!creation}%
+
+\indexlibrary{\idxcode{to_array}}%
+\begin{itemdecl}
+template<class T, size_t N>
+  constexpr array<remove_cv_t<T>, N> to_array(T (&a)[N]);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\mandates
+\tcode{is_array_v<T>} is \tcode{false} and
+\tcode{is_constructible_v<T, T\&>} is \tcode{true}.
+
+\pnum
+\expects
+\tcode{T} meets the \oldconcept{CopyConstructible} requirements.
+
+\pnum
+\returns \tcode{\{\{ a[0], $\dotsc$, a[N - 1] \}\}}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{to_array}}%
+\begin{itemdecl}
+template<class T, size_t N>
+  constexpr array<remove_cv_t<T>, N> to_array(T (&&a)[N]);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\mandates
+\tcode{is_array_v<T>} is \tcode{false} and
+\tcode{is_move_constructible_v<T>} is \tcode{true}.
+
+\pnum
+\expects
+\tcode{T} meets the \oldconcept{MoveConstructible} requirements.
+
+\pnum
+\returns \tcode{\{\{ std::move(a[0]), $\dotsc$, std::move(a[N - 1]) \}\}}.
+\end{itemdescr}
+
 \rSec3[array.tuple]{Tuple interface}
 \indexlibrary{\idxcode{array}}%
 \indexlibrary{\idxcode{tuple}}%
@@ -3574,16 +3510,16 @@ template<class T, size_t N>
 
 \indexlibrary{\idxcode{tuple_element}}%
 \begin{itemdecl}
-tuple_element<I, array<T, N>>::type
+template<size_t I, class T, size_t N>
+  struct tuple_element<I, array<T, N>> {
+    using type = T;
+  };
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
 \mandates
 \tcode{I < N} is \tcode{true}.
-
-\pnum
-\cvalue The type \tcode{T}.
 \end{itemdescr}
 
 \indexlibrarymember{array}{get}%
@@ -3625,9 +3561,9 @@ Storage management is handled automatically.
 \pnum
 A
 \tcode{deque}
-satisfies all of the requirements of a container, of a reversible container
+meets all of the requirements of a container, of a reversible container
 (given in tables in~\ref{container.requirements}), of a sequence container,
-including the optional sequence container requirements\iref{sequence.reqmts}, and of an allocator-aware container (\tref{containers.allocatoraware}).
+including the optional sequence container requirements\iref{sequence.reqmts}, and of an allocator-aware container (\tref{container.alloc.req}).
 Descriptions are provided here only for operations on
 \tcode{deque}
 that are not described in one of these tables
@@ -4018,14 +3954,14 @@ relative to a hand-written C-style singly linked list. Features that would confl
 that goal have been omitted.\end{note}
 
 \pnum
-A \tcode{forward_list} satisfies all of the requirements of a container
-(\tref{containers.container.requirements}), except that the \tcode{size()}
+A \tcode{forward_list} meets all of the requirements of a container
+(\tref{container.req}), except that the \tcode{size()}
 member function is not provided and \tcode{operator==} has linear complexity.
-A \tcode{forward_list} also satisfies all of the requirements for an allocator-aware
-container (\tref{containers.allocatoraware}). In addition, a \tcode{forward_list}
+A \tcode{forward_list} also meets all of the requirements for an allocator-aware
+container (\tref{container.alloc.req}). In addition, a \tcode{forward_list}
 provides the \tcode{assign} member functions
-(\tref{containers.sequence.requirements}) and several of the optional
-container requirements (\tref{containers.sequence.optional}).
+(\tref{container.seq.req}) and several of the optional
+container requirements (\tref{container.seq.opt}).
 Descriptions are provided here only for operations on
 \tcode{forward_list} that are not described in that table or for operations where there
 is additional semantic information.
@@ -4160,7 +4096,7 @@ namespace std {
 
 \pnum
 An incomplete type \tcode{T} may be used when instantiating \tcode{forward_list}
-if the allocator satisfies the
+if the allocator meets the
 allocator completeness requirements\iref{allocator.requirements.completeness}.
 \tcode{T} shall be complete before any member of the resulting specialization
 of \tcode{forward_list} is referenced.
@@ -4485,7 +4421,7 @@ void clear() noexcept;
 In this subclause,
 arguments for a template parameter
 named \tcode{Predicate} or \tcode{BinaryPredicate}
-shall satisfy the corresponding requirements in \ref{algorithms.requirements}.
+shall meet the corresponding requirements in \ref{algorithms.requirements}.
 For \tcode{merge} and \tcode{sort},
 the definitions and requirements in \ref{alg.sorting} apply.
 
@@ -4700,7 +4636,7 @@ template<class T, class Allocator, class U>
 \begin{itemdescr}
 \pnum
 \effects
-Equivalent to: \tcode{erase_if(c, [\&](auto\& elem) { return elem == value; });}
+Equivalent to: \tcode{erase_if(c, [\&](auto\& elem) \{ return elem == value; \});}
 \end{itemdescr}
 
 \indexlibrary{\idxcode{erase_if}!\idxcode{forward_list}}%
@@ -4731,12 +4667,12 @@ fast random access to list elements is not supported, but many
 algorithms only need sequential access anyway.
 
 \pnum
-A \tcode{list} satisfies all of the requirements of a container, of
+A \tcode{list} meets all of the requirements of a container, of
 a reversible container (given in two tables in
 \ref{container.requirements}), of a sequence container,
 including most of the optional sequence container
 requirements\iref{sequence.reqmts}, and of an allocator-aware container
-(\tref{containers.allocatoraware}).
+(\tref{container.alloc.req}).
 The exceptions are the
 \tcode{operator[]}
 and
@@ -4882,7 +4818,7 @@ namespace std {
 
 \pnum
 An incomplete type \tcode{T} may be used when instantiating \tcode{list}
-if the allocator satisfies the
+if the allocator meets the
 allocator completeness requirements\iref{allocator.requirements.completeness}.
 \tcode{T} shall be complete before any member of the resulting specialization
 of \tcode{list} is referenced.
@@ -5093,7 +5029,7 @@ lists whose allocators compare equal.}
 In this subclause,
 arguments for a template parameter
 named \tcode{Predicate} or \tcode{BinaryPredicate}
-shall satisfy the corresponding requirements in \ref{algorithms.requirements}.
+shall meet the corresponding requirements in \ref{algorithms.requirements}.
 For \tcode{merge} and \tcode{sort},
 the definitions and requirements in \ref{alg.sorting} apply.
 
@@ -5392,7 +5328,7 @@ template<class T, class Allocator, class U>
 \begin{itemdescr}
 \pnum
 \effects
-Equivalent to: \tcode{erase_if(c, [\&](auto\& elem) { return elem == value; });}
+Equivalent to: \tcode{erase_if(c, [\&](auto\& elem) \{ return elem == value; \});}
 \end{itemdescr}
 
 \indexlibrary{\idxcode{erase_if}!\idxcode{list}}%
@@ -5422,11 +5358,11 @@ Storage management is handled automatically, though hints can be given
 to improve efficiency.
 
 \pnum
-A \tcode{vector} satisfies all of the requirements of a container and of a
+A \tcode{vector} meets all of the requirements of a container and of a
 reversible container (given in two tables in~\ref{container.requirements}), of a
 sequence container, including most of the optional sequence container
 requirements\iref{sequence.reqmts}, of an allocator-aware container
-(\tref{containers.allocatoraware}),
+(\tref{container.alloc.req}),
 and, for an element type other than \tcode{bool},
 of a contiguous container\iref{container.requirements.general}.
 The exceptions are the
@@ -5434,6 +5370,10 @@ The exceptions are the
 provided. Descriptions are provided here only for operations on \tcode{vector}
 that are not described in one of these tables or for operations where there is
 additional semantic information.
+
+\pnum
+The types \tcode{iterator} and \tcode{const_iterator} meet
+the constexpr iterator requirements\iref{iterator.requirements.general}.
 
 \begin{codeblock}
 namespace std {
@@ -5455,87 +5395,88 @@ namespace std {
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
 
     // \ref{vector.cons}, construct/copy/destroy
-    vector() noexcept(noexcept(Allocator())) : vector(Allocator()) { }
-    explicit vector(const Allocator&) noexcept;
-    explicit vector(size_type n, const Allocator& = Allocator());
-    vector(size_type n, const T& value, const Allocator& = Allocator());
+    constexpr vector() noexcept(noexcept(Allocator())) : vector(Allocator()) { }
+    constexpr explicit vector(const Allocator&) noexcept;
+    constexpr explicit vector(size_type n, const Allocator& = Allocator());
+    constexpr vector(size_type n, const T& value, const Allocator& = Allocator());
     template<class InputIterator>
-      vector(InputIterator first, InputIterator last, const Allocator& = Allocator());
-    vector(const vector& x);
-    vector(vector&&) noexcept;
-    vector(const vector&, const Allocator&);
-    vector(vector&&, const Allocator&);
-    vector(initializer_list<T>, const Allocator& = Allocator());
-    ~vector();
-    vector& operator=(const vector& x);
-    vector& operator=(vector&& x)
+      constexpr vector(InputIterator first, InputIterator last, const Allocator& = Allocator());
+    constexpr vector(const vector& x);
+    constexpr vector(vector&&) noexcept;
+    constexpr vector(const vector&, const Allocator&);
+    constexpr vector(vector&&, const Allocator&);
+    constexpr vector(initializer_list<T>, const Allocator& = Allocator());
+    constexpr ~vector();
+    constexpr vector& operator=(const vector& x);
+    constexpr vector& operator=(vector&& x)
       noexcept(allocator_traits<Allocator>::propagate_on_container_move_assignment::value ||
                allocator_traits<Allocator>::is_always_equal::value);
-    vector& operator=(initializer_list<T>);
+    constexpr vector& operator=(initializer_list<T>);
     template<class InputIterator>
-      void assign(InputIterator first, InputIterator last);
-    void assign(size_type n, const T& u);
-    void assign(initializer_list<T>);
-    allocator_type get_allocator() const noexcept;
+      constexpr void assign(InputIterator first, InputIterator last);
+    constexpr void assign(size_type n, const T& u);
+    constexpr void assign(initializer_list<T>);
+    constexpr allocator_type get_allocator() const noexcept;
 
     // iterators
-    iterator               begin() noexcept;
-    const_iterator         begin() const noexcept;
-    iterator               end() noexcept;
-    const_iterator         end() const noexcept;
-    reverse_iterator       rbegin() noexcept;
-    const_reverse_iterator rbegin() const noexcept;
-    reverse_iterator       rend() noexcept;
-    const_reverse_iterator rend() const noexcept;
+    constexpr iterator               begin() noexcept;
+    constexpr const_iterator         begin() const noexcept;
+    constexpr iterator               end() noexcept;
+    constexpr const_iterator         end() const noexcept;
+    constexpr reverse_iterator       rbegin() noexcept;
+    constexpr const_reverse_iterator rbegin() const noexcept;
+    constexpr reverse_iterator       rend() noexcept;
+    constexpr const_reverse_iterator rend() const noexcept;
 
-    const_iterator         cbegin() const noexcept;
-    const_iterator         cend() const noexcept;
-    const_reverse_iterator crbegin() const noexcept;
-    const_reverse_iterator crend() const noexcept;
+    constexpr const_iterator         cbegin() const noexcept;
+    constexpr const_iterator         cend() const noexcept;
+    constexpr const_reverse_iterator crbegin() const noexcept;
+    constexpr const_reverse_iterator crend() const noexcept;
 
     // \ref{vector.capacity}, capacity
-    [[nodiscard]] bool empty() const noexcept;
-    size_type size() const noexcept;
-    size_type max_size() const noexcept;
-    size_type capacity() const noexcept;
-    void      resize(size_type sz);
-    void      resize(size_type sz, const T& c);
-    void      reserve(size_type n);
-    void      shrink_to_fit();
+    [[nodiscard]] constexpr bool empty() const noexcept;
+    constexpr size_type size() const noexcept;
+    constexpr size_type max_size() const noexcept;
+    constexpr size_type capacity() const noexcept;
+    constexpr void      resize(size_type sz);
+    constexpr void      resize(size_type sz, const T& c);
+    constexpr void      reserve(size_type n);
+    constexpr void      shrink_to_fit();
 
     // element access
-    reference       operator[](size_type n);
-    const_reference operator[](size_type n) const;
-    const_reference at(size_type n) const;
-    reference       at(size_type n);
-    reference       front();
-    const_reference front() const;
-    reference       back();
-    const_reference back() const;
+    constexpr reference       operator[](size_type n);
+    constexpr const_reference operator[](size_type n) const;
+    constexpr const_reference at(size_type n) const;
+    constexpr reference       at(size_type n);
+    constexpr reference       front();
+    constexpr const_reference front() const;
+    constexpr reference       back();
+    constexpr const_reference back() const;
 
     // \ref{vector.data}, data access
-    T*       data() noexcept;
-    const T* data() const noexcept;
+    constexpr T*       data() noexcept;
+    constexpr const T* data() const noexcept;
 
     // \ref{vector.modifiers}, modifiers
-    template<class... Args> reference emplace_back(Args&&... args);
-    void push_back(const T& x);
-    void push_back(T&& x);
-    void pop_back();
+    template<class... Args> constexpr reference emplace_back(Args&&... args);
+    constexpr void push_back(const T& x);
+    constexpr void push_back(T&& x);
+    constexpr void pop_back();
 
-    template<class... Args> iterator emplace(const_iterator position, Args&&... args);
-    iterator insert(const_iterator position, const T& x);
-    iterator insert(const_iterator position, T&& x);
-    iterator insert(const_iterator position, size_type n, const T& x);
+    template<class... Args> constexpr iterator emplace(const_iterator position, Args&&... args);
+    constexpr iterator insert(const_iterator position, const T& x);
+    constexpr iterator insert(const_iterator position, T&& x);
+    constexpr iterator insert(const_iterator position, size_type n, const T& x);
     template<class InputIterator>
-      iterator insert(const_iterator position, InputIterator first, InputIterator last);
-    iterator insert(const_iterator position, initializer_list<T> il);
-    iterator erase(const_iterator position);
-    iterator erase(const_iterator first, const_iterator last);
-    void     swap(vector&)
+      constexpr iterator insert(const_iterator position,
+                                InputIterator first, InputIterator last);
+    constexpr iterator insert(const_iterator position, initializer_list<T> il);
+    constexpr iterator erase(const_iterator position);
+    constexpr iterator erase(const_iterator first, const_iterator last);
+    constexpr void     swap(vector&)
       noexcept(allocator_traits<Allocator>::propagate_on_container_swap::value ||
                allocator_traits<Allocator>::is_always_equal::value);
-    void     clear() noexcept;
+    constexpr void     clear() noexcept;
   };
 
   template<class InputIterator, class Allocator = allocator<@\placeholder{iter-value-type}@<InputIterator>>>
@@ -5544,7 +5485,7 @@ namespace std {
 
   // swap
   template<class T, class Allocator>
-    void swap(vector<T, Allocator>& x, vector<T, Allocator>& y)
+    constexpr void swap(vector<T, Allocator>& x, vector<T, Allocator>& y)
       noexcept(noexcept(x.swap(y)));
 }
 \end{codeblock}%
@@ -5553,7 +5494,7 @@ namespace std {
 
 \pnum
 An incomplete type \tcode{T} may be used when instantiating \tcode{vector}
-if the allocator satisfies the
+if the allocator meets the
 allocator completeness requirements\iref{allocator.requirements.completeness}.
 \tcode{T} shall be complete before any member of the resulting specialization
 of \tcode{vector} is referenced.
@@ -5562,7 +5503,7 @@ of \tcode{vector} is referenced.
 
 \indexlibrary{\idxcode{vector}!constructor}
 \begin{itemdecl}
-explicit vector(const Allocator&) noexcept;
+constexpr explicit vector(const Allocator&) noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5576,7 +5517,7 @@ specified allocator.
 
 \indexlibrary{\idxcode{vector}!constructor}
 \begin{itemdecl}
-explicit vector(size_type n, const Allocator& = Allocator());
+constexpr explicit vector(size_type n, const Allocator& = Allocator());
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5593,8 +5534,8 @@ default-inserted elements using the specified allocator.
 
 \indexlibrary{\idxcode{vector}!constructor}
 \begin{itemdecl}
-vector(size_type n, const T& value,
-       const Allocator& = Allocator());
+constexpr vector(size_type n, const T& value,
+                 const Allocator& = Allocator());
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5613,8 +5554,8 @@ copies of \tcode{value}, using the specified allocator.
 \indexlibrary{\idxcode{vector}!constructor}
 \begin{itemdecl}
 template<class InputIterator>
-  vector(InputIterator first, InputIterator last,
-         const Allocator& = Allocator());
+  constexpr vector(InputIterator first, InputIterator last,
+                   const Allocator& = Allocator());
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5647,7 +5588,7 @@ reallocations if they are just input iterators.
 
 \indexlibrary{\idxcode{capacity}!\idxcode{vector}}%
 \begin{itemdecl}
-size_type capacity() const noexcept;
+constexpr size_type capacity() const noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5662,7 +5603,7 @@ without requiring reallocation.
 
 \indexlibrary{\idxcode{reserve}!\idxcode{vector}}%
 \begin{itemdecl}
-void reserve(size_type n);
+constexpr void reserve(size_type n);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5714,7 +5655,7 @@ greater than the value of \tcode{capacity()}.
 
 \indexlibrary{\idxcode{shrink_to_fit}!\idxcode{vector}}%
 \begin{itemdecl}
-void shrink_to_fit();
+constexpr void shrink_to_fit();
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5746,7 +5687,7 @@ If no reallocation happens, they remain valid.
 
 \indexlibrary{\idxcode{swap}!\idxcode{vector}}%
 \begin{itemdecl}
-void swap(vector& x)
+constexpr void swap(vector& x)
   noexcept(allocator_traits<Allocator>::propagate_on_container_swap::value ||
            allocator_traits<Allocator>::is_always_equal::value);
 \end{itemdecl}
@@ -5767,7 +5708,7 @@ Constant time.
 
 \indexlibrary{\idxcode{resize}!\idxcode{vector}}%
 \begin{itemdecl}
-void resize(size_type sz);
+constexpr void resize(size_type sz);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5787,7 +5728,7 @@ appends \tcode{sz - size()} default-inserted elements to the sequence.
 
 \indexlibrary{\idxcode{resize}!\idxcode{vector}}%
 \begin{itemdecl}
-void resize(size_type sz, const T& c);
+constexpr void resize(size_type sz, const T& c);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5808,8 +5749,8 @@ appends \tcode{sz - size()} copies of \tcode{c} to the sequence.
 
 \indexlibrary{\idxcode{data}!\idxcode{vector}}%
 \begin{itemdecl}
-T*         data() noexcept;
-const T*   data() const noexcept;
+constexpr T*         data() noexcept;
+constexpr const T*   data() const noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5827,17 +5768,17 @@ Constant time.
 
 \indexlibrary{\idxcode{insert}!\idxcode{vector}}%
 \begin{itemdecl}
-iterator insert(const_iterator position, const T& x);
-iterator insert(const_iterator position, T&& x);
-iterator insert(const_iterator position, size_type n, const T& x);
+constexpr iterator insert(const_iterator position, const T& x);
+constexpr iterator insert(const_iterator position, T&& x);
+constexpr iterator insert(const_iterator position, size_type n, const T& x);
 template<class InputIterator>
-  iterator insert(const_iterator position, InputIterator first, InputIterator last);
-iterator insert(const_iterator position, initializer_list<T>);
+  constexpr iterator insert(const_iterator position, InputIterator first, InputIterator last);
+constexpr iterator insert(const_iterator position, initializer_list<T>);
 
-template<class... Args> reference emplace_back(Args&&... args);
-template<class... Args> iterator emplace(const_iterator position, Args&&... args);
-void push_back(const T& x);
-void push_back(T&& x);
+template<class... Args> constexpr reference emplace_back(Args&&... args);
+template<class... Args> constexpr iterator emplace(const_iterator position, Args&&... args);
+constexpr void push_back(const T& x);
+constexpr void push_back(T&& x);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5874,9 +5815,9 @@ to the end of the vector.
 
 \indexlibrary{\idxcode{erase}!\idxcode{vector}}%
 \begin{itemdecl}
-iterator erase(const_iterator position);
-iterator erase(const_iterator first, const_iterator last);
-void pop_back();
+constexpr iterator erase(const_iterator position);
+constexpr iterator erase(const_iterator first, const_iterator last);
+constexpr void pop_back();
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5903,7 +5844,7 @@ assignment operator or move assignment operator of
 \indexlibrary{\idxcode{erase}!\idxcode{vector}}%
 \begin{itemdecl}
 template<class T, class Allocator, class U>
-  void erase(vector<T, Allocator>& c, const U& value);
+  constexpr void erase(vector<T, Allocator>& c, const U& value);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5915,7 +5856,7 @@ Equivalent to: \tcode{c.erase(remove(c.begin(), c.end(), value), c.end());}
 \indexlibrary{\idxcode{erase_if}!\idxcode{vector}}%
 \begin{itemdecl}
 template<class T, class Allocator, class Predicate>
-  void erase_if(vector<T, Allocator>& c, Predicate pred);
+  constexpr void erase_if(vector<T, Allocator>& c, Predicate pred);
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -5953,89 +5894,90 @@ namespace std {
     // bit reference
     class reference {
       friend class vector;
-      reference() noexcept;
+      constexpr reference() noexcept;
     public:
-      reference(const reference&) = default;
-      ~reference();
-      operator bool() const noexcept;
-      reference& operator=(const bool x) noexcept;
-      reference& operator=(const reference& x) noexcept;
-      void flip() noexcept;     // flips the bit
+      constexpr reference(const reference&) = default;
+      constexpr ~reference();
+      constexpr operator bool() const noexcept;
+      constexpr reference& operator=(const bool x) noexcept;
+      constexpr reference& operator=(const reference& x) noexcept;
+      constexpr void flip() noexcept;     // flips the bit
     };
 
     // construct/copy/destroy
-    vector() : vector(Allocator()) { }
-    explicit vector(const Allocator&);
-    explicit vector(size_type n, const Allocator& = Allocator());
-    vector(size_type n, const bool& value, const Allocator& = Allocator());
+    constexpr vector() : vector(Allocator()) { }
+    constexpr explicit vector(const Allocator&);
+    constexpr explicit vector(size_type n, const Allocator& = Allocator());
+    constexpr vector(size_type n, const bool& value, const Allocator& = Allocator());
     template<class InputIterator>
-      vector(InputIterator first, InputIterator last, const Allocator& = Allocator());
-    vector(const vector& x);
-    vector(vector&& x);
-    vector(const vector&, const Allocator&);
-    vector(vector&&, const Allocator&);
-    vector(initializer_list<bool>, const Allocator& = Allocator()));
-    ~vector();
-    vector& operator=(const vector& x);
-    vector& operator=(vector&& x);
-    vector& operator=(initializer_list<bool>);
+      constexpr vector(InputIterator first, InputIterator last, const Allocator& = Allocator());
+    constexpr vector(const vector& x);
+    constexpr vector(vector&& x);
+    constexpr vector(const vector&, const Allocator&);
+    constexpr vector(vector&&, const Allocator&);
+    constexpr vector(initializer_list<bool>, const Allocator& = Allocator()));
+    constexpr ~vector();
+    constexpr vector& operator=(const vector& x);
+    constexpr vector& operator=(vector&& x);
+    constexpr vector& operator=(initializer_list<bool>);
     template<class InputIterator>
-      void assign(InputIterator first, InputIterator last);
-    void assign(size_type n, const bool& t);
-    void assign(initializer_list<bool>);
-    allocator_type get_allocator() const noexcept;
+      constexpr void assign(InputIterator first, InputIterator last);
+    constexpr void assign(size_type n, const bool& t);
+    constexpr void assign(initializer_list<bool>);
+    constexpr allocator_type get_allocator() const noexcept;
 
     // iterators
-    iterator               begin() noexcept;
-    const_iterator         begin() const noexcept;
-    iterator               end() noexcept;
-    const_iterator         end() const noexcept;
-    reverse_iterator       rbegin() noexcept;
-    const_reverse_iterator rbegin() const noexcept;
-    reverse_iterator       rend() noexcept;
-    const_reverse_iterator rend() const noexcept;
+    constexpr iterator               begin() noexcept;
+    constexpr const_iterator         begin() const noexcept;
+    constexpr iterator               end() noexcept;
+    constexpr const_iterator         end() const noexcept;
+    constexpr reverse_iterator       rbegin() noexcept;
+    constexpr const_reverse_iterator rbegin() const noexcept;
+    constexpr reverse_iterator       rend() noexcept;
+    constexpr const_reverse_iterator rend() const noexcept;
 
-    const_iterator         cbegin() const noexcept;
-    const_iterator         cend() const noexcept;
-    const_reverse_iterator crbegin() const noexcept;
-    const_reverse_iterator crend() const noexcept;
+    constexpr const_iterator         cbegin() const noexcept;
+    constexpr const_iterator         cend() const noexcept;
+    constexpr const_reverse_iterator crbegin() const noexcept;
+    constexpr const_reverse_iterator crend() const noexcept;
 
     // capacity
-    [[nodiscard]] bool empty() const noexcept;
-    size_type size() const noexcept;
-    size_type max_size() const noexcept;
-    size_type capacity() const noexcept;
-    void      resize(size_type sz, bool c = false);
-    void      reserve(size_type n);
-    void      shrink_to_fit();
+    [[nodiscard]] constexpr bool empty() const noexcept;
+    constexpr size_type size() const noexcept;
+    constexpr size_type max_size() const noexcept;
+    constexpr size_type capacity() const noexcept;
+    constexpr void      resize(size_type sz, bool c = false);
+    constexpr void      reserve(size_type n);
+    constexpr void      shrink_to_fit();
 
     // element access
-    reference       operator[](size_type n);
-    const_reference operator[](size_type n) const;
-    const_reference at(size_type n) const;
-    reference       at(size_type n);
-    reference       front();
-    const_reference front() const;
-    reference       back();
-    const_reference back() const;
+    constexpr reference       operator[](size_type n);
+    constexpr const_reference operator[](size_type n) const;
+    constexpr const_reference at(size_type n) const;
+    constexpr reference       at(size_type n);
+    constexpr reference       front();
+    constexpr const_reference front() const;
+    constexpr reference       back();
+    constexpr const_reference back() const;
 
     // modifiers
-    template<class... Args> reference emplace_back(Args&&... args);
-    void push_back(const bool& x);
-    void pop_back();
-    template<class... Args> iterator emplace(const_iterator position, Args&&... args);
-    iterator insert(const_iterator position, const bool& x);
-    iterator insert(const_iterator position, size_type n, const bool& x);
+    template<class... Args> constexpr reference emplace_back(Args&&... args);
+    constexpr void push_back(const bool& x);
+    constexpr void pop_back();
+    template<class... Args> constexpr iterator emplace(const_iterator position, Args&&... args);
+    constexpr iterator insert(const_iterator position, const bool& x);
+    constexpr iterator insert(const_iterator position, size_type n, const bool& x);
     template<class InputIterator>
-      iterator insert(const_iterator position, InputIterator first, InputIterator last);
-    iterator insert(const_iterator position, initializer_list<bool> il);
+      constexpr iterator insert(const_iterator position,
+                                InputIterator first, InputIterator last);
+    constexpr iterator insert(const_iterator position, initializer_list<bool> il);
 
-    iterator erase(const_iterator position);
-    iterator erase(const_iterator first, const_iterator last);
-    void swap(vector&);
-    static void swap(reference x, reference y) noexcept;
-    void flip() noexcept;       // flips all bits
-    void clear() noexcept;
+    constexpr iterator erase(const_iterator position);
+    constexpr iterator erase(const_iterator first, const_iterator last);
+    constexpr void swap(vector&);
+    constexpr static void swap(reference x, reference y) noexcept;
+    constexpr void flip() noexcept;       // flips all bits
+    constexpr void clear() noexcept;
   };
 }
 \end{codeblock}%
@@ -6063,7 +6005,7 @@ clears it otherwise. \tcode{flip} reverses the state of the bit.
 
 \indexlibrarymember{flip}{vector<bool>}%
 \begin{itemdecl}
-void flip() noexcept;
+constexpr void flip() noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -6073,7 +6015,7 @@ void flip() noexcept;
 
 \indexlibrarymember{swap}{vector<bool>}%
 \begin{itemdecl}
-static void swap(reference x, reference y) noexcept;
+constexpr static void swap(reference x, reference y) noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -6140,20 +6082,9 @@ namespace std {
     bool operator==(const map<Key, T, Compare, Allocator>& x,
                     const map<Key, T, Compare, Allocator>& y);
   template<class Key, class T, class Compare, class Allocator>
-    bool operator!=(const map<Key, T, Compare, Allocator>& x,
-                    const map<Key, T, Compare, Allocator>& y);
-  template<class Key, class T, class Compare, class Allocator>
-    bool operator< (const map<Key, T, Compare, Allocator>& x,
-                    const map<Key, T, Compare, Allocator>& y);
-  template<class Key, class T, class Compare, class Allocator>
-    bool operator> (const map<Key, T, Compare, Allocator>& x,
-                    const map<Key, T, Compare, Allocator>& y);
-  template<class Key, class T, class Compare, class Allocator>
-    bool operator<=(const map<Key, T, Compare, Allocator>& x,
-                    const map<Key, T, Compare, Allocator>& y);
-  template<class Key, class T, class Compare, class Allocator>
-    bool operator>=(const map<Key, T, Compare, Allocator>& x,
-                    const map<Key, T, Compare, Allocator>& y);
+    @\placeholder{synth-three-way-result}@<pair<const Key, T>>
+      operator<=>(const map<Key, T, Compare, Allocator>& x,
+                  const map<Key, T, Compare, Allocator>& y);
 
   template<class Key, class T, class Compare, class Allocator>
     void swap(map<Key, T, Compare, Allocator>& x,
@@ -6172,20 +6103,9 @@ namespace std {
     bool operator==(const multimap<Key, T, Compare, Allocator>& x,
                     const multimap<Key, T, Compare, Allocator>& y);
   template<class Key, class T, class Compare, class Allocator>
-    bool operator!=(const multimap<Key, T, Compare, Allocator>& x,
-                    const multimap<Key, T, Compare, Allocator>& y);
-  template<class Key, class T, class Compare, class Allocator>
-    bool operator< (const multimap<Key, T, Compare, Allocator>& x,
-                    const multimap<Key, T, Compare, Allocator>& y);
-  template<class Key, class T, class Compare, class Allocator>
-    bool operator> (const multimap<Key, T, Compare, Allocator>& x,
-                    const multimap<Key, T, Compare, Allocator>& y);
-  template<class Key, class T, class Compare, class Allocator>
-    bool operator<=(const multimap<Key, T, Compare, Allocator>& x,
-                    const multimap<Key, T, Compare, Allocator>& y);
-  template<class Key, class T, class Compare, class Allocator>
-    bool operator>=(const multimap<Key, T, Compare, Allocator>& x,
-                    const multimap<Key, T, Compare, Allocator>& y);
+    @\placeholder{synth-three-way-result}@<pair<const Key, T>>
+      operator<=>(const multimap<Key, T, Compare, Allocator>& x,
+                  const multimap<Key, T, Compare, Allocator>& y);
 
   template<class Key, class T, class Compare, class Allocator>
     void swap(multimap<Key, T, Compare, Allocator>& x,
@@ -6223,20 +6143,8 @@ namespace std {
     bool operator==(const set<Key, Compare, Allocator>& x,
                     const set<Key, Compare, Allocator>& y);
   template<class Key, class Compare, class Allocator>
-    bool operator!=(const set<Key, Compare, Allocator>& x,
-                    const set<Key, Compare, Allocator>& y);
-  template<class Key, class Compare, class Allocator>
-    bool operator< (const set<Key, Compare, Allocator>& x,
-                    const set<Key, Compare, Allocator>& y);
-  template<class Key, class Compare, class Allocator>
-    bool operator> (const set<Key, Compare, Allocator>& x,
-                    const set<Key, Compare, Allocator>& y);
-  template<class Key, class Compare, class Allocator>
-    bool operator<=(const set<Key, Compare, Allocator>& x,
-                    const set<Key, Compare, Allocator>& y);
-  template<class Key, class Compare, class Allocator>
-    bool operator>=(const set<Key, Compare, Allocator>& x,
-                    const set<Key, Compare, Allocator>& y);
+    @\placeholder{synth-three-way-result}@<Key> operator<=>(const set<Key, Compare, Allocator>& x,
+    @\itcorr@                                        const set<Key, Compare, Allocator>& y);
 
   template<class Key, class Compare, class Allocator>
     void swap(set<Key, Compare, Allocator>& x,
@@ -6254,20 +6162,8 @@ namespace std {
     bool operator==(const multiset<Key, Compare, Allocator>& x,
                     const multiset<Key, Compare, Allocator>& y);
   template<class Key, class Compare, class Allocator>
-    bool operator!=(const multiset<Key, Compare, Allocator>& x,
-                    const multiset<Key, Compare, Allocator>& y);
-  template<class Key, class Compare, class Allocator>
-    bool operator< (const multiset<Key, Compare, Allocator>& x,
-                    const multiset<Key, Compare, Allocator>& y);
-  template<class Key, class Compare, class Allocator>
-    bool operator> (const multiset<Key, Compare, Allocator>& x,
-                    const multiset<Key, Compare, Allocator>& y);
-  template<class Key, class Compare, class Allocator>
-    bool operator<=(const multiset<Key, Compare, Allocator>& x,
-                    const multiset<Key, Compare, Allocator>& y);
-  template<class Key, class Compare, class Allocator>
-    bool operator>=(const multiset<Key, Compare, Allocator>& x,
-                    const multiset<Key, Compare, Allocator>& y);
+    @\placeholder{synth-three-way-result}@<Key> operator<=>(const multiset<Key, Compare, Allocator>& x,
+    @\itcorr@                                        const multiset<Key, Compare, Allocator>& y);
 
   template<class Key, class Compare, class Allocator>
     void swap(multiset<Key, Compare, Allocator>& x,
@@ -6301,8 +6197,8 @@ on the keys. The \tcode{map} class supports bidirectional iterators.
 \pnum
 A
 \tcode{map}
-satisfies all of the requirements of a container, of a reversible container\iref{container.requirements}, of
-an associative container\iref{associative.reqmts}, and of an allocator-aware container (\tref{containers.allocatoraware}).
+meets all of the requirements of a container, of a reversible container\iref{container.requirements}, of
+an associative container\iref{associative.reqmts}, and of an allocator-aware container (\tref{container.alloc.req}).
 A
 \tcode{map}
 also provides most operations described in~\ref{associative.reqmts}
@@ -6330,6 +6226,8 @@ Descriptions are provided here only for operations on
 that are not described in one of those tables
 or for operations where there is additional semantic information.
 
+\indexlibrarymember{comp}{map::value_compare}%
+\indexlibrarymember{operator()}{map::value_compare}%
 \begin{codeblock}
 namespace std {
   template<class Key, class T, class Compare = less<Key>,
@@ -6845,10 +6743,10 @@ supports bidirectional iterators.
 
 \pnum
 A
-\tcode{multimap} satisfies all of the requirements of a container and of a
+\tcode{multimap} meets all of the requirements of a container and of a
 reversible container\iref{container.requirements}, of an associative
 container\iref{associative.reqmts}, and of an allocator-aware container
-(\tref{containers.allocatoraware}).
+(\tref{container.alloc.req}).
 A
 \tcode{multimap}
 also provides most operations described in~\ref{associative.reqmts}
@@ -6876,6 +6774,8 @@ Descriptions are provided here only for operations on
 that are not described in one of those tables
 or for operations where there is additional semantic information.
 
+\indexlibrarymember{comp}{multimap::value_compare}%
+\indexlibrarymember{operator()}{multimap::value_compare}%
 \begin{codeblock}
 namespace std {
   template<class Key, class T, class Compare = less<Key>,
@@ -7164,10 +7064,10 @@ The
 supports bidirectional iterators.
 
 \pnum
-A \tcode{set} satisfies all of the requirements of a container, of a reversible
+A \tcode{set} meets all of the requirements of a container, of a reversible
 container\iref{container.requirements}, of an associative
 container\iref{associative.reqmts}, and of an allocator-aware container
-(\tref{containers.allocatoraware}).
+(\tref{container.alloc.req}).
 A
 \tcode{set}
 also provides most operations described in~\ref{associative.reqmts}
@@ -7443,10 +7343,10 @@ The
 supports bidirectional iterators.
 
 \pnum
-A \tcode{multiset} satisfies all of the requirements of a container, of a
+A \tcode{multiset} meets all of the requirements of a container, of a
 reversible container\iref{container.requirements}, of an associative
 container\iref{associative.reqmts}, and of an allocator-aware container
-(\tref{containers.allocatoraware}).
+(\tref{container.alloc.req}).
 \tcode{multiset}
 also provides most operations described in~\ref{associative.reqmts}
 for duplicate keys.
@@ -7747,15 +7647,9 @@ namespace std {
   template<class Key, class T, class Hash, class Pred, class Alloc>
     bool operator==(const unordered_map<Key, T, Hash, Pred, Alloc>& a,
                     const unordered_map<Key, T, Hash, Pred, Alloc>& b);
-  template<class Key, class T, class Hash, class Pred, class Alloc>
-    bool operator!=(const unordered_map<Key, T, Hash, Pred, Alloc>& a,
-                    const unordered_map<Key, T, Hash, Pred, Alloc>& b);
 
   template<class Key, class T, class Hash, class Pred, class Alloc>
     bool operator==(const unordered_multimap<Key, T, Hash, Pred, Alloc>& a,
-                    const unordered_multimap<Key, T, Hash, Pred, Alloc>& b);
-  template<class Key, class T, class Hash, class Pred, class Alloc>
-    bool operator!=(const unordered_multimap<Key, T, Hash, Pred, Alloc>& a,
                     const unordered_multimap<Key, T, Hash, Pred, Alloc>& b);
 
   template<class Key, class T, class Hash, class Pred, class Alloc>
@@ -7819,15 +7713,9 @@ namespace std {
   template<class Key, class Hash, class Pred, class Alloc>
     bool operator==(const unordered_set<Key, Hash, Pred, Alloc>& a,
                     const unordered_set<Key, Hash, Pred, Alloc>& b);
-  template<class Key, class Hash, class Pred, class Alloc>
-    bool operator!=(const unordered_set<Key, Hash, Pred, Alloc>& a,
-                    const unordered_set<Key, Hash, Pred, Alloc>& b);
 
   template<class Key, class Hash, class Pred, class Alloc>
     bool operator==(const unordered_multiset<Key, Hash, Pred, Alloc>& a,
-                    const unordered_multiset<Key, Hash, Pred, Alloc>& b);
-  template<class Key, class Hash, class Pred, class Alloc>
-    bool operator!=(const unordered_multiset<Key, Hash, Pred, Alloc>& a,
                     const unordered_multiset<Key, Hash, Pred, Alloc>& b);
 
   template<class Key, class Hash, class Pred, class Alloc>
@@ -7878,7 +7766,7 @@ The \tcode{unordered_map} class
 supports forward iterators.
 
 \pnum
-An \tcode{unordered_map} satisfies all of the requirements of a container, of an unordered associative container, and of an allocator-aware container (\tref{containers.allocatoraware}). It provides the operations described in the preceding requirements table for unique keys; that is, an \tcode{unordered_map} supports the \tcode{a_uniq} operations in that table, not the \tcode{a_eq} operations. For an \tcode{unordered_map<Key, T>} the \tcode{key type} is \tcode{Key}, the mapped type is \tcode{T}, and the value type is \tcode{pair<const Key, T>}.
+An \tcode{unordered_map} meets all of the requirements of a container, of an unordered associative container, and of an allocator-aware container (\tref{container.alloc.req}). It provides the operations described in the preceding requirements table for unique keys; that is, an \tcode{unordered_map} supports the \tcode{a_uniq} operations in that table, not the \tcode{a_eq} operations. For an \tcode{unordered_map<Key, T>} the \tcode{key type} is \tcode{Key}, the mapped type is \tcode{T}, and the value type is \tcode{pair<const Key, T>}.
 
 \pnum
 This subclause only describes operations on \tcode{unordered_map} that
@@ -8036,40 +7924,23 @@ namespace std {
     // map operations
     iterator         find(const key_type& k);
     const_iterator   find(const key_type& k) const;
-    iterator         find(const key_type& k, size_t hash);
-    const_iterator   find(const key_type& k, size_t hash) const;
     template<class K>
       iterator       find(const K& k);
     template<class K>
       const_iterator find(const K& k) const;
     template<class K>
-      iterator       find(const K& k, size_t hash);
-    template<class K>
-      const_iterator find(const K& k, size_t hash) const;
     size_type        count(const key_type& k) const;
-    size_type        count(const key_type& k, size_t hash) const;
     template<class K>
       size_type      count(const K& k) const;
-    template<class K>
-      size_type      count(const K& k, size_t hash) const;
     bool             contains(const key_type& k) const;
-    bool             contains(const key_type& k, size_t hash) const;
     template<class K>
       bool           contains(const K& k) const;
-    template<class K>
-      bool           contains(const K& k, size_t hash) const;
     pair<iterator, iterator>               equal_range(const key_type& k);
     pair<const_iterator, const_iterator>   equal_range(const key_type& k) const;
-    pair<iterator, iterator>               equal_range(const key_type& k, size_t hash);
-    pair<const_iterator, const_iterator>   equal_range(const key_type& k, size_t hash) const;
     template<class K>
       pair<iterator, iterator>             equal_range(const K& k);
     template<class K>
       pair<const_iterator, const_iterator> equal_range(const K& k) const;
-    template<class K>
-      pair<iterator, iterator>             equal_range(const K& k, size_t hash);
-    template<class K>
-      pair<const_iterator, const_iterator> equal_range(const K& k, size_t hash) const;
 
     // \ref{unord.map.elem}, element access
     mapped_type& operator[](const key_type& k);
@@ -8478,9 +8349,9 @@ The \tcode{unordered_multimap} class
 supports forward iterators.
 
 \pnum
-An \tcode{unordered_multimap} satisfies all of the requirements of a container, of an
+An \tcode{unordered_multimap} meets all of the requirements of a container, of an
 unordered associative container, and of an allocator-aware container
-(\tref{containers.allocatoraware}). It provides the operations described in the
+(\tref{container.alloc.req}). It provides the operations described in the
 preceding requirements table for equivalent keys; that is, an \tcode{unordered_multimap}
 supports the \tcode{a_eq} operations in that table, not the \tcode{a_uniq} operations.
 For an \tcode{unordered_multimap<Key, T>} the \tcode{key type} is \tcode{Key}, the
@@ -8624,40 +8495,22 @@ namespace std {
     // map operations
     iterator         find(const key_type& k);
     const_iterator   find(const key_type& k) const;
-    iterator         find(const key_type& k, size_t hash);
-    const_iterator   find(const key_type& k, size_t hash) const;
     template<class K>
       iterator       find(const K& k);
     template<class K>
       const_iterator find(const K& k) const;
-    template<class K>
-      iterator       find(const K& k, size_t hash);
-    template<class K>
-      const_iterator find(const K& k, size_t hash) const;
     size_type        count(const key_type& k) const;
-    size_type        count(const key_type& k, size_t hash) const;
     template<class K>
       size_type      count(const K& k) const;
-    template<class K>
-      size_type      count(const K& k, size_t hash) const;
     bool             contains(const key_type& k) const;
-    bool             contains(const key_type& k, size_t hash) const;
     template<class K>
       bool           contains(const K& k) const;
-    template<class K>
-      bool           contains(const K& k, size_t hash) const;
     pair<iterator, iterator>               equal_range(const key_type& k);
     pair<const_iterator, const_iterator>   equal_range(const key_type& k) const;
-    pair<iterator, iterator>               equal_range(const key_type& k, size_t hash);
-    pair<const_iterator, const_iterator>   equal_range(const key_type& k, size_t hash) const;
     template<class K>
       pair<iterator, iterator>             equal_range(const K& k);
     template<class K>
       pair<const_iterator, const_iterator> equal_range(const K& k) const;
-    template<class K>
-      pair<iterator, iterator>             equal_range(const K& k, size_t hash);
-    template<class K>
-      pair<const_iterator, const_iterator> equal_range(const K& k, size_t hash) const;
 
     // bucket interface
     size_type bucket_count() const noexcept;
@@ -8867,7 +8720,7 @@ The \tcode{unordered_set} class
 supports forward iterators.
 
 \pnum
-An \tcode{unordered_set} satisfies all of the requirements of a container, of an unordered associative container, and of an allocator-aware container (\tref{containers.allocatoraware}). It provides the operations described in the preceding requirements table for unique keys; that is, an \tcode{unordered_set} supports the \tcode{a_uniq} operations in that table, not the \tcode{a_eq} operations. For an \tcode{unordered_set<Key>} the \tcode{key type} and the value type are both \tcode{Key}. The \tcode{iterator} and \tcode{const_iterator} types are both constant iterator types. It is unspecified whether they are the same type.
+An \tcode{unordered_set} meets all of the requirements of a container, of an unordered associative container, and of an allocator-aware container (\tref{container.alloc.req}). It provides the operations described in the preceding requirements table for unique keys; that is, an \tcode{unordered_set} supports the \tcode{a_uniq} operations in that table, not the \tcode{a_eq} operations. For an \tcode{unordered_set<Key>} the \tcode{key type} and the value type are both \tcode{Key}. The \tcode{iterator} and \tcode{const_iterator} types are both constant iterator types. It is unspecified whether they are the same type.
 
 \pnum
 This subclause only describes operations on \tcode{unordered_set} that
@@ -9004,40 +8857,22 @@ namespace std {
     // set operations
     iterator         find(const key_type& k);
     const_iterator   find(const key_type& k) const;
-    iterator         find(const key_type& k, size_t hash);
-    const_iterator   find(const key_type& k, size_t hash) const;
     template<class K>
       iterator       find(const K& k);
     template<class K>
       const_iterator find(const K& k) const;
-    template<class K>
-      iterator       find(const K& k, size_t hash);
-    template<class K>
-      const_iterator find(const K& k, size_t hash) const;
     size_type        count(const key_type& k) const;
-    size_type        count(const key_type& k, size_t hash) const;
     template<class K>
       size_type      count(const K& k) const;
-    template<class K>
-      size_type      count(const K& k, size_t hash) const;
     bool             contains(const key_type& k) const;
-    bool             contains(const key_type& k, size_t hash) const;
     template<class K>
       bool           contains(const K& k) const;
-    template<class K>
-      bool           contains(const K& k, size_t hash) const;
     pair<iterator, iterator>               equal_range(const key_type& k);
     pair<const_iterator, const_iterator>   equal_range(const key_type& k) const;
-    pair<iterator, iterator>               equal_range(const key_type& k, size_t hash);
-    pair<const_iterator, const_iterator>   equal_range(const key_type& k, size_t hash) const;
     template<class K>
       pair<iterator, iterator>             equal_range(const K& k);
     template<class K>
       pair<const_iterator, const_iterator> equal_range(const K& k) const;
-    template<class K>
-      pair<iterator, iterator>             equal_range(const K& k, size_t hash);
-    template<class K>
-      pair<const_iterator, const_iterator> equal_range(const K& k, size_t hash) const;
 
     // bucket interface
     size_type bucket_count() const noexcept;
@@ -9203,9 +9038,9 @@ The \tcode{unordered_multiset} class
 supports forward iterators.
 
 \pnum
-An \tcode{unordered_multiset} satisfies all of the requirements of a container, of an
+An \tcode{unordered_multiset} meets all of the requirements of a container, of an
 unordered associative container, and of an allocator-aware container
-(\tref{containers.allocatoraware}). It provides the operations described in the
+(\tref{container.alloc.req}). It provides the operations described in the
 preceding requirements table for equivalent keys; that is, an \tcode{unordered_multiset}
 supports the \tcode{a_eq} operations in that table, not the \tcode{a_uniq} operations.
 For an \tcode{unordered_multiset<Key>} the \tcode{key type} and the value type are
@@ -9346,40 +9181,22 @@ namespace std {
     // set operations
     iterator         find(const key_type& k);
     const_iterator   find(const key_type& k) const;
-    iterator         find(const key_type& k, size_t hash);
-    const_iterator   find(const key_type& k, size_t hash) const;
     template<class K>
       iterator       find(const K& k);
     template<class K>
       const_iterator find(const K& k) const;
-    template<class K>
-      iterator       find(const K& k, size_t hash);
-    template<class K>
-      const_iterator find(const K& k, size_t hash) const;
     size_type        count(const key_type& k) const;
-    size_type        count(const key_type& k, size_t hash) const;
     template<class K>
       size_type      count(const K& k) const;
-    template<class K>
-      size_type      count(const K& k, size_t hash) const;
     bool             contains(const key_type& k) const;
-    bool             contains(const key_type& k, size_t hash) const;
     template<class K>
       bool           contains(const K& k) const;
-    template<class K>
-      bool           contains(const K& k, size_t hash) const;
     pair<iterator, iterator>               equal_range(const key_type& k);
     pair<const_iterator, const_iterator>   equal_range(const key_type& k) const;
-    pair<iterator, iterator>               equal_range(const key_type& k, size_t hash);
-    pair<const_iterator, const_iterator>   equal_range(const key_type& k, size_t hash) const;
     template<class K>
       pair<iterator, iterator>             equal_range(const K& k);
     template<class K>
       pair<const_iterator, const_iterator> equal_range(const K& k) const;
-    template<class K>
-      pair<iterator, iterator>             equal_range(const K& k, size_t hash);
-    template<class K>
-      pair<const_iterator, const_iterator> equal_range(const K& k, size_t hash) const;
 
     // bucket interface
     size_type bucket_count() const noexcept;
@@ -9581,6 +9398,9 @@ namespace std {
     bool operator<=(const queue<T, Container>& x, const queue<T, Container>& y);
   template<class T, class Container>
     bool operator>=(const queue<T, Container>& x, const queue<T, Container>& y);
+  template<class T, three_way_comparable Container>
+    compare_three_way_result_t<Container>
+      operator<=>(const queue<T, Container>& x, const queue<T, Container>& y);
 
   template<class T, class Container>
     void swap(queue<T, Container>& x, queue<T, Container>& y) noexcept(noexcept(x.swap(y)));
@@ -9620,6 +9440,9 @@ namespace std {
     bool operator<=(const stack<T, Container>& x, const stack<T, Container>& y);
   template<class T, class Container>
     bool operator>=(const stack<T, Container>& x, const stack<T, Container>& y);
+  template<class T, three_way_comparable Container>
+    compare_three_way_result_t<Container>
+      operator<=>(const stack<T, Container>& x, const stack<T, Container>& y);
 
   template<class T, class Container>
     void swap(stack<T, Container>& x, stack<T, Container>& y) noexcept(noexcept(x.swap(y)));
@@ -9851,6 +9674,19 @@ template<class T, class Container>
 \pnum
 \returns
 \tcode{x.c >= y.c}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{operator<=>}!\idxcode{queue}}%
+\begin{itemdecl}
+template<class T, three_way_comparable Container>
+  compare_three_way_result_t<Container>
+    operator<=>(const queue<T, Container>& x, const queue<T, Container>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+\tcode{x.c <=> y.c}.
 \end{itemdescr}
 
 \rSec3[queue.special]{Specialized algorithms}
@@ -10400,6 +10236,19 @@ template<class T, class Container>
 \tcode{x.c >= y.c}.
 \end{itemdescr}
 
+\indexlibrary{\idxcode{operator<=>}!\idxcode{stack}}%
+\begin{itemdecl}
+template<class T, three_way_comparable Container>
+  compare_three_way_result_t<Container>
+    operator<=>(const stack<T, Container>& x, const stack<T, Container>& y);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns
+\tcode{x.c <=> y.c}.
+\end{itemdescr}
+
 \rSec3[stack.special]{Specialized algorithms}
 
 \indexlibrarymember{swap}{stack}%
@@ -10446,8 +10295,8 @@ namespace std {
       as_writable_bytes(span<ElementType, Extent> s) noexcept;
 
   // \ref{span.tuple}, tuple interface
-  template<class T> class tuple_size;
-  template<size_t I, class T> class tuple_element;
+  template<class T> struct tuple_size;
+  template<size_t I, class T> struct tuple_element;
   template<class ElementType, size_t Extent>
     struct tuple_size<span<ElementType, Extent>>;
   template<class ElementType>
@@ -10469,17 +10318,6 @@ A \tcode{span} is a view over a contiguous sequence of objects,
 the storage of which is owned by some other object.
 
 \pnum
-The iterator types \tcode{span::iterator} and \tcode{span::const_iterator}
-model \libconcept{ContiguousIterator}\iref{iterator.concept.contiguous},
-meet the \oldconcept{RandomAccessIterator}
-requirements\iref{random.access.iterators},
-and
-meet the requirements for
-constexpr iterators\iref{iterator.requirements.general}.
-All requirements on container iterators\iref{container.requirements} apply to
-\tcode{span::iterator} and \tcode{span::const_iterator} as well.
-
-\pnum
 All member functions of \tcode{span} have constant time complexity.
 
 \indexlibrary{\idxcode{span}}%
@@ -10497,7 +10335,7 @@ namespace std {
     using const_pointer = const element_type*;
     using reference = element_type&;
     using const_reference = const element_type&;
-    using iterator = @\impdefx{type of \tcode{span::iterator}}@;
+    using iterator = @\impdefx{type of \tcode{span::iterator}}@;        // see \ref{span.iterators}
     using const_iterator = @\impdefx{type of \tcode{span::const_iterator}}@;
     using reverse_iterator = std::reverse_iterator<iterator>;
     using const_reverse_iterator = std::reverse_iterator<const_iterator>;
@@ -10594,7 +10432,7 @@ constexpr span() noexcept;
 \begin{itemdescr}
 \pnum
 \constraints
-\tcode{Extent <= 0} is \tcode{true}.
+\tcode{Extent == dynamic_extent || Extent == 0} is \tcode{true}.
 
 \pnum
 \ensures
@@ -10966,6 +10804,26 @@ Equivalent to: \tcode{return data_;}
 
 \rSec3[span.iterators]{Iterator support}
 
+\indexlibrarymember{iterator}{span}%
+\indexlibrarymember{const_iterator}{span}%
+\begin{itemdecl}
+using iterator = @\impdefx{type of \tcode{span::iterator}}@;
+using const_iterator = @\impdefx{type of \tcode{span::const_iterator}}@;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+The types
+model \libconcept{contiguous_iterator}\iref{iterator.concept.contiguous},
+meet the \oldconcept{RandomAccessIterator}
+requirements\iref{random.access.iterators},
+and
+meet the requirements for
+constexpr iterators\iref{iterator.requirements.general}.
+All requirements on container iterators\iref{container.requirements} apply to
+\tcode{span::iterator} and \tcode{span::const_iterator} as well.
+\end{itemdescr}
+
 \indexlibrarymember{span}{begin}%
 \begin{itemdecl}
 constexpr iterator begin() const noexcept;
@@ -11102,17 +10960,16 @@ template<class ElementType, size_t Extent>
 
 \indexlibrary{\idxcode{tuple_element}}%
 \begin{itemdecl}
-tuple_element<I, span<ElementType, Extent>>::type
+template<size_t I, class ElementType, size_t Extent>
+  struct tuple_element<I, span<ElementType, Extent>> {
+    using type = ElementType;
+  };
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
 \mandates
 \tcode{Extent != dynamic_extent \&\& I < Extent} is \tcode{true}.
-
-\pnum
-\cvalue
-The type \tcode{ElementType}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{get}}%
@@ -11127,7 +10984,5 @@ template<size_t I, class ElementType, size_t Extent>
 \tcode{Extent != dynamic_extent \&\& I < Extent} is \tcode{true}.
 
 \pnum
-\returns
-A reference to the $\tcode{I}^\text{th}$ element of \tcode{s},
-where indexing is zero-based.
+\returns \tcode{s[I]}.
 \end{itemdescr}

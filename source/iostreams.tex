@@ -18,36 +18,37 @@ stream buffering,
 stream formatting and manipulators,
 string streams,
 and file streams,
-as summarized in \tref{iostreams.lib.summary}.
+as summarized in \tref{iostreams.summary}.
 
-\begin{libsumtab}{Input/output library summary}{tab:iostreams.lib.summary}
+\begin{libsumtab}{Input/output library summary}{iostreams.summary}
 \ref{iostreams.requirements}  & Requirements                &                      \\ \rowsep
 \ref{iostream.forward}        & Forward declarations        & \tcode{<iosfwd>}     \\ \rowsep
 \ref{iostream.objects}        & Standard iostream objects   & \tcode{<iostream>}   \\ \rowsep
 \ref{iostreams.base}          & Iostreams base classes      & \tcode{<ios>}        \\ \rowsep
 \ref{stream.buffers}          & Stream buffers              & \tcode{<streambuf>}  \\ \rowsep
-\ref{iostream.format}         & Formatting and manipulators & \tcode{<istream>}    \\
-                              &                             & \tcode{<ostream>}    \\
-                              &                             & \tcode{<iomanip>}    \\ \rowsep
+\ref{iostream.format}         & Formatting and manipulators &
+  \tcode{<iomanip>}, \tcode{<istream>}, \tcode{<ostream>}   \\ \rowsep
 \ref{string.streams}          & String streams              & \tcode{<sstream>}    \\ \rowsep
 \ref{file.streams}            & File streams                & \tcode{<fstream>}    \\ \rowsep
 \ref{syncstream}              & Synchronized output streams & \tcode{<syncstream>} \\ \rowsep
 \ref{filesystems}             & File systems                & \tcode{<filesystem>} \\ \rowsep
-\ref{c.files}                 & C library files             & \tcode{<cstdio>}     \\
-                              &                             & \tcode{<cinttypes>}  \\
+\ref{c.files}                 & C library files             &
+  \tcode{<cstdio>}, \tcode{<cinttypes>}  \\
 \end{libsumtab}
 
 \pnum
-Figure~\ref{fig:streampos} illustrates relationships among various types
+\begin{note}
+\fref{iostreams.streampos} illustrates relationships among various types
 described in this clause. A line from \textbf{A} to \textbf{B} indicates that \textbf{A}
 is an alias (e.g., a typedef) for \textbf{B} or that \textbf{A} is defined in terms of
 \textbf{B}.
 
 \begin{importgraphic}
-{Stream position, offset, and size types [non-normative]}
-{fig:streampos}
+{Stream position, offset, and size types}
+{iostreams.streampos}
 {figstreampos.pdf}
 \end{importgraphic}
+\end{note}
 
 \rSec1[iostreams.requirements]{Iostreams requirements}
 
@@ -96,7 +97,7 @@ are other types is
 In the classes of \ref{input.output}, a template parameter with name
 \tcode{charT} represents a member of the set of types containing \tcode{char}, \tcode{wchar_t},
 and any other \impldef{set of character types that iostreams templates can be instantiated for}
-character types that satisfy the requirements for a character on which any of
+character types that meet the requirements for a character on which any of
 the iostream components can be instantiated.
 
 \rSec2[iostreams.threadsafety]{Thread safety}
@@ -964,9 +965,9 @@ using fmtflags = @\textit{T1}@;
 The type
 \tcode{fmtflags}
 is a bitmask type\iref{bitmask.types}.
-Setting its elements has the effects indicated in \tref{iostreams.fmtflags.effects}.
+Setting its elements has the effects indicated in \tref{ios.fmtflags}.
 
-\begin{libefftab}{\tcode{fmtflags} effects}{tab:iostreams.fmtflags.effects}
+\begin{libefftab}{\tcode{fmtflags} effects}{ios.fmtflags}
 \tcode{boolalpha} &
  insert and extract \tcode{bool} type in alphabetic format\\
 \tcode{dec}     &
@@ -1003,9 +1004,9 @@ Setting its elements has the effects indicated in \tref{iostreams.fmtflags.effec
 \pnum
 Type
 \tcode{fmtflags}
-also defines the constants indicated in \tref{iostreams.fmtflags.constants}.
+also defines the constants indicated in \tref{ios.fmtflags.const}.
 
-\begin{floattable}{\tcode{fmtflags} constants}{tab:iostreams.fmtflags.constants}
+\begin{floattable}{\tcode{fmtflags} constants}{ios.fmtflags.const}
 {ll}
 \topline
 \lhdr{Constant}   & \rhdr{Allowable values}       \\ \capsep
@@ -1027,9 +1028,9 @@ using iostate = @\textit{T2}@;
 The type
 \tcode{iostate}
 is a bitmask type\iref{bitmask.types}
-that contains the elements indicated in \tref{iostreams.iostate.effects}.
+that contains the elements indicated in \tref{ios.iostate}.
 
-\begin{libefftab}{\tcode{iostate} effects}{tab:iostreams.iostate.effects}
+\begin{libefftab}{\tcode{iostate} effects}{ios.iostate}
 \tcode{badbit}    &
  indicates a loss of integrity in an input or output sequence
  (such as an irrecoverable read error from a file); \\
@@ -1063,9 +1064,9 @@ using openmode = @\textit{T3}@;
 The type
 \tcode{openmode}
 is a bitmask type\iref{bitmask.types}.
-It contains the elements indicated in \tref{iostreams.openmode.effects}.
+It contains the elements indicated in \tref{ios.openmode}.
 
-\begin{libefftab}{\tcode{openmode} effects}{tab:iostreams.openmode.effects}
+\begin{libefftab}{\tcode{openmode} effects}{ios.openmode}
 \tcode{app}     &
  seek to end before each write  \\
 \tcode{ate}     &
@@ -1093,9 +1094,9 @@ using seekdir = @\textit{T4}@;
 The type
 \tcode{seekdir}
 is an enumerated type\iref{enumerated.types}
-that contains the elements indicated in \tref{iostreams.seekdir.effects}.
+that contains the elements indicated in \tref{ios.seekdir}.
 
-\begin{libefftabmean}{\tcode{seekdir} effects}{tab:iostreams.seekdir.effects}
+\begin{libefftabmean}{\tcode{seekdir} effects}{ios.seekdir}
 \tcode{beg}     &
  request a seek (for subsequent input or output) relative to the beginning of the stream  \\
 \tcode{cur}     &
@@ -1670,23 +1671,23 @@ An \tcode{fpos} type specifies file position information.
 It holds a state object
 whose type is equal to the template parameter \tcode{stateT}.
 Type \tcode{stateT} shall meet
-the \oldconcept{DefaultConstructible} (\tref{defaultconstructible}),
-\oldconcept{CopyConstructible} (\tref{copyconstructible}),
-\oldconcept{CopyAssignable} (\tref{copyassignable}), and
-\oldconcept{Destructible} (\tref{destructible}) requirements.
+the \oldconcept{DefaultConstructible} (\tref{cpp17.defaultconstructible}),
+\oldconcept{CopyConstructible} (\tref{cpp17.copyconstructible}),
+\oldconcept{CopyAssignable} (\tref{cpp17.copyassignable}), and
+\oldconcept{Destructible} (\tref{cpp17.destructible}) requirements.
 If \tcode{is_trivially_copy_constructible_v<stateT>} is \tcode{true},
 then \tcode{fpos<stateT>} has a trivial copy constructor.
 If \tcode{is_trivially_copy_assignable<stateT>} is \tcode{true},
 then \tcode{fpos<stateT>} has a trivial copy assignment operator.
 If \tcode{is_trivially_destructible_v<stateT>} is \tcode{true},
 then \tcode{fpos<stateT>} has a trivial destructor.
-All specializations of \tcode{fpos} satisfy
+All specializations of \tcode{fpos} meet
 the \oldconcept{DefaultConstructible},
 \oldconcept{CopyConstructible},
 \oldconcept{CopyAssignable},
 \oldconcept{Destructible},
-and \oldconcept{EqualityComparable} (\tref{equalitycomparable}) requirements.
-In addition, the expressions shown in \tref{iostreams.position.requirements}
+and \oldconcept{EqualityComparable} (\tref{cpp17.equalitycomparable}) requirements.
+In addition, the expressions shown in \tref{fpos.operations}
 are valid and have the indicated semantics.
 In that table,
 \begin{itemize}
@@ -1701,7 +1702,7 @@ of type \tcode{streamoff} or \tcode{const streamoff}.
 
 \begin{libreqtab4c}
 {Position type requirements}
-{tab:iostreams.position.requirements}
+{fpos.operations}
 \\ \topline
 \lhdr{Expression}   & \chdr{Return type}  & \chdr{Operational}  & \rhdr{Assertion/note}   \\
             &           & \chdr{semantics}  & \rhdr{pre-/post-condition} \\ \capsep
@@ -1899,9 +1900,9 @@ void init(basic_streambuf<charT, traits>* sb);
 \begin{itemdescr}
 \pnum
 \ensures
-The postconditions of this function are indicated in \tref{iostreams.basicios.init.effects}.
+The postconditions of this function are indicated in \tref{basic.ios.cons}.
 
-\begin{libefftabvalue}{\tcode{basic_ios::init()} effects}{tab:iostreams.basicios.init.effects}
+\begin{libefftabvalue}{\tcode{basic_ios::init()} effects}{basic.ios.cons}
 \tcode{rdbuf()}   &
  \tcode{sb}     \\
 \tcode{tie()}   &
@@ -2122,11 +2123,10 @@ other special action taken.
 
 \pnum
 \ensures
-The postconditions of this function are indicated in \tref{iostreams.copyfmt.effects}.
-
+The postconditions of this function are indicated in \tref{basic.ios.copyfmt}.
 
 \begin{LibEffTab}{\tcode{basic_ios::copyfmt()} effects}
-{tab:iostreams.copyfmt.effects}{Value}{1.2in}
+{basic.ios.copyfmt}{Value}{1.2in}
 \tcode{rdbuf()}             &
   \textit{unchanged}        \\
 \tcode{tie()}               &
@@ -3754,7 +3754,7 @@ The public members of
 call this virtual function only if
 \tcode{gptr()}
 is null or
-\tcode{gptr() >= egptr()}
+\tcode{gptr() >= egptr()}.
 
 \pnum
 \returns
@@ -4425,7 +4425,6 @@ Exchanges the values returned by \tcode{gcount()} and
 namespace std {
   template<class charT, class traits = char_traits<charT>>
   class basic_istream<charT, traits>::sentry {
-    using traits_type = traits;
     bool ok_; // \expos
   public:
     explicit sentry(basic_istream<charT, traits>& is, bool noskipws = false);
@@ -4530,7 +4529,7 @@ otherwise,
 During preparation, the constructor may call
 \tcode{setstate(failbit)}
 (which may throw
-\tcode{ios_base::\brk{}failure}\iref{iostate.flags})\footnote{The
+\tcode{ios_base::\brk{}failure}\iref{iostate.flags}).\footnote{The
 \tcode{sentry}
 constructor and destructor
 can also perform additional
@@ -4975,7 +4974,7 @@ a character \tcode{c}, if one is available.
 Otherwise, the function calls
 \tcode{setstate(failbit)},
 which may throw
-\tcode{ios_base::failure}\iref{iostate.flags},
+\tcode{ios_base::failure}\iref{iostate.flags}.
 
 \pnum
 \returns
@@ -5830,6 +5829,24 @@ namespace std {
   template<class traits>
     basic_ostream<char, traits>& operator<<(basic_ostream<char, traits>&, unsigned char);
 
+  template<class traits>
+    basic_ostream<char, traits>& operator<<(basic_ostream<char, traits>&, wchar_t) = delete;
+  template<class traits>
+    basic_ostream<char, traits>& operator<<(basic_ostream<char, traits>&, char8_t) = delete;
+  template<class traits>
+    basic_ostream<char, traits>& operator<<(basic_ostream<char, traits>&, char16_t) = delete;
+  template<class traits>
+    basic_ostream<char, traits>& operator<<(basic_ostream<char, traits>&, char32_t) = delete;
+  template<class traits>
+    basic_ostream<wchar_t, traits>&
+      operator<<(basic_ostream<wchar_t, traits>&, char8_t) = delete;
+  template<class traits>
+    basic_ostream<wchar_t, traits>&
+      operator<<(basic_ostream<wchar_t, traits>&, char16_t) = delete;
+  template<class traits>
+    basic_ostream<wchar_t, traits>&
+      operator<<(basic_ostream<wchar_t, traits>&, char32_t) = delete;
+
   template<class charT, class traits>
     basic_ostream<charT, traits>& operator<<(basic_ostream<charT, traits>&, const charT*);
   template<class charT, class traits>
@@ -5841,6 +5858,28 @@ namespace std {
     basic_ostream<char, traits>& operator<<(basic_ostream<char, traits>&, const signed char*);
   template<class traits>
     basic_ostream<char, traits>& operator<<(basic_ostream<char, traits>&, const unsigned char*);
+
+  template<class traits>
+    basic_ostream<char, traits>&
+      operator<<(basic_ostream<char, traits>&, const wchar_t*) = delete;
+  template<class traits>
+    basic_ostream<char, traits>&
+      operator<<(basic_ostream<char, traits>&, const char8_t*) = delete;
+  template<class traits>
+    basic_ostream<char, traits>&
+      operator<<(basic_ostream<char, traits>&, const char16_t*) = delete;
+  template<class traits>
+    basic_ostream<char, traits>&
+      operator<<(basic_ostream<char, traits>&, const char32_t*) = delete;
+  template<class traits>
+    basic_ostream<wchar_t, traits>&
+      operator<<(basic_ostream<wchar_t, traits>&, const char8_t*) = delete;
+  template<class traits>
+    basic_ostream<wchar_t, traits>&
+      operator<<(basic_ostream<wchar_t, traits>&, const char16_t*) = delete;
+  template<class traits>
+    basic_ostream<wchar_t, traits>&
+      operator<<(basic_ostream<wchar_t, traits>&, const char32_t*) = delete;
 }
 \end{codeblock}
 
@@ -5887,6 +5926,12 @@ is on in
 the output function
 rethrows the exception without completing its actions, otherwise
 it does not throw anything and treat as an error.
+
+\pnum
+\begin{note}
+The deleted overloads of \tcode{operator<<}
+prevent formatting characters as integers and strings as pointers.
+\end{note}
 
 \rSec4[ostream.cons]{Constructors}
 
@@ -6019,7 +6064,7 @@ otherwise,
 During preparation, the constructor may call
 \tcode{setstate(failbit)}
 (which may throw
-\tcode{ios_base::\brk{}failure}\iref{iostate.flags})\footnote{The
+\tcode{ios_base::\brk{}failure}\iref{iostate.flags}).\footnote{The
 \tcode{sentry}
 constructor and destructor
 can also perform additional
@@ -7380,19 +7425,48 @@ namespace std {
     basic_stringbuf() : basic_stringbuf(ios_base::in | ios_base::out) {}
     explicit basic_stringbuf(ios_base::openmode which);
     explicit basic_stringbuf(
-      const basic_string<charT, traits, Allocator>& str,
+      const basic_string<charT, traits, Allocator>& s,
       ios_base::openmode which = ios_base::in | ios_base::out);
+    explicit basic_stringbuf(const Allocator& a)
+      : basic_stringbuf(ios_base::in | ios_base::out, a) {}
+    basic_stringbuf(ios_base::openmode which, const Allocator& a);
+    explicit basic_stringbuf(
+      basic_string<charT, traits, Allocator>&& s,
+      ios_base::openmode which = ios_base::in | ios_base::out);
+    template<class SAlloc>
+      basic_stringbuf(
+        const basic_string<charT, traits, SAlloc>& s, const Allocator& a)
+        : basic_stringbuf(s, ios_base::in | ios_base::out, a) {}
+    template<class SAlloc>
+      basic_stringbuf(
+        const basic_string<charT, traits, SAlloc>& s,
+        ios_base::openmode which, const Allocator& a);
+    template<class SAlloc>
+      explicit basic_stringbuf(
+        const basic_string<charT, traits, SAlloc>& s,
+        ios_base::openmode which = ios_base::in | ios_base::out);
     basic_stringbuf(const basic_stringbuf& rhs) = delete;
     basic_stringbuf(basic_stringbuf&& rhs);
+    basic_stringbuf(basic_stringbuf&& rhs, const Allocator& a);
 
     // \ref{stringbuf.assign}, assign and swap
     basic_stringbuf& operator=(const basic_stringbuf& rhs) = delete;
     basic_stringbuf& operator=(basic_stringbuf&& rhs);
-    void swap(basic_stringbuf& rhs);
+    void swap(basic_stringbuf& rhs) noexcept(@\seebelow@);
 
-    // \ref{stringbuf.members}, get and set
-    basic_string<charT, traits, Allocator> str() const;
+    // \ref{stringbuf.members}, getters and setters
+    allocator_type get_allocator() const noexcept;
+
+    basic_string<charT, traits, Allocator> str() const &;
+    template<class SAlloc>
+      basic_string<charT,traits,SAlloc> str(const SAlloc& sa) const;
+    basic_string<charT, traits, Allocator> str() &&;
+    basic_string_view<charT, traits> view() const noexcept;
+
     void str(const basic_string<charT, traits, Allocator>& s);
+    template<class SAlloc>
+      void str(const basic_string<charT, traits, SAlloc>& s);
+    void str(basic_string<charT, traits, Allocator>&& s);
 
   protected:
     // \ref{stringbuf.virtuals}, overridden virtual functions
@@ -7409,12 +7483,14 @@ namespace std {
                       = ios_base::in | ios_base::out) override;
 
   private:
-    ios_base::openmode mode;  // \expos
+    ios_base::openmode mode;                       // \expos
+    basic_string<charT, traits, Allocator> buf;    // \expos
+    void init_buf_ptrs();                          // \expos
   };
 
   template<class charT, class traits, class Allocator>
     void swap(basic_stringbuf<charT, traits, Allocator>& x,
-              basic_stringbuf<charT, traits, Allocator>& y);
+              basic_stringbuf<charT, traits, Allocator>& y) noexcept(noexcept(x.swap(y)));
 }
 \end{codeblock}
 
@@ -7430,15 +7506,21 @@ The sequence can be initialized from, or made available as, an object of class
 \tcode{basic_string}.
 
 \pnum
-For the sake of exposition, the maintained data is presented here as:
+For the sake of exposition,
+the maintained data and internal pointer initialization is presented here as:
 \begin{itemize}
 \item
-\tcode{ios_base::openmode mode},
-has
-\tcode{in}
-set if the input sequence can be read, and
-\tcode{out}
-set if the output sequence can be written.
+  \tcode{ios_base::openmode mode}, has
+  \tcode{in} set if the input sequence can be read, and
+  \tcode{out} set if the output sequence can be written.
+\item
+  \tcode{basic_string<charT, traits, Allocator> buf}
+  contains the underlying character sequence.
+\item
+  \tcode{init_buf_ptrs()} sets the base class'
+  get area\iref{streambuf.get.area} and
+  put area\iref{streambuf.put.area} pointers
+  after initializing, moving from, or assigning to \tcode{buf} accordingly.
 \end{itemize}
 
 \rSec3[stringbuf.cons]{Constructors}
@@ -7451,10 +7533,8 @@ explicit basic_stringbuf(ios_base::openmode which);
 \begin{itemdescr}
 \pnum
 \effects
-Constructs an object of class
-\tcode{basic_stringbuf},
-initializing the base class with
-\tcode{basic_streambuf()}\iref{streambuf.cons}, and initializing
+Initializes the base class with
+\tcode{basic_streambuf()}\iref{streambuf.cons}, and
 \tcode{mode}
 with \tcode{which}.
 It is
@@ -7466,7 +7546,7 @@ are initialized to null pointers.
 
 \pnum
 \ensures
-\tcode{str() == ""}.
+\tcode{str().empty()} is \tcode{true}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{basic_stringbuf}!constructor}%
@@ -7479,32 +7559,107 @@ explicit basic_stringbuf(
 \begin{itemdescr}
 \pnum
 \effects
-Constructs an object of class
-\tcode{basic_stringbuf},
-initializing the base class with
-\tcode{basic_streambuf()}\iref{streambuf.cons}, and initializing
-\tcode{mode}
-with \tcode{which}.
-Then calls \tcode{str(s)}.
+Initializes the base class with
+\tcode{basic_streambuf()}\iref{streambuf.cons},
+\tcode{mode} with \tcode{which}, and
+\tcode{buf} with \tcode{s},
+then calls \tcode{init_buf_ptrs()}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_stringbuf}!constructor}%
+\begin{itemdecl}
+basic_stringbuf(ios_base::openmode which, const Allocator &a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the base class with
+\tcode{basic_streambuf()}\iref{streambuf.cons},
+\tcode{mode} with \tcode{which}, and
+\tcode{buf} with \tcode{a},
+then calls \tcode{init_buf_ptrs()}.
+
+\pnum
+\ensures
+\tcode{str().empty()} is \tcode{true}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_stringbuf}!constructor}%
+\begin{itemdecl}
+explicit basic_stringbuf(
+  basic_string<charT, traits, Allocator>&& s,
+  ios_base::openmode which = ios_base::in | ios_base::out);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the base class with \tcode{basic_streambuf()}\iref{streambuf.cons},
+\tcode{mode} with \tcode{which}, and
+\tcode{buf} with \tcode{std::move(s)},
+then calls \tcode{init_buf_ptrs()}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_stringbuf}!constructor}%
+\begin{itemdecl}
+template<class SAlloc>
+  basic_stringbuf(
+    const basic_string<charT, traits, SAlloc>& s,
+    ios_base::openmode which, const Allocator &a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the base class with \tcode{basic_streambuf()}\iref{streambuf.cons},
+\tcode{mode} with \tcode{which}, and
+\tcode{buf} with \tcode{\{s,a\}},
+then calls \tcode{init_buf_ptrs()}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_stringbuf}!constructor}%
+\begin{itemdecl}
+template<class SAlloc>
+  explicit basic_stringbuf(
+    const basic_string<charT, traits, SAlloc>& s,
+    ios_base::openmode which = ios_base::in | ios_base::out);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints
+\tcode{is_same_v<SAlloc,Allocator>} is \tcode{false}.
+
+\pnum
+\effects
+Initializes the base class with \tcode{basic_streambuf()}\iref{streambuf.cons},
+\tcode{mode} with \tcode{which}, and
+\tcode{buf} with \tcode{s},
+then calls \tcode{init_buf_ptrs()}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{basic_stringbuf}!constructor}%
 \begin{itemdecl}
 basic_stringbuf(basic_stringbuf&& rhs);
+basic_stringbuf(basic_stringbuf&& rhs, const Allocator& a);
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
-\effects Move constructs from the rvalue \tcode{rhs}. It
-is
+\effects
+Copy constructs the base class from \tcode{rhs} and
+initializes \tcode{mode} with \tcode{rhs.mode}.
+In the first form \tcode{buf} is initialized
+from \tcode{std::move(rhs).str()}.
+In the second form \tcode{buf} is initialized
+from \tcode{\{std::move(rhs).str(), a\}}.
+It is
 \impldef{whether sequence pointers are copied by \tcode{basic_stringbuf} move
 constructor} whether the sequence pointers in \tcode{*this}
 (\tcode{eback()}, \tcode{gptr()}, \tcode{egptr()},
 \tcode{pbase()}, \tcode{pptr()}, \tcode{epptr()}) obtain
-the values which \tcode{rhs} had. Whether they do or not, \tcode{*this}
-and \tcode{rhs} reference separate buffers (if any at all) after the
-construction. The openmode, locale and any other state of \tcode{rhs} is
-also copied.
+the values which \tcode{rhs} had.
 
 \pnum
 \ensures Let \tcode{rhs_p} refer to the state of
@@ -7523,6 +7678,9 @@ refer to the state of \tcode{rhs} just after this construction.
 \item \tcode{if (pbase()) pbase() != rhs_a.pbase()}
 \item \tcode{if (pptr()) pptr() != rhs_a.pptr()}
 \item \tcode{if (epptr()) epptr() != rhs_a.epptr()}
+\item \tcode{getloc() == rhs_p.getloc()}
+\item \tcode{rhs} is empty but usable,
+  as if \tcode{std::move(rhs).str()} was called.
 \end{itemize}
 \end{itemdescr}
 
@@ -7544,20 +7702,30 @@ have had if it had been move constructed from \tcode{rhs} (see~\ref{stringbuf.co
 
 \indexlibrarymember{swap}{basic_stringbuf}%
 \begin{itemdecl}
-void swap(basic_stringbuf& rhs);
+void swap(basic_stringbuf& rhs) noexcept(@\seebelow@);
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
+\expects \tcode{allocator_traits<Allocator>::propagate_on_container_swap::value}
+is \tcode{true} or
+\tcode{get_allocator() == s.get_allocator()} is \tcode{true}.
+
+\pnum
 \effects Exchanges the state of \tcode{*this}
 and \tcode{rhs}.
+
+\pnum
+\remarks The expression inside \tcode{noexcept} is equivalent to:\\
+\tcode{allocator_traits<Allocator>::propagate_on_container_swap::value ||}\\
+\tcode{allocator_traits<Allocator>::is_always_equal::value}.
 \end{itemdescr}
 
 \indexlibrarymember{swap}{basic_stringbuf}%
 \begin{itemdecl}
 template<class charT, class traits, class Allocator>
   void swap(basic_stringbuf<charT, traits, Allocator>& x,
-            basic_stringbuf<charT, traits, Allocator>& y);
+            basic_stringbuf<charT, traits, Allocator>& y) noexcept(noexcept(x.swap(y)));
 \end{itemdecl}
 
 \begin{itemdescr}
@@ -7567,32 +7735,149 @@ template<class charT, class traits, class Allocator>
 
 \rSec3[stringbuf.members]{Member functions}
 
+\pnum
+The member functions getting the underlying character sequence
+all refer to a \tcode{high_mark} value,
+where \tcode{high_mark} represents the position
+one past the highest initialized character in the buffer.
+Characters can be initialized by writing to the stream,
+by constructing the \tcode{basic_stringbuf}
+passing a \tcode{basic_string} argument, or
+by calling one of the \tcode{str} member functions
+passing a \tcode{basic_string} as an argument.
+In the latter case, all characters initialized prior to the call
+are now considered uninitialized
+(except for those characters re-initialized by the new \tcode{basic_string}).
+
+\begin{itemdecl}
+void init_buf_ptrs(); // \expos
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the input and output sequences from \tcode{buf}
+according to \tcode{mode}.
+
+\pnum
+\ensures
+\begin{itemize}
+\item If \tcode{ios_base::out} is set in \tcode{mode},
+  \tcode{pbase()} points to \tcode{buf.front()} and
+  \tcode{epptr() >= pbase() + buf.size()} is \tcode{true};
+  \begin{itemize}
+  \item in addition, if \tcode{ios_base::ate} is set in \tcode{mode},
+    \tcode{pptr() == pbase() + buf.size()} is \tcode{true},
+  \item otherwise \tcode{pptr() == pbase()} is \tcode{true}.
+  \end{itemize}
+\item If \tcode{ios_base::in} is set in \tcode{mode},
+  \tcode{eback()} points to \tcode{buf.front()}, and
+  \tcode{(gptr() == eback() \&\& egptr() == eback() + buf.size())}
+  is \tcode{true}.
+\end{itemize}
+
+\pnum
+\begin{note}
+For efficiency reasons,
+stream buffer operations might violate invariants of \tcode{buf}
+while it is held encapsulated in the \tcode{basic_stringbuf},
+e.g., by writing to characters in the range
+\range{\tcode{buf.data() + buf.size()}}{\tcode{buf.data() + buf.capacity()}}.
+All operations retrieving a \tcode{basic_string} from \tcode{buf}
+ensure that the \tcode{basic_string} invariants hold on the returned value.
+\end{note}
+\end{itemdescr}
+
+\indexlibrarymember{get_allocator}{basic_stringbuf}%
+\begin{itemdecl}
+allocator_type get_allocator() const noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\returns \tcode{buf.get_allocator()}.
+\end{itemdescr}
+
 \indexlibrarymember{str}{basic_stringbuf}%
 \begin{itemdecl}
-basic_string<charT, traits, Allocator> str() const;
+basic_string<charT, traits, Allocator> str() const &;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to:
+\begin{codeblock}
+return basic_string<charT, traits, Allocator>(view(), get_allocator());
+\end{codeblock}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_stringbuf}%
+\begin{itemdecl}
+template<class SAlloc>
+  basic_string<charT, traits, SAlloc> str(const SAlloc& sa) const;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints \tcode{SAlloc} is a type that
+qualifies as an allocator\iref{container.requirements.general}.
+
+\pnum
+\effects Equivalent to:
+\begin{codeblock}
+return basic_string<charT, traits, SAlloc>(view(), sa);
+\end{codeblock}
+\end{itemdescr}
+
+\begin{itemdecl}
+basic_string<charT, traits, Allocator> str() &&;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
 \returns
-A
-\tcode{basic_string}
-object whose content is equal to the
-\tcode{basic_stringbuf}
-underlying character sequence.
-If the \tcode{basic_stringbuf} was created only in input mode, the resultant
-\tcode{basic_string} contains the character sequence in the range
-\range{eback()}{egptr()}. If the \tcode{basic_stringbuf} was created with
-\tcode{which \& ios_base::out} being nonzero then the resultant \tcode{basic_string}
-contains the character sequence in the range \range{pbase()}{high_mark}, where
-\tcode{high_mark} represents the position one past the highest initialized character
-in the buffer. Characters can be initialized by writing to the stream, by constructing
-the \tcode{basic_stringbuf} with a \tcode{basic_string}, or by calling the
-\tcode{str(basic_string)} member function. In the case of calling the
-\tcode{str(basic_string)} member function, all characters initialized prior to
-the call are now considered uninitialized (except for those characters re-initialized
-by the new \tcode{basic_string}). Otherwise the \tcode{basic_stringbuf} has been created
-in neither input nor output mode and a zero length \tcode{basic_string} is returned.
+A \tcode{basic_string<charT, traits, Allocator>} object
+move constructed from
+the \tcode{basic_stringbuf}'s underlying character sequence in \tcode{buf}.
+This can be achieved by first adjusting \tcode{buf} to have
+the same content as \tcode{view()}.
+
+\pnum
+\ensures
+The underlying character sequence \tcode{buf} is empty and
+\tcode{pbase()}, \tcode{pptr()}, \tcode{epptr()}, \tcode{eback()},
+\tcode{gptr()}, and \tcode{egptr()}
+are initialized as if by calling \tcode{init_buf_ptrs()}
+with an empty \tcode{buf}.
+\end{itemdescr}
+
+\indexlibrarymember{view}{basic_stringbuf}%
+\begin{itemdecl}
+basic_string_view<charT, traits> view() const noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+Let \tcode{sv} be \tcode{basic_string_view<charT, traits>}.
+
+\pnum
+\returns
+A \tcode{sv} object referring to
+the \tcode{basic_stringbuf}'s underlying character sequence in \tcode{buf}:
+\begin{itemize}
+\item If \tcode{ios_base::out} is set in \tcode{mode},
+  then \tcode{sv(pbase(), high_mark-pbase())} is returned.
+\item Otherwise, if \tcode{ios_base::in} is set in \tcode{mode},
+  then \tcode{sv(eback(), egptr()-eback())} is returned.
+\item Otherwise, \tcode{sv()} is returned.
+\end{itemize}
+
+\pnum
+\begin{note}
+Using the returned \tcode{sv} object after
+destruction or invalidation of the character sequence underlying \tcode{*this}
+is undefined behavior, unless \tcode{sv.empty()} is \tcode{true}.
+\end{note}
 \end{itemdescr}
 
 \indexlibrarymember{str}{basic_stringbuf}%
@@ -7603,17 +7888,43 @@ void str(const basic_string<charT, traits, Allocator>& s);
 \begin{itemdescr}
 \pnum
 \effects
-Copies the content of \tcode{s} into the \tcode{basic_stringbuf} underlying character
-sequence and initializes the input and output sequences according to \tcode{mode}.
+Equivalent to:
+\begin{codeblock}
+buf = s;
+init_buf_ptrs();
+\end{codeblock}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_stringbuf}%
+\begin{itemdecl}
+template<class SAlloc>
+  void str(const basic_string<charT, traits, SAlloc>& s);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints \tcode{is_same_v<SAlloc,Allocator>} is \tcode{false}.
 
 \pnum
-\ensures If \tcode{mode \& ios_base::out} is nonzero, \tcode{pbase()} points to the
-first underlying character and \tcode{epptr()} \tcode{>= pbase() + s.size()} holds; in
-addition, if \tcode{mode \& ios_base::ate} is nonzero,
-\tcode{pptr() == pbase() + s.size()}
-holds, otherwise \tcode{pptr() == pbase()} is \tcode{true}. If \tcode{mode \& ios_base::in} is
-nonzero, \tcode{eback()} points to the first underlying character, and both \tcode{gptr()
-== eback()} and \tcode{egptr() == eback() + s.size()} hold.
+\effects Equivalent to:
+\begin{codeblock}
+buf = s;
+init_buf_ptrs();
+\end{codeblock}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_stringbuf}%
+\begin{itemdecl}
+void str(basic_string<charT, traits, Allocator>&& s);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to:
+\begin{codeblock}
+buf = std::move(s);
+init_buf_ptrs();
+\end{codeblock}
 \end{itemdescr}
 
 \rSec3[stringbuf.virtuals]{Overridden virtual functions}
@@ -7782,9 +8093,9 @@ pos_type seekoff(off_type off, ios_base::seekdir way,
 \pnum
 \effects
 Alters the stream position within one of the
-controlled sequences, if possible, as indicated in \tref{iostreams.seekoff.positioning}.
+controlled sequences, if possible, as indicated in \tref{stringbuf.seekoff.pos}.
 
-\begin{libtab2}{\tcode{seekoff} positioning}{tab:iostreams.seekoff.positioning}
+\begin{libtab2}{\tcode{seekoff} positioning}{stringbuf.seekoff.pos}
 {p{2.5in}l}{Conditions}{Result}
 \tcode{(which \& ios_base::in)}\tcode{ == ios_base::in}  &
  positions the input sequence \\ \rowsep
@@ -7805,7 +8116,7 @@ Otherwise &
 \pnum
 For a sequence to be positioned,
 the function determines \tcode{newoff} as indicated in
-\tref{iostreams.newoff.values}.
+\tref{stringbuf.seekoff.newoff}.
 If the sequence's next pointer
 (either
 \tcode{gptr()}
@@ -7814,7 +8125,7 @@ or
 is a null pointer and \tcode{newoff} is nonzero,
 the positioning operation fails.
 
-\begin{libtab2}{\tcode{newoff} values}{tab:iostreams.newoff.values}
+\begin{libtab2}{\tcode{newoff} values}{stringbuf.seekoff.newoff}
 {lp{2.0in}}{Condition}{\tcode{newoff} Value}
 \tcode{way == ios_base::beg}  &
  0  \\ \rowsep
@@ -7905,8 +8216,24 @@ namespace std {
     basic_istringstream() : basic_istringstream(ios_base::in) {}
     explicit basic_istringstream(ios_base::openmode which);
     explicit basic_istringstream(
-      const basic_string<charT, traits, Allocator>& str,
+      const basic_string<charT, traits, Allocator>& s,
       ios_base::openmode which = ios_base::in);
+    basic_istringstream(ios_base::openmode which, const Allocator& a);
+    explicit basic_istringstream(
+      basic_string<charT, traits, Allocator>&& s,
+      ios_base::openmode which = ios_base::in);
+    template<class SAlloc>
+      basic_istringstream(
+        const basic_string<charT, traits, SAlloc>& s, const Allocator& a)
+        : basic_istringstream(s, ios_base::in, a) {}
+    template<class SAlloc>
+      basic_istringstream(
+        const basic_string<charT, traits, SAlloc>& s,
+        ios_base::openmode which, const Allocator& a);
+    template<class SAlloc>
+      explicit basic_istringstream(
+        const basic_string<charT, traits, SAlloc>& s,
+        ios_base::openmode which = ios_base::in);
     basic_istringstream(const basic_istringstream& rhs) = delete;
     basic_istringstream(basic_istringstream&& rhs);
 
@@ -7917,9 +8244,17 @@ namespace std {
 
     // \ref{istringstream.members}, members
     basic_stringbuf<charT, traits, Allocator>* rdbuf() const;
+    basic_string<charT, traits, Allocator> str() const &;
+    template<class SAlloc>
+      basic_string<charT,traits,SAlloc> str(const SAlloc& sa) const;
+    basic_string<charT, traits, Allocator> str() &&;
+    basic_string_view<charT, traits> view() const noexcept;
 
-    basic_string<charT, traits, Allocator> str() const;
     void str(const basic_string<charT, traits, Allocator>& s);
+    template<class SAlloc>
+      void str(const basic_string<charT, traits, SAlloc>& s);
+    void str(basic_string<charT, traits, Allocator>&& s);
+
   private:
     basic_stringbuf<charT, traits, Allocator> sb; // \expos
   };
@@ -7954,30 +8289,90 @@ explicit basic_istringstream(ios_base::openmode which);
 \begin{itemdescr}
 \pnum
 \effects
-Constructs an object of class
-\tcode{basic_istringstream<charT, traits>},
-initializing the base class with
+Initializes the base class with
 \tcode{basic_istream<charT, traits>(addressof(sb))}\iref{istream}
-and initializing \tcode{sb} with\linebreak % avoid Overfull
+and \tcode{sb} with
 \tcode{basic_stringbuf<charT, traits, Allocator>(which | ios_base::in)}\iref{stringbuf.cons}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{basic_istringstream}!constructor}%
 \begin{itemdecl}
 explicit basic_istringstream(
-  const basic_string<charT, traits, Allocator>& str,
+  const basic_string<charT, traits, Allocator>& s,
   ios_base::openmode which = ios_base::in);
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
 \effects
-Constructs an object of class
-\tcode{basic_istringstream<charT, traits>},
-initializing the base class with
+Initializes the base class with
 \tcode{basic_istream<charT, traits>(addressof(sb))}\iref{istream}
-and initializing \tcode{sb} with\linebreak % avoid Overfull
-\tcode{basic_stringbuf<charT, traits, Allocator>(str, which | ios_base::in)}\iref{stringbuf.cons}.
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(s, which | ios_base::in)}\linebreak(\ref{stringbuf.cons}). % avoid Overfull
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_istringstream}!constructor}%
+\begin{itemdecl}
+basic_istringstream(ios_base::openmode which, const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the base class with
+\tcode{basic_istream<charT, traits>(addressof(sb))}\iref{istream}
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(which | ios_base::in, a)}\iref{stringbuf.cons}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_istringstream}!constructor}%
+\begin{itemdecl}
+explicit basic_istringstream(
+  basic_string<charT, traits, Allocator>&& s,
+  ios_base::openmode which = ios_base::in);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the base class with
+\tcode{basic_istream<charT, traits>(addressof(sb))}\iref{istream}
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(std::move(s), which | ios_base::\brk{}in)}\iref{stringbuf.cons}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_istringstream}!constructor}%
+\begin{itemdecl}
+template<class SAlloc>
+  basic_istringstream(
+    const basic_string<charT, traits, SAlloc>& s,
+    ios_base::openmode which, const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the base class with
+\tcode{basic_istream<charT, traits>(addressof(sb))}\iref{istream}
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(s, which | ios_base::in, a)}\linebreak(\ref{stringbuf.cons}). % avoid Overfull
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_istringstream}!constructor}%
+\begin{itemdecl}
+template<class SAlloc>
+  explicit basic_istringstream(
+    const basic_string<charT, traits, SAlloc>& s,
+    ios_base::openmode which = ios_base::in);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the base class with
+\tcode{basic_istream<charT, traits>(addressof(sb))}\iref{istream}
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(s, which | ios_base::in)}\iref{stringbuf.cons}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{basic_istringstream}!constructor}%
@@ -8018,10 +8413,11 @@ void swap(basic_istringstream& rhs);
 
 \begin{itemdescr}
 \pnum
-\effects Exchanges the state of \tcode{*this} and
-\tcode{rhs} by calling
-\tcode{basic_istream<charT, traits>::swap(rhs)} and
-\tcode{sb.swap(rhs.sb)}.
+\effects Equivalent to:
+\begin{codeblock}
+basic_istream<charT, traits>::swap(rhs);
+sb.swap(rhs.sb);
+\end{codeblock}
 \end{itemdescr}
 
 
@@ -8052,13 +8448,43 @@ basic_stringbuf<charT, traits, Allocator>* rdbuf() const;
 
 \indexlibrarymember{str}{basic_istringstream}%
 \begin{itemdecl}
-basic_string<charT, traits, Allocator> str() const;
+basic_string<charT, traits, Allocator> str() const &;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
-\returns
-\tcode{rdbuf()->str()}.
+\effects Equivalent to: \tcode{return rdbuf()->str();}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_istringstream}%
+\begin{itemdecl}
+template<class SAlloc>
+  basic_string<charT,traits,SAlloc> str(const SAlloc& sa) const;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to: \tcode{return rdbuf()->str(sa);}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_istringstream}%
+\begin{itemdecl}
+basic_string<charT,traits,Allocator> str() &&;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to: \tcode{return std::move(*rdbuf()).str();}
+\end{itemdescr}
+
+\indexlibrarymember{view}{basic_istringstream}%
+\begin{itemdecl}
+basic_string_view<charT, traits> view() const noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to: \tcode{return rdbuf()->view();}
 \end{itemdescr}
 
 \indexlibrarymember{str}{basic_istringstream}%
@@ -8069,8 +8495,29 @@ void str(const basic_string<charT, traits, Allocator>& s);
 \begin{itemdescr}
 \pnum
 \effects
-Calls
-\tcode{rdbuf()->str(s)}.
+Equivalent to: \tcode{rdbuf()->str(s);}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_istringstream}%
+\begin{itemdecl}
+template<class SAlloc>
+  void str(const basic_string<charT, traits, SAlloc>& s);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{rdbuf()->str(s);}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_istringstream}%
+\begin{itemdecl}
+void str(basic_string<charT, traits, Allocator>&& s);
+\end{itemdecl}
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{rdbuf()->str(std::move(s));}
 \end{itemdescr}
 
 \rSec2[ostringstream]{Class template \tcode{basic_ostringstream}}
@@ -8093,8 +8540,24 @@ namespace std {
     basic_ostringstream() : basic_ostringstream(ios_base::out) {}
     explicit basic_ostringstream(ios_base::openmode which);
     explicit basic_ostringstream(
-      const basic_string<charT, traits, Allocator>& str,
+      const basic_string<charT, traits, Allocator>& s,
       ios_base::openmode which = ios_base::out);
+    basic_ostringstream(ios_base::openmode which, const Allocator& a);
+    explicit basic_ostringstream(
+      basic_string<charT, traits, Allocator>&& s,
+      ios_base::openmode which = ios_base::out);
+    template<class SAlloc>
+      basic_ostringstream(
+        const basic_string<charT, traits, SAlloc>& s, const Allocator& a)
+        : basic_ostringstream(s, ios_base::out, a) {}
+    template<class SAlloc>
+      basic_ostringstream(
+        const basic_string<charT, traits, SAlloc>& s,
+        ios_base::openmode which, const Allocator& a);
+    template<class SAlloc>
+      explicit basic_ostringstream(
+        const basic_string<charT, traits, SAlloc>& s,
+        ios_base::openmode which = ios_base::out);
     basic_ostringstream(const basic_ostringstream& rhs) = delete;
     basic_ostringstream(basic_ostringstream&& rhs);
 
@@ -8106,8 +8569,17 @@ namespace std {
     // \ref{ostringstream.members}, members
     basic_stringbuf<charT, traits, Allocator>* rdbuf() const;
 
-    basic_string<charT, traits, Allocator> str() const;
+    basic_string<charT, traits, Allocator> str() const &;
+    template<class SAlloc>
+      basic_string<charT,traits,SAlloc> str(const SAlloc& sa) const;
+    basic_string<charT, traits, Allocator> str() &&;
+    basic_string_view<charT, traits> view() const noexcept;
+
     void str(const basic_string<charT, traits, Allocator>& s);
+    template<class SAlloc>
+      void str(const basic_string<charT, traits, SAlloc>& s);
+    void str(basic_string<charT, traits, Allocator>&& s);
+
    private:
     basic_stringbuf<charT, traits, Allocator> sb; // \expos
   };
@@ -8142,30 +8614,93 @@ explicit basic_ostringstream(ios_base::openmode which);
 \begin{itemdescr}
 \pnum
 \effects
-Constructs an object of class
-\tcode{basic_ostringstream<charT, traits>},
-initializing the base class with
+Initializes the base class with
 \tcode{basic_ostream<charT, traits>(addressof(sb))}\iref{ostream}
-and initializing \tcode{sb} with\linebreak % avoid Overfull
+and \tcode{sb} with
 \tcode{basic_stringbuf<charT, traits, Allocator>(which | ios_base::out)}\iref{stringbuf.cons}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{basic_ostringstream}!constructor}%
 \begin{itemdecl}
 explicit basic_ostringstream(
-  const basic_string<charT, traits, Allocator>& str,
+  const basic_string<charT, traits, Allocator>& s,
   ios_base::openmode which = ios_base::out);
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
 \effects
-Constructs an object of class
-\tcode{basic_ostringstream<charT, traits>},
-initializing the base class with
+Initializes the base class with
 \tcode{basic_ostream<charT, traits>(addressof(sb))}\iref{ostream}
-and initializing \tcode{sb} with\linebreak % avoid Overfull
-\tcode{basic_stringbuf<charT, traits, Allocator>(str, which | ios_base::out)}\iref{stringbuf.cons}.
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(s, which | ios_base::out)}\linebreak(\ref{stringbuf.cons}). % avoid Overfull
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_ostringstream}!constructor}%
+\begin{itemdecl}
+basic_ostringstream(ios_base::openmode which, const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the base class with
+\tcode{basic_ostream<charT, traits>(addressof(sb))}\iref{ostream}
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(which | ios_base::out, a)}\linebreak(\ref{stringbuf.cons}). % avoid Overfull
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_ostringstream}!constructor}%
+\begin{itemdecl}
+explicit basic_ostringstream(
+  basic_string<charT, traits, Allocator>&& s,
+  ios_base::openmode which = ios_base::out);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the base class with
+\tcode{basic_ostream<charT, traits>(addressof(sb))}\iref{ostream}
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(std::move(s), which | ios_base::\brk{}out)}\iref{stringbuf.cons}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_ostringstream}!constructor}%
+\begin{itemdecl}
+template<class SAlloc>
+  basic_ostringstream(
+    const basic_string<charT, traits, SAlloc>& s,
+    ios_base::openmode which, const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the base class with
+\tcode{basic_ostream<charT, traits>(addressof(sb))}\iref{ostream}
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(s, which | ios_base::out, a)}\linebreak(\ref{stringbuf.cons}). % avoid Overfull
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_ostringstream}!constructor}%
+\begin{itemdecl}
+template<class SAlloc>
+  explicit basic_ostringstream(
+    const basic_string<charT, traits, SAlloc>& s,
+    ios_base::openmode which = ios_base::out);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints \tcode{is_same_v<SAlloc,Allocator>} is \tcode{false}.
+
+\pnum
+\effects
+Initializes the base class with
+\tcode{basic_ostream<charT, traits>(addressof(sb))}\iref{ostream}
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(s, which | ios_base::out)}\linebreak(\ref{stringbuf.cons}). % avoid Overfull
 \end{itemdescr}
 
 \indexlibrary{\idxcode{basic_ostringstream}!constructor}%
@@ -8206,12 +8741,12 @@ void swap(basic_ostringstream& rhs);
 
 \begin{itemdescr}
 \pnum
-\effects Exchanges the state of \tcode{*this} and
-\tcode{rhs} by calling
-\tcode{basic_ostream<charT, traits>::swap(rhs)} and
-\tcode{sb.swap(rhs.sb)}.
+\effects Equivalent to:
+\begin{codeblock}
+basic_ostream<charT, traits>::swap(rhs);
+sb.swap(rhs.sb);
+\end{codeblock}
 \end{itemdescr}
-
 
 \indexlibrarymember{swap}{basic_ostringstream}%
 \begin{itemdecl}
@@ -8240,13 +8775,47 @@ basic_stringbuf<charT, traits, Allocator>* rdbuf() const;
 
 \indexlibrarymember{str}{basic_ostringstream}%
 \begin{itemdecl}
-basic_string<charT, traits, Allocator> str() const;
+basic_string<charT, traits, Allocator> str() const &;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
-\returns
-\tcode{rdbuf()->str()}.
+\effects
+Equivalent to: \tcode{return rdbuf()->str();}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_ostringstream}%
+\begin{itemdecl}
+template<class SAlloc>
+  basic_string<charT,traits,SAlloc> str(const SAlloc& sa) const;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{return rdbuf()->str(sa);}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_ostringstream}%
+\begin{itemdecl}
+basic_string<charT,traits,Allocator> str() &&;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{return std::move(*rdbuf()).str();}
+\end{itemdescr}
+
+\indexlibrarymember{view}{basic_ostringstream}%
+\begin{itemdecl}
+basic_string_view<charT, traits> view() const noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{return rdbuf()->view();}
 \end{itemdescr}
 
 \indexlibrarymember{str}{basic_ostringstream}%
@@ -8257,8 +8826,30 @@ void str(const basic_string<charT, traits, Allocator>& s);
 \begin{itemdescr}
 \pnum
 \effects
-Calls
-\tcode{rdbuf()->str(s)}.
+Equivalent to: \tcode{rdbuf()->str(s);}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_ostringstream}%
+\begin{itemdecl}
+template<class SAlloc>
+  void str(const basic_string<charT, traits, SAlloc>& s);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{rdbuf()->str(s);}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_ostringstream}%
+\begin{itemdecl}
+void str(basic_string<charT, traits, Allocator>&& s);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{rdbuf()->str(std::move(s));}
 \end{itemdescr}
 
 \rSec2[stringstream]{Class template \tcode{basic_stringstream}}
@@ -8281,8 +8872,24 @@ namespace std {
     basic_stringstream() : basic_stringstream(ios_base::out | ios_base::in) {}
     explicit basic_stringstream(ios_base::openmode which);
     explicit basic_stringstream(
-      const basic_string<charT, traits, Allocator>& str,
+      const basic_string<charT, traits, Allocator>& s,
       ios_base::openmode which = ios_base::out | ios_base::in);
+    basic_stringstream(ios_base::openmode which, const Allocator& a);
+    explicit basic_stringstream(
+      basic_string<charT, traits, Allocator>&& s,
+      ios_base::openmode which = ios_base::out | ios_base::in);
+    template<class SAlloc>
+      basic_stringstream(
+        const basic_string<charT, traits, SAlloc>& s, const Allocator& a)
+        : basic_stringstream(s, ios_base::out | ios_base::in, a) {}
+    template<class SAlloc>
+      basic_stringstream(
+        const basic_string<charT, traits, SAlloc>& s,
+        ios_base::openmode which, const Allocator& a);
+    template<class SAlloc>
+      explicit basic_stringstream(
+        const basic_string<charT, traits, SAlloc>& s,
+        ios_base::openmode which = ios_base::out | ios_base::in);
     basic_stringstream(const basic_stringstream& rhs) = delete;
     basic_stringstream(basic_stringstream&& rhs);
 
@@ -8293,8 +8900,17 @@ namespace std {
 
     // \ref{stringstream.members}, members
     basic_stringbuf<charT, traits, Allocator>* rdbuf() const;
-    basic_string<charT, traits, Allocator> str() const;
-    void str(const basic_string<charT, traits, Allocator>& str);
+
+    basic_string<charT, traits, Allocator> str() const &;
+    template<class SAlloc>
+      basic_string<charT,traits,SAlloc> str(const SAlloc& sa) const;
+    basic_string<charT, traits, Allocator> str() &&;
+    basic_string_view<charT, traits> view() const noexcept;
+
+    void str(const basic_string<charT, traits, Allocator>& s);
+    template<class SAlloc>
+      void str(const basic_string<charT, traits, SAlloc>& s);
+    void str(basic_string<charT, traits, Allocator>&& s);
 
   private:
     basic_stringbuf<charT, traits> sb;  // \expos
@@ -8331,11 +8947,9 @@ explicit basic_stringstream(ios_base::openmode which);
 \begin{itemdescr}
 \pnum
 \effects
-Constructs an object of class
-\tcode{basic_stringstream<charT, traits>},
-initializing the base class with
+Initializes the base class with
 \tcode{basic_iostream<charT, traits>(addressof(sb))}\iref{iostream.cons}
-and initializing
+and
 \tcode{sb}
 with
 \tcode{basic_string\-buf<charT, traits, Allocator>(which)}.
@@ -8344,21 +8958,86 @@ with
 \indexlibrary{\idxcode{basic_stringstream}!constructor}%
 \begin{itemdecl}
 explicit basic_stringstream(
-  const basic_string<charT, traits, Allocator>& str,
+  const basic_string<charT, traits, Allocator>& s,
   ios_base::openmode which = ios_base::out | ios_base::in);
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
 \effects
-Constructs an object of class
-\tcode{basic_stringstream<charT, traits>},
-initializing the base class with
+Initializes the base class with
 \tcode{basic_iostream<charT, traits>(addressof(sb))}\iref{iostream.cons}
-and initializing
+and
 \tcode{sb}
 with
-\tcode{basic_string\-buf<charT, traits, Allocator>(str, which)}.
+\tcode{basic_string\-buf<charT, traits, Allocator>(s, which)}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_stringstream}!constructor}%
+\begin{itemdecl}
+basic_stringstream(ios_base::openmode which, const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the base class with
+\tcode{basic_iostream<charT, traits>(addressof(sb))}\iref{iostream.cons}
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(which, a)}\iref{stringbuf.cons}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_stringstream}!constructor}%
+\begin{itemdecl}
+explicit basic_stringstream(
+  basic_string<charT, traits, Allocator>&& s,
+  ios_base::openmode which = ios_base::out | ios_base::in);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the base class with
+\tcode{basic_iostream<charT, traits>(addressof(sb))}\iref{iostream.cons}
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(std::move(s), which)}\iref{stringbuf.cons}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_stringstream}!constructor}%
+\begin{itemdecl}
+template<class SAlloc>
+  basic_stringstream(
+    const basic_string<charT, traits, SAlloc>& s,
+    ios_base::openmode which, const Allocator& a);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Initializes the base class with
+\tcode{basic_iostream<charT, traits>(addressof(sb))}\iref{iostream.cons}
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(s, which, a)}\iref{stringbuf.cons}.
+\end{itemdescr}
+
+\indexlibrary{\idxcode{basic_stringstream}!constructor}%
+\begin{itemdecl}
+template<class SAlloc>
+  explicit basic_stringstream(
+    const basic_string<charT, traits, SAlloc>& s,
+    ios_base::openmode which = ios_base::out | ios_base::in);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\constraints \tcode{is_same_v<SAlloc,Allocator>} is \tcode{false}.
+
+\pnum
+\effects
+Initializes the base class with
+\tcode{basic_iostream<charT, traits>(addressof(sb))}\iref{iostream.cons}
+and \tcode{sb} with
+\tcode{basic_stringbuf<charT, traits, Allocator>(s, which)}\iref{stringbuf.cons}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{basic_stringstream}!constructor}%
@@ -8398,12 +9077,13 @@ void swap(basic_stringstream& rhs);
 
 \begin{itemdescr}
 \pnum
-\effects Exchanges the state of \tcode{*this} and
-\tcode{rhs} by calling
-\tcode{basic_iostream<charT,traits>::swap(rhs)} and
-\tcode{sb.swap(rhs.sb)}.
+\effects
+Equivalent to:
+\begin{codeblock}
+basic_iostream<charT,traits>::swap(rhs);
+sb.swap(rhs.sb);
+\end{codeblock}
 \end{itemdescr}
-
 
 \indexlibrarymember{swap}{basic_stringstream}%
 \begin{itemdecl}
@@ -8432,25 +9112,81 @@ basic_stringbuf<charT, traits, Allocator>* rdbuf() const;
 
 \indexlibrarymember{str}{basic_stringstream}%
 \begin{itemdecl}
-basic_string<charT, traits, Allocator> str() const;
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns
-\tcode{rdbuf()->str()}.
-\end{itemdescr}
-
-\indexlibrarymember{str}{basic_stringstream}%
-\begin{itemdecl}
-void str(const basic_string<charT, traits, Allocator>& str);
+basic_string<charT, traits, Allocator> str() const &;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
 \effects
-Calls
-\tcode{rdbuf()->str(str)}.
+Equivalent to: \tcode{return rdbuf()->str();}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_stringstream}%
+\begin{itemdecl}
+template<class SAlloc>
+  basic_string<charT,traits,SAlloc> str(const SAlloc& sa) const;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{return rdbuf()->str(sa);}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_stringstream}%
+\begin{itemdecl}
+basic_string<charT,traits,Allocator> str() &&;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{return std::move(*rdbuf()).str();}
+\end{itemdescr}
+
+\indexlibrarymember{view}{basic_stringstream}%
+\begin{itemdecl}
+basic_string_view<charT, traits> view() const noexcept;
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{return rdbuf()->view();}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_stringstream}%
+\begin{itemdecl}
+void str(const basic_string<charT, traits, Allocator>& s);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{rdbuf()->str(s);}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_stringstream}%
+\begin{itemdecl}
+template<class SAlloc>
+  void str(const basic_string<charT, traits, SAlloc>& s);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{rdbuf()->str(s);}
+\end{itemdescr}
+
+\indexlibrarymember{str}{basic_stringstream}%
+\begin{itemdecl}
+void str(basic_string<charT, traits, Allocator>&& s);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects
+Equivalent to: \tcode{rdbuf()->str(std::move(s));}
 \end{itemdescr}
 
 \rSec1[file.streams]{File-based streams}
@@ -8786,11 +9522,11 @@ as if by a call to \tcode{fopen}
 \indexlibrary{\idxcode{fopen}}%
 with the second argument determined from
 \tcode{mode \& \~{}ios_base::ate}
-as indicated in \tref{iostreams.file.open.modes}.
+as indicated in \tref{filebuf.open.modes}.
 If \tcode{mode} is not some combination of flags shown in the table then
 the open fails.
 
-\begin{floattable}{File open modes}{tab:iostreams.file.open.modes}
+\begin{floattable}{File open modes}{filebuf.open.modes}
 {cccccl}
 \topline
 \multicolumn{5}{|c}{\tcode{ios_base} flag combination} & \tcode{stdio} equivalent \\
@@ -9175,9 +9911,9 @@ and output the resulting unshift sequence.
 The function determines one of three values for the
 argument \tcode{whence}, of type
 \tcode{int},
-as indicated in \tref{iostreams.seekoff.effects}.
+as indicated in \tref{filebuf.seekoff}.
 
-\begin{libtab2}{\tcode{seekoff} effects}{tab:iostreams.seekoff.effects}
+\begin{libtab2}{\tcode{seekoff} effects}{filebuf.seekoff}
 {ll}{\tcode{way} Value}{\tcode{stdio} Equivalent}
 \tcode{basic_ios::beg}  & \tcode{SEEK_SET}  \\
 \tcode{basic_ios::cur}  & \tcode{SEEK_CUR}  \\
@@ -10194,7 +10930,7 @@ basic_syncbuf(basic_syncbuf&& other);
 \begin{itemdescr}
 \pnum
 \effects
-Move constructs from \tcode{other} (\tref{moveconstructible}).
+Move constructs from \tcode{other} (\tref{cpp17.moveconstructible}).
 
 \pnum
 \ensures
@@ -10458,8 +11194,8 @@ namespace std {
 \end{codeblock}
 
 \pnum
-\tcode{Allocator} shall satisfy the \oldconcept{Allocator} requirements
-(\tref{utilities.allocator.requirements}).
+\tcode{Allocator} shall meet the \oldconcept{Allocator} requirements
+(\tref{cpp17.allocator}).
 
 \pnum
 \begin{example}
@@ -10789,7 +11525,7 @@ shall not participate in overload resolution
 unless \tcode{EcharT} is one of the encoded character types.
 
 \pnum
-Template parameters named \tcode{InputIterator} shall satisfy the
+Template parameters named \tcode{InputIterator} shall meet the
 \oldconcept{InputIterator} requirements\iref{input.iterators} and shall
 have a value type that is one of the encoded character types.
 
@@ -10801,8 +11537,8 @@ implied character set and encoding,
 they are not included as permitted types. \end{note}
 
 \pnum
-Template parameters named \tcode{Allocator} shall satisfy the
-\oldconcept{Allocator} requirements (\tref{utilities.allocator.requirements}).
+Template parameters named \tcode{Allocator} shall meet the
+\oldconcept{Allocator} requirements (\tref{cpp17.allocator}).
 
 \rSec3[fs.req.namespace]{Namespaces and headers}
 
@@ -10849,6 +11585,8 @@ namespace std::filesystem {
     uintmax_t capacity;
     uintmax_t free;
     uintmax_t available;
+
+    friend bool operator==(const space_info&, const space_info&) = default;
   };
 
   // \ref{fs.enum}, enumerations
@@ -11198,11 +11936,7 @@ namespace std::filesystem {
 
     // \ref{fs.path.nonmember}, non-member operators
     friend bool operator==(const path& lhs, const path& rhs) noexcept;
-    friend bool operator!=(const path& lhs, const path& rhs) noexcept;
-    friend bool operator< (const path& lhs, const path& rhs) noexcept;
-    friend bool operator<=(const path& lhs, const path& rhs) noexcept;
-    friend bool operator> (const path& lhs, const path& rhs) noexcept;
-    friend bool operator>=(const path& lhs, const path& rhs) noexcept;
+    friend strong_ordering operator<=>(const path& lhs, const path& rhs) noexcept;
 
     friend path operator/ (const path& lhs, const path& rhs);
 
@@ -11861,21 +12595,23 @@ Otherwise, modifies \tcode{*this} as if by these steps:
 \begin{example}
 Even if \tcode{//host} is interpreted as a \grammarterm{root-name},
 both of the paths \tcode{path("//host")/"foo"} and \tcode{path("//host/")/"foo"}
-equal \tcode{"//host/foo"}.
+equal \tcode{"//host/foo"} (although the former might use backslash as the
+preferred separator).
 
 Expression examples:
 \begin{codeblock}
 // On POSIX,
-path("foo") / "";     // yields \tcode{"foo/"}
-path("foo") / "/bar"; // yields \tcode{"/bar"}
-// On Windows, backslashes replace slashes in the above yields
+path("foo") /= path("");        // yields \tcode{path("foo/")}
+path("foo") /= path("/bar");    // yields \tcode{path("/bar")}
 
 // On Windows,
-path("foo") / "c:/bar";  // yields \tcode{"c:/bar"}
-path("foo") / "c:";      // yields \tcode{"c:"}
-path("c:") / "";         // yields \tcode{"c:"}
-path("c:foo") / "/bar";  // yields \tcode{"c:/bar"}
-path("c:foo") / "c:bar"; // yields \tcode{"c:foo/bar"}
+path("foo") /= path("");        // yields \tcode{path("foo\textbackslash\textbackslash{}")}
+path("foo") /= path("/bar");    // yields \tcode{path("/bar")}
+path("foo") /= path("c:/bar");  // yields \tcode{path("c:/bar")}
+path("foo") /= path("c:");      // yields \tcode{path("c:")}
+path("c:") /= path("");         // yields \tcode{path("c:")}
+path("c:foo") /= path("/bar");  // yields \tcode{path("c:/bar")}
+path("c:foo") /= path("c:bar"); // yields \tcode{path("c:foo\textbackslash\textbackslash{}bar")}
 \end{codeblock}
 \end{example}
 
@@ -11918,11 +12654,8 @@ path& operator+=(const path& x);
 path& operator+=(const string_type& x);
 path& operator+=(basic_string_view<value_type> x);
 path& operator+=(const value_type* x);
-path& operator+=(value_type x);
 template<class Source>
   path& operator+=(const Source& x);
-template<class EcharT>
-  path& operator+=(EcharT x);
 template<class Source>
   path& concat(const Source& x);
 \end{itemdecl}
@@ -11937,6 +12670,19 @@ and may not be portable between operating systems.
 
 \pnum
 \returns \tcode{*this}.
+\end{itemdescr}
+
+\indexlibrarymember{operator+=}{path}%
+\indexlibrarymember{concat}{path}%
+\begin{itemdecl}
+path& operator+=(value_type x);
+template<class EcharT>
+  path& operator+=(EcharT x);
+\end{itemdecl}
+
+\begin{itemdescr}
+\pnum
+\effects Equivalent to: \tcode{return *this += basic_string_view(\&x, 1);}
 \end{itemdescr}
 
 \indexlibrarymember{concat}{path}%
@@ -12429,7 +13175,7 @@ even though the generic format pathnames are the same.
 
 \begin{itemdescr}
 \pnum
-\returns \tcode{true} if the pathname in the generic format is empty, else \tcode{false}.
+\returns \tcode{true} if the pathname in the generic format is empty, otherwise \tcode{false}.
 \end{itemdescr}
 
 \indexlibrarymember{has_root_path}{path}%
@@ -12520,7 +13266,7 @@ bool is_absolute() const;
 \begin{itemdescr}
 \pnum
 \returns \tcode{true} if the pathname in the native format
-  contains an absolute path\iref{fs.class.path}, else \tcode{false}.
+  contains an absolute path\iref{fs.class.path}, otherwise \tcode{false}.
 
 \pnum
 \begin{example} \tcode{path("/").is_absolute()} is
@@ -12661,7 +13407,7 @@ Path iterators iterate over the elements of the pathname
 in the generic format\iref{fs.path.generic}.
 
 \pnum
-A \tcode{path::iterator} is a constant iterator satisfying all the
+A \tcode{path::iterator} is a constant iterator meeting all the
 requirements of a bidirectional iterator\iref{bidirectional.iterators}
 except that,
 for dereferenceable iterators \tcode{a} and \tcode{b}
@@ -12782,7 +13528,7 @@ friend bool operator==(const path& lhs, const path& rhs) noexcept;
 
 \begin{itemdescr}
 \pnum
-\returns \tcode{!(lhs < rhs) \&\& !(rhs < lhs)}.
+\returns \tcode{lhs.compare(rhs) == 0}.
 
 \indextext{path equality}
 \pnum
@@ -12802,54 +13548,14 @@ Programmers wishing to determine if two paths are ``the same'' must decide if
   file'', and choose the appropriate function accordingly. \end{note}
 \end{itemdescr}
 
-\indexlibrarymember{operator"!=}{path}%
+\indexlibrarymember{operator<=>}{path}%
 \begin{itemdecl}
-friend bool operator!=(const path& lhs, const path& rhs) noexcept;
+friend strong_ordering operator<=>(const path& lhs, const path& rhs) noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
-\returns \tcode{!(lhs == rhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{operator<}{path}%
-\begin{itemdecl}
-friend bool operator< (const path& lhs, const path& rhs) noexcept;
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{lhs.compare(rhs) < 0}.
-\end{itemdescr}
-
-\indexlibrarymember{operator<=}{path}%
-\begin{itemdecl}
-friend bool operator<=(const path& lhs, const path& rhs) noexcept;
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{!(rhs < lhs)}.
-\end{itemdescr}
-
-\indexlibrarymember{operator>}{path}%
-\begin{itemdecl}
-friend bool operator> (const path& lhs, const path& rhs) noexcept;
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{rhs < lhs}.
-\end{itemdescr}
-
-\indexlibrarymember{operator>=}{path}%
-\begin{itemdecl}
-friend bool operator>=(const path& lhs, const path& rhs) noexcept;
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{!(lhs < rhs)}.
+\returns \tcode{lhs.compare(rhs) <=> 0}.
 \end{itemdescr}
 
 \indexlibrarymember{operator/}{path}%
@@ -12984,10 +13690,10 @@ const char* what() const noexcept override;
 
 \pnum
 This enum specifies constants used to identify the format of the character
-sequence, with the meanings listed in \tref{enum.path.format}.
+sequence, with the meanings listed in \tref{fs.enum.path.format}.
 
 \begin{floattable}
-{Enum \tcode{path::format}}{tab:enum.path.format}{lp{4in}}
+{Enum \tcode{path::format}}{fs.enum.path.format}{lp{4in}}
 \topline
 \lhdr{Name} & \rhdr{Meaning} \\\capsep
 \tcode{native_format} & The native pathname format. \\\rowsep
@@ -13012,7 +13718,7 @@ with the meanings listed in \tref{fs.enum.file.type}.
 The values of the constants are distinct.
 
 \begin{floattable}
-{Enum class \tcode{file_type}}{tab:fs.enum.file.type}
+{Enum class \tcode{file_type}}{fs.enum.file.type}
 {lp{4.5in}}
 \topline
 \lhdr{Constant}	&
@@ -13051,14 +13757,14 @@ The file exists but the type could not be determined \\
 \pnum
 The \tcode{enum class} type \tcode{copy_options}
 is a bitmask type\iref{bitmask.types} that specifies bitmask constants used to control the semantics of
-copy operations. The constants are specified in option groups with the meanings listed in \tref{fs.enum.copy_options}.
+copy operations. The constants are specified in option groups with the meanings listed in \tref{fs.enum.copy.opts}.
 The constant \tcode{none} represents the empty bitmask, and
 is shown in each option group for purposes of exposition;
 implementations shall provide only a single definition.
 Every other constant in the table represents a distinct bitmask element.
 
 \begin{floattable}
-{Enum class \tcode{copy_options}}{tab:fs.enum.copy_options}
+{Enum class \tcode{copy_options}}{fs.enum.copy.opts}
 {lp{4in}}
 \topline
 \ohdrx{2}{Option group controlling \tcode{copy_file} function effects for existing target files} \\ \rowsep
@@ -13111,7 +13817,7 @@ is a bitmask type\iref{bitmask.types} that specifies bitmask constants used to i
 permissions, with the meanings listed in \tref{fs.enum.perms}.
 
 \begin{floattable}
-{Enum class \tcode{perms}}{tab:fs.enum.perms}
+{Enum class \tcode{perms}}{fs.enum.perms}
 {lrlp{3.2in}}
 \topline
 \lhdr{Name}	& \chdr{Value}		& \chdr{POSIX}	& \rhdr{Definition or notes}	\\
@@ -13168,13 +13874,13 @@ permissions, with the meanings listed in \tref{fs.enum.perms}.
 The \tcode{enum class} type \tcode{perm_options}
 is a bitmask type\iref{bitmask.types} that specifies bitmask constants used to
 control the semantics of permissions operations,
-with the meanings listed in \tref{enum.perm_options}.
+with the meanings listed in \tref{fs.enum.perm.opts}.
 The bitmask constants are bitmask elements.
-In \tref{enum.perm_options} \tcode{perm} denotes a value of type \tcode{perms}
+In \tref{fs.enum.perm.opts} \tcode{perm} denotes a value of type \tcode{perms}
 passed to \tcode{permissions}.
 
 \begin{floattable}
-{Enum class \tcode{perm_options}}{tab:enum.perm_options}{x{.15\hsize}x{.70\hsize}}
+{Enum class \tcode{perm_options}}{fs.enum.perm.opts}{x{.15\hsize}x{.70\hsize}}
 \topline
 \lhdr{Name} &
   \rhdr{Meaning} \\ \capsep
@@ -13198,12 +13904,12 @@ passed to \tcode{permissions}.
 \pnum
 The \tcode{enum class} type \tcode{directory_options} is a bitmask
   type\iref{bitmask.types} that specifies bitmask constants used to identify
-  directory traversal options, with the meanings listed in \tref{fs.enum.directory_options}.
+  directory traversal options, with the meanings listed in \tref{fs.enum.dir.opts}.
   The constant \tcode{none} represents the empty bitmask;
   every other constant in the table represents a distinct bitmask element.
 
 \begin{floattable}
-{Enum class \tcode{directory_options}}{tab:fs.enum.directory_options}
+{Enum class \tcode{directory_options}}{fs.enum.dir.opts}
 {lp{3in}}
 \topline
 \lhdr{Name}	&
@@ -13243,6 +13949,9 @@ namespace std::filesystem {
     // \ref{fs.file.status.obs}, observers
     file_type  type() const noexcept;
     perms      permissions() const noexcept;
+
+    friend bool operator==(const file_status& lhs, const file_status& rhs) noexcept
+      { return lhs.type() == rhs.type() && lhs.permissions() == rhs.permissions(); }
   };
 }
 \end{codeblock}
@@ -13368,11 +14077,7 @@ namespace std::filesystem {
     file_status symlink_status(error_code& ec) const noexcept;
 
     bool operator==(const directory_entry& rhs) const noexcept;
-    bool operator!=(const directory_entry& rhs) const noexcept;
-    bool operator< (const directory_entry& rhs) const noexcept;
-    bool operator> (const directory_entry& rhs) const noexcept;
-    bool operator<=(const directory_entry& rhs) const noexcept;
-    bool operator>=(const directory_entry& rhs) const noexcept;
+    strong_ordering operator<=>(const directory_entry& rhs) const noexcept;
 
   private:
     filesystem::path pathobject;     // \expos
@@ -13744,54 +14449,14 @@ bool operator==(const directory_entry& rhs) const noexcept;
 \returns \tcode{pathobject == rhs.pathobject}.
 \end{itemdescr}
 
-\indexlibrarymember{operator"!=}{directory_entry}%
+\indexlibrarymember{operator<=>}{directory_entry}%
 \begin{itemdecl}
-bool operator!=(const directory_entry& rhs) const noexcept;
+strong_ordering operator<=>(const directory_entry& rhs) const noexcept;
 \end{itemdecl}
 
 \begin{itemdescr}
 \pnum
-\returns \tcode{pathobject != rhs.pathobject}.
-\end{itemdescr}
-
-\indexlibrarymember{operator<}{directory_entry}%
-\begin{itemdecl}
-bool operator< (const directory_entry& rhs) const noexcept;
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{pathobject < rhs.pathobject}.
-\end{itemdescr}
-
-\indexlibrarymember{operator>}{directory_entry}%
-\begin{itemdecl}
-bool operator> (const directory_entry& rhs) const noexcept;
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{pathobject > rhs.pathobject}.
-\end{itemdescr}
-
-\indexlibrarymember{operator<=}{directory_entry}%
-\begin{itemdecl}
-bool operator<=(const directory_entry& rhs) const noexcept;
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{pathobject <= rhs.pathobject}.
-\end{itemdescr}
-
-\indexlibrarymember{operator>=}{directory_entry}%
-\begin{itemdecl}
-bool operator>=(const directory_entry& rhs) const noexcept;
-\end{itemdecl}
-
-\begin{itemdescr}
-\pnum
-\returns \tcode{pathobject >= rhs.pathobject}.
+\returns \tcode{pathobject <=> rhs.pathobject}.
 \end{itemdescr}
 
 \rSec2[fs.class.directory.iterator]{Class \tcode{directory_iterator}}
@@ -13841,8 +14506,8 @@ namespace std::filesystem {
 \end{codeblock}
 
 \pnum
- \tcode{directory_iterator} satisfies the
- \oldconcept{InputIterator} requirements\iref{input.iterators}.
+\tcode{directory_iterator} meets the
+\oldconcept{InputIterator} requirements\iref{input.iterators}.
 
 \pnum
 If an iterator of type \tcode{directory_iterator} reports an error or
@@ -14138,7 +14803,7 @@ and does not report an error.
 \pnum
 \begin{note} By default, \tcode{recursive_directory_iterator} does not
 follow directory symlinks. To follow directory symlinks, specify \tcode{options} as
-\tcode{directory_options::follow_directory_symlink} \end{note}
+\tcode{directory_options::follow_directory_symlink}. \end{note}
 \end{itemdescr}
 
 \indexlibrary{\idxcode{recursive_directory_iterator}!constructor}%
@@ -14314,13 +14979,13 @@ void pop(error_code& ec);
   iterated over, and continue iteration over the parent directory.
 
 \pnum
-\ensures Any copies of the previous value of \tcode{*this}
-are no longer required
-to be dereferenceable nor to be in the domain of \tcode{==}.
-
-\pnum
 \throws As specified in~\ref{fs.err.report}.
 \end{itemdescr}
+
+\pnum
+\remarks Any copies of the previous value of \tcode{*this}
+are no longer required
+to be dereferenceable nor to be in the domain of \tcode{==}.
 
 \indexlibrarymember{disable_recursion_pending}{recursive_directory_iterator}%
 \begin{itemdecl}
@@ -14963,7 +15628,7 @@ bool equivalent(const path& p1, const path& p2, error_code& ec) noexcept;
 \begin{itemdescr}
 \pnum
 \returns \tcode{true}, if \tcode{p1} and \tcode{p2} resolve to the same file
-  system entity, else \tcode{false}. The signature with argument \tcode{ec}
+  system entity, otherwise \tcode{false}. The signature with argument \tcode{ec}
   returns \tcode{false} if an error occurs.
 
 \pnum
@@ -15277,7 +15942,7 @@ bool is_regular_file(const path& p);
 \returns \tcode{is_regular_file(status(p))}.
 
 \pnum
-\throws \tcode{filesystem_error} if \tcode{status(p)} would throw \tcode{filesystem_error.}
+\throws \tcode{filesystem_error} if \tcode{status(p)} would throw \tcode{filesystem_error}.
 \end{itemdescr}
 
 \indexlibrary{\idxcode{is_regular_file}}%
